@@ -1,2 +1,3 @@
 .gitignore
 widgets_venv
+__pycache__

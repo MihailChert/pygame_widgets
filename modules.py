@@ -1,3 +1,4 @@
+import pygame
 
 class Padding:
 	def __init__(self, padding):
@@ -31,6 +32,48 @@ class Padding:
 	def vertical_indent(self):
 		return self.top + self.bottom
 
+class FontProperty:
+	def __init__(self, font_name=None, font_size=None, font_color=None):
+		self._name = font_name
+		self._size = font_size
+		self._color = font_color
+		self._font = None
+
+	def __getattr__(self, name):
+		return getattr(self._font, name)
+
+	def create_font(self):
+		self._font = pygame.font.Font(self._name, self._size)
+
+	@property
+	def font(self):
+		return self._font
+
+	@property
+	def font_name(self):
+		return self._name
+	@font_name.setter
+	def set_name(self, name):
+		self._name = name
+		self.create_font()
+
+	@property
+	def font_size(self):
+		return self._size
+	@font_size.setter
+	def set_size(self, size):
+		self._size = size
+		self.create_font()
+
+	@property
+	def color(self):
+		return self._color
+	@color.setter
+	def set_color(self, color):
+		self._color = color
+
+
+
 class SizeRange:
 	def __init__(self, min_width, max_width, min_height, max_height):
 		self.range_width = (min_width, max_width)
@@ -48,3 +91,9 @@ class SizeRange:
 	@property
 	def max_h(self):
 		return self.range_height[1]
+
+if __name__ == '__main__':
+	pygame.font.init()
+	font = FontParoperty(None, 35, (0, 0, 4))
+	font.create_font()
+	print(font.size)
