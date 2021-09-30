@@ -2,7 +2,7 @@ import pygame
 import sys
 
 from lable import Lable
-from timer import Timer, TargetTimer
+from specialtimer import Timer
 from modules import SizeRange
 
 pygame.font.init()
@@ -19,10 +19,9 @@ lable = Lable(display, (100, 100), (None, 30, Lable.default_color),
 lable.set_text('lksdn\nsmd')
 lable.font.color[1] = 0
 event = pygame.event.Event(Timer.TIMEREVENT)
-timer1 = Timer(0, 20)
-timer1.start()
-timer2 = TargetTimer(1, 500, timer1.start)
-timer2.start()
+timer = [Timer(i*10) for i in range(1, 4)]
+for t in timer:
+	t.start()
 
 while True:
 	clock.tick(FPS)
@@ -31,12 +30,11 @@ while True:
 		or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
 			pygame.quit()
 			sys.exit()
-		if event.type == Timer.TIMEREVENT and event.timer_id == 0:
-			lable.font.color[event.timer_id] += 10
+		if event.type == Timer.TIMEREVENT:
+			lable.font.color[event.timer_id] += 1
 			# print(lable.font.color)
 			if lable.font.color[event.timer_id] > 255:
 				lable.font.color[event.timer_id] = 0
-				event.timer.stop()
 
 
 
