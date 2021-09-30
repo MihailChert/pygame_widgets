@@ -60,22 +60,21 @@ class Lable(pygame.sprite.Sprite):
 
 	def calc_rect(self, pos):
 		line_counter = 0
-		max_size = [0 if self.size_range is None else self.size_range.min_w,
-					0 if self.size_range is None else self.size_range.min_h]
-		for line in self.text.split('\n'):
-			line_counter += 1
+		max_size = [0 if self.size_range is None or self.size_range.min_w is None else self.size_range.min_w,
+					0 if self.size_range is None or self.size_range.min_h is None else self.size_range.min_h]
+		for line in self.text.splitlines():
 			if self.size_range is None or self.size_range.max_w is None:
 				size = self.font.size(line)[0]
 				if max_size[0] < size:
 					max_size[0] = size
-			elif self.font.size(line)[0] < self.size_range.max_w\
+			elif self.font.size(line)[0] <= self.size_range.max_w\
 				- self.padding.horizontal_indent():
 				size = self.font.size(line)[0]
 				if max_size[0] < size:
 					max_size[0] = size
 			else:
 				buffer = []
-				line = line.split(' ')
+				line = line.split()
 				while len(line) != 0\
 						or self.font.size(' '.join(line))[0]\
 						> self.size_range.max_w\
@@ -92,6 +91,9 @@ class Lable(pygame.sprite.Sprite):
 					line.reverse()
 					buffer = []
 					line_counter += 1
+				else:
+					line_counter -= 1
+			line_counter += 1
 		size = self.font.size('5')[1] * line_counter
 		if self.size_range is None or self.size_range.max_h is None:
 			if size > max_size[1]:
@@ -125,15 +127,16 @@ class Lable(pygame.sprite.Sprite):
 	def draw_text(self, drawble=True):
 		# pdb.set_trace()
 		line_counter = -1
-		for line in self.text.split('\n'):
+		for line in self.text.splitlines():
 			line_counter += 1
-			if self.font.size(line)[0] < self.rect.width \
+			if self.font.size(line)[0] <= self.rect.width \
 				- self.padding.horizontal_indent():
 				render = self.font.render(line, False, self.font.color)
 				size = self.font.size(line)
+				# pdb.set_trace()
 			else:
 				buffer = []
-				line = line.split(' ')
+				line = line.split()
 				while len(line) != 0\
 					 or self.font.size(' '.join(line))[0] > self.rect.width\
 					 - self.padding.horizontal_indent():
@@ -144,6 +147,7 @@ class Lable(pygame.sprite.Sprite):
 					size = self.font.size(' '.join(line))
 					render = self.font.render(' '.join(line), False, self.font.color)
 					rect = self.get_rect_align(size, line_counter)
+					# pdb.set_trace()
 					self.background.blit(render, rect)
 					line = buffer
 					line.reverse()
@@ -152,6 +156,7 @@ class Lable(pygame.sprite.Sprite):
 				render = self.font.render(' '.join(line), False, self.font.color)
 				size = self.font.size(' '.join(line))
 			rect = self.get_rect_align(size, line_counter)
+			# pdb.set_trace()
 			self.background.blit(render, rect)
 
 	def draw(self):

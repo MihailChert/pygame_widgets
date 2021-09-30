@@ -36,7 +36,7 @@ class FontProperty:
 	def __init__(self, font_name=None, font_size=None, font_color=None):
 		self._name = font_name
 		self._size = font_size
-		self._color = font_color
+		self._color = list(font_color)
 		self._font = None
 
 	def __getattr__(self, name):
