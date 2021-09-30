@@ -1,3 +1,5 @@
+# created by virtualenv automatically
 .gitignore
-widgets_venv
-__pycache__
+widget_venv
+*.pyc
+

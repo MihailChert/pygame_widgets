@@ -6,6 +6,7 @@ from modules import Padding, SizeRange, FontProperty
 
 class Lable(pygame.sprite.Sprite):
 	default_color = (255, 255, 255)
+	ID = 0
 
 	def __init__(self, parent, pos, font, text,
 				background, text_align, trancparency=False, rect_size=None,
@@ -21,6 +22,9 @@ class Lable(pygame.sprite.Sprite):
 			self.font = FontProperty(None, 16, Lable.default_color)
 		self.font.create_font()
 		self.visible = True
+		self.id = Lable.ID
+		self.name = 'Lable' + str(self.id)
+		Lable.ID += 1
 		self.parent = parent
 		self._text = text
 		self.padding = padding
