@@ -45,7 +45,6 @@ class TargetTimer(Timer):
 
 	def run(self):
 		while True:
-			try:
 				if self.active:
 					time.sleep(self.interval / 1000)
 					pygame.event.post(self.event)
