@@ -92,7 +92,7 @@ class Lable(pygame.sprite.Sprite):
 					buffer = []
 					line_counter += 1
 				else:
-					line_counter -= 1
+					break
 			line_counter += 1
 		size = self.font.size('5')[1] * line_counter
 		if self.size_range is None or self.size_range.max_h is None:
