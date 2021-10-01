@@ -1,6 +1,5 @@
 import pygame
 import threading
-import pdb
 
 class MultiTimer(threading.Thread):
 	def __init__(self):

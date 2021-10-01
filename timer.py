@@ -1,6 +1,6 @@
 import pygame
 import threading
-import time, pdb
+import time
 
 
 class Timer(threading.Thread):
@@ -43,7 +43,6 @@ class Timer(threading.Thread):
 class TargetTimer(Timer):
 	def __init__(self,time_interval, target, timer_name=None):
 		super().__init__(timer_name, time_interval, timer_name)
-		self.target = target
 		self.event.target = target
 
 	def run(self):
@@ -53,4 +52,5 @@ class TargetTimer(Timer):
 					pygame.event.post(self.event)
 			except Exception as ex:
 				print(ex)
+				break
 

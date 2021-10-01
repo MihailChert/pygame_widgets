@@ -1,5 +1,4 @@
 import numpy
-import pdb
 import pygame
 
 from modules import Padding, SizeRange, FontProperty
@@ -12,6 +11,33 @@ class Lable(pygame.sprite.Sprite):
 				background, text_align, trancparency=False, rect_size=None,
 				size_range=None, padding=Padding(0)):
 		pygame.sprite.Sprite.__init__(self)
+		self.font = None
+		self.text_font = font
+		self.visible = True
+		self.id = Lable.ID
+		self.name = 'Lable' + str(self.id)
+		Lable.ID += 1
+		self.parent = parent
+		self._text = text
+		self.padding = padding
+		self.align = 'l' if text_align is None else text_align.lower()
+		self.rect_range = size_range
+		self.resizble = True
+		self.rect = None
+		self.rectangle = (pos, rect_size)
+		if trancparency:
+			self.background = pygame.Surface(self.rect.size, pygame.SRCALPHA)
+		else:
+			self.background = pygame.Surface(self.rect.size)
+		self.background.fill(background)
+		self.background_color = background
+
+	@property
+	def text_font(self):
+		return self.font
+
+	@text_font.setter
+	def set_font(self, font):
 		if isinstance(font, FontProperty):
 			self.font = font
 		elif isinstance(font, dict):
@@ -21,32 +47,35 @@ class Lable(pygame.sprite.Sprite):
 		else:
 			self.font = FontProperty(None, 16, Lable.default_color)
 		self.font.create_font()
-		self.visible = True
-		self.id = Lable.ID
-		self.name = 'Lable' + str(self.id)
-		Lable.ID += 1
-		self.parent = parent
-		self._text = text
-		self.padding = padding
-		self.align = 'l' if text_align is None else text_align.lower()
-		if rect_size is not None:
+
+	@property
+	def recengl(self):
+		return self.rect
+
+	@rectangle.setter
+	def set_rect(self, rect):
+		if isinstance(rect, pygame.Rect):
+			self.rect = rect
+		elif isinstance(rect, (list, tuple)):
+			if len(rect) == 4 or len(rect) == 2:
+				self.rect = pygame.Rect(*rect)
+		elif rect is None:
+			self.rect = self.calc_rect((self.rect.x, self.rect.y))
+			self.resizble = True
+
+	@property
+	def rect_range(self):
+		return self.size_range
+
+	@rect_range.property
+	def set_size_range(self, size_range):
+		if not isinstance(size_range, SizeRange):
+			raise TypeError('Expected type - SizeRange')
+		if self.resizble:
 			self.size_range = None
-			self.resizble = False
-			self.rect = pygame.Rect(pos, rect_size)
-		elif size_range is not None:
+		else:
 			self.size_range = size_range
-			self.resizble = True
-			self.rect = self.calc_rect(pos)
-		else:
-			self.size_range = None
-			self.resizble = True
-			self.rect = self.calc_rect(pos)
-		if trancparency:
-			self.background = pygame.Surface(self.rect.size, pygame.SRCALPHA)
-		else:
-			self.background = pygame.Surface(self.rect.size)
-		self.background.fill(background)
-		self.background_color = background
+			self.rect = self.calc_rect((self.rect.x, self.rect.y))
 
 	@property
 	def isresizble(self):
