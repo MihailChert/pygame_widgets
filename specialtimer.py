@@ -18,7 +18,6 @@ class MultiTimer(threading.Thread):
 		while True:
 			try:
 				for ind, timer in enumerate(self.timers):
-					pdb.set_trace
 					now = pygame.time.get_ticks() - timer._last_activate
 					if now >= timer.interval:
 						timer._post()

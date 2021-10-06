@@ -2,6 +2,7 @@ import numpy
 import pygame
 
 from modules import Padding, SizeRange, FontProperty
+import pdb
 
 class Lable(pygame.sprite.Sprite):
 	default_color = (255, 255, 255)
@@ -9,10 +10,10 @@ class Lable(pygame.sprite.Sprite):
 
 	def __init__(self, parent, pos, font, text,
 				background, text_align, trancparency=False, rect_size=None,
-				size_range=None, padding=Padding(0)):
+				size_range=None, padding=Padding(5)):
 		pygame.sprite.Sprite.__init__(self)
 		self.font = None
-		self.text_font = font
+		self.set_font(font)
 		self.visible = True
 		self.id = Lable.ID
 		self.name = 'Lable' + str(self.id)
@@ -21,10 +22,9 @@ class Lable(pygame.sprite.Sprite):
 		self._text = text
 		self.padding = padding
 		self.align = 'l' if text_align is None else text_align.lower()
-		self.rect_range = size_range
-		self.resizble = True
-		self.rect = None
-		self.rectangle = (pos, rect_size)
+		self.resizble = rect_size is None
+		self.rect = pygame.Rect(pos, rect_size if not self.resizble else (0, 0))
+		self.set_size_range(size_range)
 		if trancparency:
 			self.background = pygame.Surface(self.rect.size, pygame.SRCALPHA)
 		else:
@@ -32,11 +32,6 @@ class Lable(pygame.sprite.Sprite):
 		self.background.fill(background)
 		self.background_color = background
 
-	@property
-	def text_font(self):
-		return self.font
-
-	@text_font.setter
 	def set_font(self, font):
 		if isinstance(font, FontProperty):
 			self.font = font
@@ -49,7 +44,7 @@ class Lable(pygame.sprite.Sprite):
 		self.font.create_font()
 
 	@property
-	def recengl(self):
+	def rectangle(self):
 		return self.rect
 
 	@rectangle.setter
@@ -63,15 +58,10 @@ class Lable(pygame.sprite.Sprite):
 			self.rect = self.calc_rect((self.rect.x, self.rect.y))
 			self.resizble = True
 
-	@property
-	def rect_range(self):
-		return self.size_range
-
-	@rect_range.property
 	def set_size_range(self, size_range):
-		if not isinstance(size_range, SizeRange):
+		if not isinstance(size_range, (SizeRange, type(None))):
 			raise TypeError('Expected type - SizeRange')
-		if self.resizble:
+		if not self.resizble:
 			self.size_range = None
 		else:
 			self.size_range = size_range
@@ -116,7 +106,10 @@ class Lable(pygame.sprite.Sprite):
 							> self.size_range.max_w\
 							- self.padding.horizontal_indent():
 						buffer.append(line.pop())
-					# pdb.set_trace()
+					pdb.set_trace()
+					if len(line) == 0:
+						raise RuntimeWarning('Too small rectangle size for text word.')
+						break
 					size = self.font.size(' '.join(line))[0]
 					if max_size[0] < size:
 						max_size[0] = size

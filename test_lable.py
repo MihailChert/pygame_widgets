@@ -15,7 +15,7 @@ pygame.display.set_caption(__file__)
 clock = pygame.time.Clock()
 s_range = SizeRange(None, 60, None, None)
 lable = Lable(display, (100, 100), (None, 30, Lable.default_color),
-	'', (100, 100, 100), 'c', size_range=s_range)
+	'', (100, 100, 100), 'c')
 lable.set_text('lksdn\nsmd')
 lable.font.color[1] = 0
 event = pygame.event.Event(Timer.TIMEREVENT)
