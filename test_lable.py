@@ -24,7 +24,8 @@ for t in timer:
 	t.start()
 
 while True:
-	clock.tick(FPS)
+	clock.tick()
+	pygame.display.set_caption(str(clock.get_fps()))
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT \
 		or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:

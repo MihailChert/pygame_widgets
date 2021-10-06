@@ -2,7 +2,7 @@ import numpy
 import pygame
 
 from modules import Padding, SizeRange, FontProperty
-import pdb
+# import pdb
 
 class Lable(pygame.sprite.Sprite):
 	default_color = (255, 255, 255)
