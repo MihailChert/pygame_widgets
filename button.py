@@ -30,14 +30,19 @@ class Button(Lable):
 		return self._pressed
 
 
-	def collide(self, mouse_event):
-		if mouse_event.button == 1:
-			if self.rect.collidepoint(mouse_event.pos):
+	def collide(self, mouse_event, chenge_curr=False):
+		if self.rect.collidepoint(mouse_event.pos):
+			pygame.mouse.set_system_cursor(pygame.SYSTEM_CURSOR_HAND)
+			if mouse_event.type == pygame.MOUSEBUTTONDOWN or mouse_event.type == pygame.MOUSEBUTTONUP:
 				if self._pressed ^ mouse_event.type == pygame.MOUSEBUTTONDOWN:
 					pygame.event.post(self.event)
 				self._pressed = mouse_event.type == pygame.MOUSEBUTTONDOWN
-			else:
-				self._pressed = False
+			return True
+		else:
+			if not chenge_curr:
+				pygame.mouse.set_system_cursor(pygame.SYSTEM_CURSOR_ARROW)
+			self._pressed = False
+			return chenge_curr
 
 	def draw(self):
 		if not self._pressed:

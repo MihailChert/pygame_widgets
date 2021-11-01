@@ -1,5 +1,6 @@
 import pygame
 import sys
+import pdb
 
 from button import Button
 from lable import Lable
@@ -16,11 +17,10 @@ print(pygame.time.get_ticks())
 pygame.display.set_caption(__file__)
 clock = pygame.time.Clock()
 
-lable = Lable(screen, (100, 100), None, '', (200, 100, 5), 'r')
 button = Button(screen, (10, 10), None, '', (20, 10, 5), 'c')
 button.set_text('Button')
-print(Button.ID)
-print(Lable.ID)
+button2 = Button(screen, (200, 10), None, '', (50, 150, 250), 'c')
+button2.set_text('Button2')
 
 # timer = [Timer(i*10) for i in range(1, 4)]
 # for t in timer:
@@ -35,9 +35,11 @@ while True:
 			pygame.quit()
 			sys.exit()
 
-		if event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.MOUSEBUTTONUP:
-			button.collide(event)
-			print(event)
+		if event.type == pygame.MOUSEBUTTONDOWN\
+			or event.type == pygame.MOUSEBUTTONUP\
+			or event.type == pygame.MOUSEMOTION:
+			ch_cur = button.collide(event)
+			button2.collide(event, ch_cur)
 
 		if event.type == Button.BUTTONEVENT:
 			print('pressed')
@@ -45,5 +47,6 @@ while True:
 
 	screen.fill((0, 0, 0))
 	button.draw()
+	button2.draw()
 
 	pygame.display.flip()
