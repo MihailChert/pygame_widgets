@@ -14,17 +14,18 @@ display = pygame.display.set_mode(DISPLAYSIZE)
 pygame.display.set_caption(__file__)
 clock = pygame.time.Clock()
 s_range = SizeRange(None, 60, None, None)
+colors = (150,20,0)
 lable = Lable(display, (100, 100), (None, 30, Lable.default_color),
-	'', (100, 100, 100), 'c')
+	'', (100, 100, 100), 'c', border_colors=colors, border=40)
 lable.set_text('lksdn\nsmd')
 lable.font.color[1] = 0
 event = pygame.event.Event(Timer.TIMEREVENT)
-timer = [Timer(i*10) for i in range(1, 4)]
-for t in timer:
-	t.start()
+timer = Timer(40*10)
+timer.start()
 
 while True:
 	clock.tick()
+
 	pygame.display.set_caption(str(clock.get_fps()))
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT \
@@ -32,14 +33,7 @@ while True:
 			pygame.quit()
 			sys.exit()
 		if event.type == Timer.TIMEREVENT:
-			lable.font.color[event.timer_id] += 1
-			# print(lable.font.color)
-			if lable.font.color[event.timer_id] > 255:
-				lable.font.color[event.timer_id] = 0
-
-
-
-	display.fill((0, 0, 0))
-	lable.draw()
+			display.fill(0)
+			lable.draw()
 
 	pygame.display.flip()

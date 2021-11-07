@@ -1,8 +1,7 @@
 import pygame
-import pdb
 
 from lable import Lable
-from modules import Padding
+from modules import Padding, Border, Margin
 
 class Button(Lable):
 	ID = 0
@@ -51,13 +50,13 @@ class Button(Lable):
 			self.draw_pressed()
 
 	def draw_unpressed(self):
-		self.background.set_alpha(255)
-		self.parent.blit(self.background, self.rect)
-		self.background.fill(self.background_color)
+		self.surface.set_alpha(255)
+		self.parent.blit(self.surface, self.rect)
+		self.surface.fill(self.surface_color)
 		self.draw_text()
 
 	def draw_pressed(self):
-		self.background.set_alpha(100)
-		self.parent.blit(self.background, self.rect)
-		self.background.fill(self.background_color)
+		self.surface.set_alpha(100)
+		self.parent.blit(self.surface, self.rect)
+		self.surface.fill(self.surface_color)
 		self.draw_text()

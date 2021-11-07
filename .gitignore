@@ -1,5 +1,7 @@
 # created by virtualenv automatically
 .gitignore
+.pylintrc
 widget_venv
 *.pyc
-
+*.jpeg
+*.png
