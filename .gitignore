@@ -2,6 +2,7 @@
 .gitignore
 .pylintrc
 widget_venv
-*.pyc
-*.jpeg
-*.png
+^*.pyc
+^*.jpeg
+^*.png
+^test_*.py
