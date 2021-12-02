@@ -1,32 +1,33 @@
 """Summary
 """
 from typing import Union, Optional, Any, Tuple, List, Iterable, Callable
+
 import pygame
-from label import Label
+
+from eventlessbutton import EventlessButton
 from modules import Padding, Margin, SizeRange
 
 # pylint: disable=E1101
 
 
-class Button(Label):
+class Button(EventlessButton):
 
 	"""Summary
 
 	Attributes
 	----------
 	ID : int
-		Description
+									Description
 	BUTTONEVENT : TYPE
-		Description
+									Description
 	id : TYPE
-		Description
+									Description
 	name : TYPE
-		Description
+									Description
 	event : TYPE
-		Description
+									Description
 	"""
 
-	ID = 0
 	BUTTONEVENT = pygame.event.custom_type()
 
 	def __init__(
@@ -51,31 +52,31 @@ class Button(Label):
 		Parameters
 		----------
 		parent : pygame.sprite.Sprite
-			Description
+										Description
 		pos : Tuple[int, int]
-			Description
+										Description
 		font : Union[FontProperty, dict, list, None]
-			Description
+										Description
 		text : str
-			Description
+										Description
 		background : Tuple[int, int, int]
-			Description
+										Description
 		text_align : str
-			Description
+										Description
 		trancparency : bool, optional
-			Description
+										Description
 		rect_size : Union[list, tuple], optional
-			Description
+										Description
 		size_range : SizeRange, optional
-			Description
+										Description
 		padding : Padding, optional
-			Description
+										Description
 		border : int, optional
-			Description
+										Description
 		border_colors : Union[List[int], Tuple[int, int, int]], optional
-			Description
+										Description
 		margin : Margin, optional
-			Description
+										Description
 		"""
 		super().__init__(
 			parent,
@@ -91,78 +92,32 @@ class Button(Label):
 			borders,
 			border_color,
 			margin,
+			target,
 		)
-		Lable.ID -= 1
-		self.id = Button.ID
-		self.name = "Button" + str(self.id)
-		Button.ID += 1
 		self.event = pygame.event.Event(Button.BUTTONEVENT)
 		self.event.button = self
-		self.event.button_id = self.id
+		self.event.button_id = self._id
 		self.event.button_name = self.name
-		self.event.target = target
-		self._pressed = False
 
-	@property
-	def ispressed(self) -> bool:
-		"""Summary
-
-		Returns
-		-------
-		bool
-			Description
-		"""
-		return self._pressed
-
-	def collide(
-		self, mouse_event: pygame.event.Event, chenge_curr: bool = False
-	) -> bool:
-		"""Summary
-
-		Parameters
-		----------
-		mouse_event : pygame.event.Event
-			Description
-		chenge_curr : bool, optional
-			Description
-
-		Returns
-		-------
-		bool
-			Description
-		"""
+	def check_press(self, mouse_event, chenge_curr=False):
 		if self.client_rect.collidepoint(mouse_event.pos):
-			pygame.mouse.set_system_cursor(pygame.SYSTEM_CURSOR_HAND)
-			if (
-				mouse_event.type == pygame.MOUSEBUTTONDOWN
-				or mouse_event.type == pygame.MOUSEBUTTONUP
-			):
+			self.select()
+			if (mouse_event.type in 
+				(pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP)):
 				if self._pressed ^ (mouse_event.type == pygame.MOUSEBUTTONDOWN):
-					pygame.event.post(self.event)
+					try:
+						self.target()
+					except TypeError as er:
+						if self.target is not None:
+							raise er
+					finally:
+						self.post()
 				self._pressed = mouse_event.type == pygame.MOUSEBUTTONDOWN
 			return True
 		if not chenge_curr:
-			pygame.mouse.set_system_cursor(pygame.SYSTEM_CURSOR_ARROW)
+			self.unselect()
 		self._pressed = False
 		return chenge_curr
 
-	def draw(self) -> None:
-		"""Summary"""
-		if not self._pressed:
-			self.draw_unpressed()
-		else:
-			self.draw_pressed()
-
-	def draw_unpressed(self) -> None:
-		"""Summary"""
-		self.surface.set_alpha(255)
-		self.parent.blit(self.surface, self.client_rect)
-		self.surface.fill(self.surface_color)
-		self.draw_text()
-
-	def draw_pressed(self) -> None:
-		"""Summary"""
-		self.surface.set_alpha(100)
-		self.parent.blit(self.surface, self.client_rect)
-		self.surface.fill(self.surface_color)
-		self.draw_text()
+	def post(self):
+		pygame.event.post(self.event)

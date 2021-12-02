@@ -14,37 +14,37 @@ class Label(pygame.sprite.Sprite):
 	Attributes
 	----------
 	default_color : tuple
-		Стандартный цвет метки
+			Стандартный цвет метки
 	COUNTER : int
-		Количество меток в программе
+			Количество меток в программе
 	font : modules.FontProperty
-		Шрифт написания текста
+			Шрифт написания текста
 	visible : bool
-		Отображаемость объекта
+			Отображаемость объекта
 	id : TYPE
-		Идентификатор метки
+			Идентификатор метки
 	name : str
-		Название метки
+			Название метки
 	parent : pygame.Surface
-		Пверхнасть на которой отрисуется объект
+			Пверхнасть на которой отрисуется объект
 	padding : Padding
-		Внутренние отступы объекта
+			Внутренние отступы объекта
 	border : Border
-		Отрисовывваемая граница объекта
+			Отрисовывваемая граница объекта
 	margin : Margin
-		Внешняя граница объекта
+			Внешняя граница объекта
 	align : str
-		Поиционирование текста
+			Поиционирование текста
 	resizble : bool
-		Изменяемость размера
+			Изменяемость размера
 	client_rect : pygame.Rect
-		Прямоугольник включающий границу, внутренние отступы, содержимое
+			Прямоугольник включающий границу, внутренние отступы, содержимое
 	surface : pygame.Surface
-		Поверхгисть трисовки объекта
+			Поверхгисть трисовки объекта
 	surface_color : pygame.Color
-		Цвет поверхности
+			Цвет поверхности
 	size_range : SizeRange
-		Минимальные и максимально возможные знчения размеров объекта
+			Минимальные и максимально возможные знчения размеров объекта
 	"""
 
 	default_color = (255, 255, 255)
@@ -71,39 +71,39 @@ class Label(pygame.sprite.Sprite):
 		Parameters
 		----------
 		parent : pygame.sprite.Sprite
-			Description
+				Description
 		pos : Tuple[int, int]
-			Description
+				Description
 		font : Union[FontProperty, dict, list, None]
-			Description
+				Description
 		text : str
-			Description
+				Description
 		background : Tuple[int, int, int]
-			Description
+				Description
 		text_align : str
-			Description
+				Description
 		trancparency : bool, optional
-			Description
+				Description
 		rect_size : Union[list, tuple], optional
-			Description
+				Description
 		size_range : SizeRange, optional
-			Description
+				Description
 		padding : Padding, optional
-			Description
+				Description
 		border : int, optional
-			Description
+				Description
 		border_colors : Union[List[int], Tuple[int, int, int]], optional
-			Description
+				Description
 		margin : Margin, optional
-			Description
+				Description
 		"""
 		pygame.sprite.Sprite.__init__(self)
 		self.font = None
 		self.set_font(font)
 		self.visible = True
-		self.id = Lable.COUNTER
-		self.name = "Lable" + str(self.id)
-		Lable.COUNTER += 1
+		self._id = Label.COUNTER
+		self.name = "Label" + str(self._id)
+		Label.COUNTER += 1
 		self.parent = parent
 		self._text = text
 		self.padding = padding
@@ -117,7 +117,6 @@ class Label(pygame.sprite.Sprite):
 			self.surface = pygame.Surface(self.client_rect.size, pygame.SRCALPHA)
 		else:
 			self.surface = pygame.Surface(self.client_rect.size)
-		self.surface.fill(background)
 		self.surface_color = background
 
 	def set_font(self, font: Union[FontProperty, dict, list, tuple, None]) -> None:
@@ -126,7 +125,7 @@ class Label(pygame.sprite.Sprite):
 		Parameters
 		----------
 		font : Union[FontProperty, dict, list, tuple, None]
-			Description
+				Description
 		"""
 		if isinstance(font, FontProperty):
 			self.font = font
@@ -135,8 +134,12 @@ class Label(pygame.sprite.Sprite):
 		elif isinstance(font, (tuple, list)):
 			self.font = FontProperty(*font)
 		else:
-			self.font = FontProperty(None, 16, Lable.default_color)
+			self.font = FontProperty(None, 16, Label.default_color)
 		self.font.create_font()
+
+	@property
+	def get_id(self):
+		return self._id
 
 	@property
 	def client_rectangle(self) -> pygame.Rect:
@@ -145,7 +148,7 @@ class Label(pygame.sprite.Sprite):
 		Returns
 		-------
 		pygame.Rect
-			Description
+				Description
 		"""
 		return self.client_rect
 
@@ -156,7 +159,7 @@ class Label(pygame.sprite.Sprite):
 		Parameters
 		----------
 		rect : Union[pygame.Rect, List[int], Tuple[int, ...]]
-			Description
+				Description
 		"""
 		if isinstance(rect, pygame.Rect):
 			self.client_rect = rect
@@ -173,12 +176,12 @@ class Label(pygame.sprite.Sprite):
 		Parameters
 		----------
 		size_range : Optional[SizeRange]
-			Description
+				Description
 
 		Raises
 		------
 		TypeError
-			Description
+				Description
 		"""
 		if not isinstance(size_range, (SizeRange, type(None))):
 			raise TypeError("Expected type - SizeRange")
@@ -195,7 +198,7 @@ class Label(pygame.sprite.Sprite):
 		Returns
 		-------
 		bool
-			Description
+				Description
 		"""
 		return self.resizble
 
@@ -206,7 +209,7 @@ class Label(pygame.sprite.Sprite):
 		Returns
 		-------
 		pygame.Rect
-			Description
+				Description
 		"""
 		return pygame.Rect(
 			self.client_rect.x - self.margin.left,
@@ -222,7 +225,7 @@ class Label(pygame.sprite.Sprite):
 		Returns
 		-------
 		str
-			Description
+				Description
 		"""
 		return self._text
 
@@ -232,7 +235,7 @@ class Label(pygame.sprite.Sprite):
 		Parameters
 		----------
 		text : str
-			Description
+				Description
 		"""
 		self._text = text
 		if self.resizble:
@@ -245,17 +248,17 @@ class Label(pygame.sprite.Sprite):
 		Parameters
 		----------
 		pos : Union[List[int], Tuple[int, int]]
-			Description
+				Description
 
 		Returns
 		-------
 		pygame.Rect
-			Description
+				Description
 
 		Raises
 		------
 		RuntimeWarning
-			Description
+				Description
 		"""
 		line_counter = 0
 		max_size = [
@@ -327,21 +330,21 @@ class Label(pygame.sprite.Sprite):
 
 		Parameters
 		----------
-		lables : List[Lable]
-			Description
+		lables : List[Label]
+				Description
 		unmovable_x : bool, optional
-			Description
+				Description
 		unmovable_y : bool, optional
-			Description
+				Description
 
 		Returns
 		-------
 		int
-			Description
+				Description
 		"""
 		self_rect = self.get_rect
 		moved = 0
-		for lable, delta_x, delta_y in Lable._collide(self_rect, lables):
+		for lable, delta_x, delta_y in Label._collide(self_rect, lables):
 			moved += 1
 			if unmovable_y:
 				if self.client_rect.x < lable.client_rect.x:
@@ -382,14 +385,14 @@ class Label(pygame.sprite.Sprite):
 		Parameters
 		----------
 		self_rect : pygame.Rect
-			Description
-		collided_lables : List[Lable]
-			Description
+				Description
+		collided_lables : List[Label]
+				Description
 
 		Yields
 		------
-		Generator[Lable, int, int]
-			Description
+		Generator[Label, int, int]
+				Description
 		"""
 		for lable in collided_lables:
 			if self_rect.colliderect(lable.get_rect):
@@ -408,14 +411,14 @@ class Label(pygame.sprite.Sprite):
 		Parameters
 		----------
 		size : Tuple[int, int]
-			Description
+				Description
 		line_number : int
-			Description
+				Description
 
 		Returns
 		-------
 		pygame.Rect
-			Description
+				Description
 		"""
 		if self.align[0] == "r":
 			rect = pygame.Rect(
@@ -453,7 +456,7 @@ class Label(pygame.sprite.Sprite):
 		Parameters
 		----------
 		drawble : bool, optional
-			Description
+				Description
 		"""
 		# pdb.set_trace()
 		line_counter = -1
@@ -501,7 +504,7 @@ class Label(pygame.sprite.Sprite):
 		"""Summary"""
 		# pdb.set_trace()
 		# if not self.visible:
-		# 	return
+		#	 return
 		self.parent.blit(self.surface, self.client_rect)
 		self.surface.fill(self.surface_color)
 		self.draw_text()

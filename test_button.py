@@ -3,7 +3,7 @@ import sys
 import pdb
 
 from button import Button
-from lable import Lable
+from label import Label
 from specialtimer import Timer
 
 pygame.font.init()
@@ -35,11 +35,10 @@ while True:
 			pygame.quit()
 			sys.exit()
 
-		if event.type == pygame.MOUSEBUTTONDOWN\
-			or event.type == pygame.MOUSEBUTTONUP\
-			or event.type == pygame.MOUSEMOTION:
-			ch_cur = button.collide(event)
-			button2.collide(event, ch_cur)
+		if (event.type in
+			(pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION)):
+			ch_cur = button.check_press(event)
+			button2.check_press(event, ch_cur)
 
 		if event.type == Button.BUTTONEVENT:
 			print('pressed')
