@@ -259,7 +259,6 @@ class Border(Padding):
 			raise RuntimeError("Parent can't be none")
 		for ind, space in enumerate(self.spaces):
 			self.spaces[ind] = space * 2
-		print(self.spaces)
 		self.color = Border.parse_colors(colors)
 
 	def __getattr__(self, name: str) -> tuple:

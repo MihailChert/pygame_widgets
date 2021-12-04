@@ -1,6 +1,8 @@
 """Summary
 """
 from typing import Any, Union, Optional, List, Tuple, Generator
+from math import ceil
+import pdb
 
 import pygame
 
@@ -61,7 +63,7 @@ class Label(pygame.sprite.Sprite):
 		trancparency: bool = False,
 		rect_size: Union[list, tuple] = None,
 		size_range: SizeRange = None,
-		padding: Padding = Padding(5),
+		padding: Padding = Padding(3),
 		border: int = 4,
 		border_colors: Union[List[int], Tuple[int, int, int]] = (255, 255, 255),
 		margin: Margin = Margin(0),
@@ -101,9 +103,9 @@ class Label(pygame.sprite.Sprite):
 		self.font = None
 		self.set_font(font)
 		self.visible = True
-		self.id = Lable.COUNTER
+		self.id = Label.COUNTER
 		self.name = "Lable" + str(self.id)
-		Lable.COUNTER += 1
+		Label.COUNTER += 1
 		self.parent = parent
 		self._text = text
 		self.padding = padding
@@ -203,7 +205,7 @@ class Label(pygame.sprite.Sprite):
 	def get_rect(self) -> pygame.Rect:
 		"""Summary
 
-		Returns
+		Returnsi
 		-------
 		pygame.Rect
 			Description
@@ -320,7 +322,7 @@ class Label(pygame.sprite.Sprite):
 		return pygame.Rect(pos, max_size)
 
 	def calculate_collide(
-		self, lables: list, unmovable_x: bool = False, unmovable_y: bool = False
+		self, labels: list, movable_x: bool = False, movable_y: bool = False
 	) -> int:
 		"""Смещение наклеек наезжфющих друг на друга учитывая margin, padding
 		border
@@ -329,9 +331,9 @@ class Label(pygame.sprite.Sprite):
 		----------
 		lables : List[Lable]
 			Description
-		unmovable_x : bool, optional
+		movable_x : bool, optional
 			Description
-		unmovable_y : bool, optional
+		movable_y : bool, optional
 			Description
 
 		Returns
@@ -341,36 +343,18 @@ class Label(pygame.sprite.Sprite):
 		"""
 		self_rect = self.get_rect
 		moved = 0
-		for lable, delta_x, delta_y in Lable._collide(self_rect, lables):
+		for label, delta_x, delta_y in Label._collide(self_rect, labels):
+			if label is self or label.id == self.id:
+				continue
 			moved += 1
-			if unmovable_y:
-				if self.client_rect.x < lable.client_rect.x:
-					self.client_rect.x -= delta_x / 2
-					lable.client_rect.x += delta_x / 2
-				elif self.client_rect.x > lable.client_rect.x:
-					self.client_rect.x += delta_x / 2
-					lable.client_rect.x -= delta_x / 2
-			elif unmovable_x:
-				if self.client_rect.y < lable.client_rect.y:
-					self.client_rect -= delta_y / 2
-					lable.client_rect.y += delta_y / 2
-				elif self.client_rect.y > lable.client_rect.y:
-					self.client_rect.y += delta_y / 2
-					lable.client_rect.y -= delta_y / 2
-			elif delta_x < delta_y:
-				if self.client_rect.x < lable.client_rect.x:
-					self.client_rect.x -= delta_x / 2
-					lable.client_rect.x += delta_x / 2
-				elif self.client_rect.x > lable.client_rect.x:
-					self.client_rect.x += delta_x / 2
-					lable.client_rect.x -= delta_x / 2
-			else:
-				if self.client_rect.y < lable.client_rect.y:
-					self.client_rect -= delta_y / 2
-					lable.client_rect.y += delta_y / 2
-				elif self.client_rect.y > lable.client_rect.y:
-					self.client_rect.y += delta_y / 2
-					lable.client_rect.y -= delta_y / 2
+			if movable_y:
+				self._move(label, True, delta_x)
+				continue
+			if movable_x:
+				unmove = self._move(label, False, delta_y)
+				continue
+			axis = delta_x < delta_y
+			self._move(label, axis, delta_x if axis else delta_y)
 		return moved
 
 	@staticmethod
@@ -401,6 +385,39 @@ class Label(pygame.sprite.Sprite):
 					self_rect.y - lable_rect.y
 				)
 				yield lable, delta_x, delta_y
+				
+	def _move(self, label, axis_x:bool, delta):
+		if axis_x:
+			if self.client_rect.x <= lable.client_rect.x:
+				if self.client_rect.x - ceil(delta / 2) < self.margin.left:
+					label.client_rect.x += delta - (self.client_rect.x - self.margin.left)
+					self.client_rect.x = self.margin.left
+					return
+				self.client_rect.x -= ceil(delta / 2)
+				label.client_rect.x += ceil(delta / 2)
+				return
+			if label.client_rect.x - ceil(delta / 2) < label.margin.left:
+				self.client_rect.x += delta - (label.client_rect.x - label.margin.left)
+				label.client_rect.x = label.margin.left
+				return
+			self.client_rect.x += ceil(delta / 2)
+			label.client_rect.x -= ceil(delta / 2)
+			return
+		if self.client_rect.y <= label.client_rect.y:
+			if self.client_rect.y - ceil(delta / 2) < self.margin.top:
+				label.client_rect.y += delta - (self.client_rect.y - self.margin.top)
+				self.client_rect.y = self.margin.top
+				return
+			self.client_rect.y -= ceil(delta / 2)
+			label.client_rect.y += ceil(delta / 2)
+			return
+		if label.client_rect.y - ceil(delta / 2) < label.margin.top:
+			self.client_rect.y += delta - (label.client_rect.y - label.margin.top)
+			label.client_rect.y = label.margin.top
+			return
+		self.client_rect.y += ceil(delta / 2)
+		label.client_rect.y -= ceil(delta / 2)
+		return
 
 	def get_rect_align(self, size: Tuple[int, int], line_number: int) -> pygame.Rect:
 		"""Summary

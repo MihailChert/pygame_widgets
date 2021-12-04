@@ -1,9 +1,10 @@
 import pygame
 import sys
+import pdb
 
-from lable import Lable
+from label import Label
 from specialtimer import Timer
-from modules import SizeRange
+from modules import SizeRange, Margin
 
 pygame.font.init()
 pygame.init()
@@ -15,11 +16,13 @@ pygame.display.set_caption(__file__)
 clock = pygame.time.Clock()
 s_range = SizeRange(None, 60, None, None)
 colors = (150,20,0)
-lable = Lable(display, (100, 100), (None, 30, Lable.default_color),
-	'', (100, 100, 100), 'c', border_colors=colors, border=40)
-lable.set_text('lksdn\nsmd')
-lable.font.color[1] = 0
-event = pygame.event.Event(Timer.TIMEREVENT)
+labels = []
+for i in range(10):
+	label = Label(display, (50, 50), (None, 17, Label.default_color),
+		'', (100, 100, 100), 'c', border_colors=colors, margin=Margin(5))
+	label.set_text(label.name)
+	labels.append(label)
+
 timer = Timer(40*10)
 timer.start()
 
@@ -33,7 +36,10 @@ while True:
 			pygame.quit()
 			sys.exit()
 		if event.type == Timer.TIMEREVENT:
+			for i in labels:
+				move = i.calculate_collide(labels)
 			display.fill(0)
-			lable.draw()
+			for l in labels:
+				l.draw()
 
 	pygame.display.flip()
