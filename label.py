@@ -428,15 +428,15 @@ class Label(pygame.sprite.Sprite):
 		line_number : int
 			Number of line to drawing text.
 
-		Raises
-		------
-		ValueError
-			Unexpected value of text align.
-
 		Returns
 		-------
 		pygame.Rect
 			Rectangle for drawing aligned text.
+
+		Raises
+		------
+		ValueError
+			Unexpected value of text align.
 		"""
 		if self.align[0] == "r":
 			rect = pygame.Rect(

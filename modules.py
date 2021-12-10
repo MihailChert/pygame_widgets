@@ -8,26 +8,27 @@ import pygame
 
 class Padding:
 
-	"""Summary
+	"""Internal indent of object.
 
 	Attributes
 	----------
-	spaces : TYPE
-			Description
+	spaces : List[int]
+		List of indents of object like padding in css.
 	"""
 
-	def __init__(self, size_space: Union[int, tuple, list]) -> NoReturn:
-		"""Summary
-
+	def __init__(self, size_space: Union[int, tuple, list]):
+		"""
 		Parameters
 		----------
 		size_space : Union[int, tuple, list]
-				Description
+			Internal indent of object in pixels.
 
 		Raises
 		------
 		RuntimeError
-				Description
+			Can't create padding. Length list of spaces must be, 1, 2, 4.
+		RuntimeError
+			Can't create padding. Spaces must be iterable or int.
 		"""
 		if isinstance(size_space, int):
 			self.spaces = [size_space] * 4
@@ -44,169 +45,160 @@ class Padding:
 			elif len(size_space) == 4:
 				self.spaces = size_space
 			else:
-				raise RuntimeError(
-					f"Can't create '{type(self).__name__}'."
-					+ f" Lengths '{type(self).__name__}'"
-					+ " widths must be 1, 2, 4"
-				)
+				raise RuntimeError(f"Can't create '{type(self).__name__}'. Lengths '{type(self).__name__}' list of spaces must be 1, 2, 4.")
 		else:
-			raise RuntimeError(
-				f"Can't create '{type(self).__name__}'."
-				+ f" {type(self).__name__}'s widths must be list or tuple"
-			)
+			raise RuntimeError(f"Can't create '{type(self).__name__}'. {type(self).__name__}'s spaces must be iterable or int.")
 
 	def __getattr__(self, name: str) -> tuple:
-		"""Summary
+		"""Ability to address on 'spaces' such as 'padding'.
 
 		Parameters
 		----------
 		name : str
-				Description
+			Name of attribute.
 
 		Returns
 		-------
 		tuple
-				Description
+			List of indent.
 
 		Raises
 		------
 		AttributeError
-				Description
+			Unexpected attribute.
 		"""
 		if name == "padding":
 			return self.spaces
-		raise AttributeError(f"Anexpected antribut with name: {name}")
+		raise AttributeError(f"Unexpected attribute with name: {name}")
 
 	def __str__(self) -> str:
-		"""Summary
+		"""Convert to string.
 
 		Returns
 		-------
 		str
-				Description
+			String representation.
 		"""
-		return f"top:{self.top}; rigth:{self.rigth}; bottom:{self.bottom}; left:{self.left};"
+		return f"top:{self.top}; right:{self.right}; bottom:{self.bottom}; left:{self.left};"
 
 	@property
 	def top(self) -> int:
-		"""Summary
+		"""Top indent in pixel.
 
 		Returns
 		-------
 		int
-				Description
+			Top indent.
 		"""
 		return self.spaces[0]
 
 	@property
-	def rigth(self) -> int:
-		"""Summary
+	def right(self) -> int:
+		"""Right indent in pixel.
 
 		Returns
 		-------
 		int
-				Description
+			Right indent.
 		"""
 		return self.spaces[1]
 
 	@property
 	def bottom(self) -> int:
-		"""Summary
+		"""Bottom indent in pixel.
 
 		Returns
 		-------
 		int
-				Description
+			Bottom indent.
 		"""
 		return self.spaces[2]
 
 	@property
 	def left(self) -> int:
-		"""Summary
+		"""Left indent in pixel
 
 		Returns
 		-------
 		int
-				Description
+			Left indent.
 		"""
 		return self.spaces[3]
 
 	def horizontal_indent(self) -> int:
-		"""Summary
+		"""Sum right and left indent.
 
 		Returns
 		-------
 		int
-				Description
+			Right and left indent.
 		"""
 		return self.rigth + self.left
 
 	def vertical_indent(self) -> int:
-		"""Summary
+		"""Sum top and bottom indent.
 
 		Returns
 		-------
 		int
-				Description
+			Top and bottom indent.
 		"""
 		return self.top + self.bottom
 
 	@staticmethod
 	def absolute_vertical_indent(*spaces) -> int:
-		"""Summary
+		"""Calculates all vertical indents of object.
 
 		Parameters
 		----------
 		*spaces
-				Description
+			Indents of object.
 
 		Returns
 		-------
 		int
-				Description
+			All vertical indents of object.
 
 		Raises
 		------
 		RuntimeError
-				Description
+			Counts of spaces can be 3 or less.
+		TypeError
+			The object must be class or subclasses of 'Padding'.
 		"""
 		if len(spaces) > 3:
-			raise RuntimeError(
-				"To mani spaces for the object. Can be 3 scpaces or les."
-			)
+			raise RuntimeError("To mani spaces for the object. Spaces can be 3 or les.")
 		res = 0
 		for space in spaces:
 			if isinstance(space, Padding):
 				res += space.top + space.bottom
 			else:
-				raise RuntimeError(
-					f"The {space} is not space. U can use Padding, Border, Margin"
-				)
+				raise TypeError(f"The {type(space)} is not space. It must be class or subclasses of 'Padding'.")
 		return res
 
 	@staticmethod
 	def absolute_horizontal_indent(*spaces) -> int:
-		"""Summary
+		"""Calculates all horizontal indents of object.
 
 		Parameters
 		----------
 		*spaces
-				Description
+			Indents of object.
 
 		Returns
 		-------
 		int
-				Description
+			All horizontal indents of object.
 
 		Raises
 		------
 		RuntimeError
-				Description
+			Counts of spaces can be 3 or less.
+		TypeError
+			The object must be class or subclasses of 'Padding'.
 		"""
 		if len(spaces) > 3:
-			raise RuntimeError(
-				"To mani spaces for the object. Can be 3 scpaces or les."
-			)
+			raise RuntimeError("To mani spaces for the object. Spaces can be 3 or les.")
 		res = 0
 		for space in spaces:
 			if space is None:
@@ -214,49 +206,50 @@ class Padding:
 			if isinstance(space, Padding):
 				res += space.left + space.rigth
 			else:
-				raise RuntimeError(
-					f"The {space} is not space. U can use Padding, Border, Margin"
-				)
+				raise TypeError(f"The {type(space)} is not space. It must be class or subclasses of 'Padding'.")
 		return res
 
 
 class Border(Padding):
-
-	"""Summary
+	"""Draw borders of object.
+	Subclass to 'Padding'.
 
 	Attributes
 	----------
-	colors : TYPE
-			Description
+	spaces : List[int]
+		Width lines of border.
+	parent : Union[pygame.Surface, pygame.sprite.Sprite]
+		The parent surface on which the label is drawn.
+	colors : pygame.Color
+		Color lines of border.
 	"""
 
 	def __init__(
-		self,
-		border_widths: Union[int, list, tuple],
-		colors: Union[list, tuple],
-		parent: pygame.sprite.Sprite,
-	) -> NoReturn:
+			self,
+			parent: pygame.sprite.Sprite,
+			border_widths: Union[int, list, tuple],
+			colors: Union[list, tuple, pygame.Color]):
 		"""Summary
 
 		Parameters
 		----------
+		parent : Union[pygame.sprite.Sprite, pygame.Surface]
+				The parent surface on which the label is drawn.
 		border_widths : Union[int, list, tuple]
-				Description
-		colors : Union[list, tuple]
-				Description
-		parent : pygame.sprite.Sprite
-				Description
+			Width lines of border.
+		colors : Union[list, tuple, pygam.Color]
+			Color lines of border.
 
 		Raises
 		------
-		RuntimeError
-				Description
+		ValueError
+			Parent can't be None
 		"""
 		super().__init__(border_widths)
 		if parent is not None:
 			self._parent = parent
 		else:
-			raise RuntimeError("Parent can't be none")
+			raise ValueError("Parent can't beDescription None")
 		for ind, space in enumerate(self.spaces):
 			self.spaces[ind] = space * 2
 		self.color = Border.parse_colors(colors)
