@@ -394,7 +394,10 @@ class Border(Padding):
 		start_point = next(points_iter)
 		for line, color in self:
 			end_point = next(points_iter)
-			pygame.draw.line(self._parent.surface, color, start_point, end_point, line)
+			if hasattr(self._parent, 'surface'):
+				pygame.draw.line(self._parent.surface, color, start_point, end_point, line)
+			else:
+				pygame.draw.line(self._parent, color, start_point, end_point, line)
 			start_point = end_point
 
 
