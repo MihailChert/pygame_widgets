@@ -1,11 +1,9 @@
-"""Summary
-"""
 from typing import Union, Optional, Any, Tuple, List, Iterable, Callable
+
 import pygame
+
 from label import Label
 from modules import Padding, Margin, SizeRange
-
-# pylint: disable=E1101
 
 
 class Button(Label):

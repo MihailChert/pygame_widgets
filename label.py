@@ -1,8 +1,5 @@
-"""Summary
-"""
 from typing import Any, Union, Optional, List, Tuple, Generator
 from math import ceil
-import pdb
 
 import pygame
 
@@ -11,45 +8,45 @@ from modules import Padding, Border, Margin, SizeRange, FontProperty
 
 class Label(pygame.sprite.Sprite):
 
-	"""Summary
+	"""Show statik text. Text can change in program.
 
 	Attributes
 	----------
-	default_color : tuple
-		Стандартный цвет метки
+	default_color : pygame.Color
+		Default color Label.
 	COUNTER : int
-		Количество меток в программе
+		Count all Labels created in program.
 	font : modules.FontProperty
-		Шрифт написания текста
+		Font of test.
 	visible : bool
-		Отображаемость объекта
+		Label's visible.
 	id : TYPE
-		Идентификатор метки
+		Label's id.
 	name : str
-		Название метки
+		Label's name. Default 'Label{Label.id}.
 	parent : pygame.Surface
 		Пверхнасть на которой отрисуется объект
 	padding : Padding
-		Внутренние отступы объекта
+		Label's padding.
 	border : Border
-		Отрисовывваемая граница объекта
+		Label's border.
 	margin : Margin
-		Внешняя граница объекта
+		Label's margin.
 	align : str
-		Поиционирование текста
+		Defined text position.
 	resizble : bool
-		Изменяемость размера
+		Defined fixed label size
 	client_rect : pygame.Rect
-		Прямоугольник включающий границу, внутренние отступы, содержимое
+		Label's drawing rectangle
 	surface : pygame.Surface
-		Поверхгисть трисовки объекта
-	surface_color : pygame.Color
-		Цвет поверхности
+		Label's surface. All elements drawing in surface.
+	surface_color : pygame.Color.
+		Color for text background.
 	size_range : SizeRange
-		Минимальные и максимально возможные знчения размеров объекта
+		Defined maximum and minimum size.
 	"""
 
-	default_color = (255, 255, 255)
+	default_color = pygame.Color(255, 255, 255)
 	COUNTER = 0
 
 	def __init__(
@@ -60,7 +57,7 @@ class Label(pygame.sprite.Sprite):
 		text: str,
 		background: Tuple[int, int, int],
 		text_align: str,
-		trancparency: bool = False,
+		transparency: bool = False,
 		rect_size: Union[list, tuple] = None,
 		size_range: SizeRange = None,
 		padding: Padding = Padding(3),
@@ -68,43 +65,42 @@ class Label(pygame.sprite.Sprite):
 		border_colors: Union[List[int], Tuple[int, int, int]] = (255, 255, 255),
 		margin: Margin = Margin(0),
 	):
-		"""Summary
-
+		"""
 		Parameters
 		----------
 		parent : pygame.sprite.Sprite
 			Description
 		pos : Tuple[int, int]
-			Description
+			Label's position on parent.
 		font : Union[FontProperty, dict, list, None]
-			Description
+			Label's text font.
 		text : str
-			Description
+			Text to write in label
 		background : Tuple[int, int, int]
-			Description
+			Color for text background.
 		text_align : str
-			Description
-		trancparency : bool, optional
-			Description
+			Defined text position.
+		transparency : bool, optional
+			Defined label transparency.
 		rect_size : Union[list, tuple], optional
-			Description
+			Label's size.
 		size_range : SizeRange, optional
-			Description
+			Defined maximum and minimum size.
 		padding : Padding, optional
-			Description
+			Label's padding.
 		border : int, optional
-			Description
+			Label's border.
 		border_colors : Union[List[int], Tuple[int, int, int]], optional
-			Description
+			Border's color.
 		margin : Margin, optional
-			Description
+			Label's margin.
 		"""
 		pygame.sprite.Sprite.__init__(self)
 		self.font = None
 		self.set_font(font)
 		self.visible = True
 		self.id = Label.COUNTER
-		self.name = "Lable" + str(self.id)
+		self.name = "Label" + str(self.id)
 		Label.COUNTER += 1
 		self.parent = parent
 		self._text = text
@@ -115,7 +111,7 @@ class Label(pygame.sprite.Sprite):
 		self.resizble = rect_size is None
 		self.client_rect = pygame.Rect(pos, rect_size if not self.resizble else (0, 0))
 		self.set_size_range(size_range)
-		if trancparency:
+		if transparency:
 			self.surface = pygame.Surface(self.client_rect.size, pygame.SRCALPHA)
 		else:
 			self.surface = pygame.Surface(self.client_rect.size)
@@ -123,12 +119,12 @@ class Label(pygame.sprite.Sprite):
 		self.surface_color = background
 
 	def set_font(self, font: Union[FontProperty, dict, list, tuple, None]) -> None:
-		"""Summary
+		"""Set new text font for label.
 
 		Parameters
 		----------
 		font : Union[FontProperty, dict, list, tuple, None]
-			Description
+			New text font.
 		"""
 		if isinstance(font, FontProperty):
 			self.font = font
