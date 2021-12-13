@@ -91,7 +91,7 @@ class TargetTimer(Timer):
 	id : int
 		Timer's id.
 	event : pygame.event.Event.
-		Event push of interval end.
+		Event pushed of interval end.
 	target : Callable.
 		Callable object.
 	"""
