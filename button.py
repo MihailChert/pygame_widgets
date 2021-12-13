@@ -100,7 +100,7 @@ class Button(Label):
 		margin : Margin, optional
 			External indent. The margins of object add up.
 		target : Callable
-			Function has active on pressed.
+			Function has call on pressed.
 		"""
 		super().__init__(
 			parent,
