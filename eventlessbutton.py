@@ -8,6 +8,51 @@ from modules import Padding, Margin, SizeRange
 
 class EventlessButton(Label):
     COUNTER = 0
+    """Interactive text element.
+    On press make target.
+    Subclass Label.
+
+    Attributes
+    ----------
+    COUNTER : int
+        Counts all buttons created in program.
+    font : modules.FontProperty
+        Font of text.
+    visible : bool
+        Button visibility.
+    id : int
+        Button's id.
+    name : str
+        Button's name. Default 'Label{Label.id}.
+    parent : pygame.Surface
+        The parent surface on which the label is drawn.
+    padding : Padding
+        Internal indent.
+    border : Border
+        Button's border.
+    margin : Margin
+        External indent of button.
+    align : str
+        Defines the position of text.
+    resizable : bool
+        Determines whether the size ot the button has been adjusted.
+    size_range : SizeRange
+        Determines maximum and minimum size. If equal None, then the size depends only on the text
+    client_rect : pygame.Rect
+        Button's drawing rectangle
+    surface : pygame.Surface
+        Button's surface. All elements drawing in surface.
+    surface_color : pygame.Color.
+        Color for text background.
+    _active_color: pygame.Color
+        The color to be used for drawing interactive object.
+    select: function
+        Action when hovering the cursor over the object.
+    unselect: function
+        Action when removing the cursor from the object.
+    target: function
+        Function has call on pressed.
+    """
 
     def __init__(
             self,
@@ -26,6 +71,38 @@ class EventlessButton(Label):
             margin: Margin = Margin(0),
             target: Optional[Callable] = None,
     ):
+        """
+        Parameters
+        ----------
+        parent : pygame.Surface
+            The parent surface on which the button is drawn.
+        pos : Tuple[int, int]
+            Button's position on the parent object.
+        font : Union[FontProperty, dict, list, None]
+            Button's text font.
+        text : str
+            Text to write in Button. Text can be multiline.
+        background : Tuple[int, int, int]
+            Color for text background.
+        text_align : str
+            Defined text position. Can be center, left, right. Default text align left.
+        transparency : bool, optional
+            Determines button transparency.
+        rect_size : Union[list, tuple], optional
+            Button's size. If equal None, then the size of object depends on size range and text.
+        size_range : SizeRange, optional
+            Determines maximum and minimum size. If equal None, then the size of object depends only on the text.
+        padding : Padding, optional
+            Internal indent.
+        border : int, optional
+            Size of label borders.
+        border_color : Union[List[int], Tuple[int, int, int]], optional
+            Border's color.
+        margin : Margin, optional
+            External indent. The margins of object add up.
+        target : Callable
+            Function has call on pressed.
+        """
         super().__init__(
             parent,
             pos,
@@ -42,9 +119,8 @@ class EventlessButton(Label):
             margin,
         )
         Label.COUNTER -= 1
-        self._id = EventlessButton.COUNTER
+        self.id = EventlessButton.COUNTER
         EventlessButton.COUNTER += 1
-        self.name = type(self).__name__ + str(self._id)
         self.target = target
         self._pressed = False
         self.select = self.default_select
@@ -53,19 +129,34 @@ class EventlessButton(Label):
 
     @property
     def ispressed(self):
+        """Return the status of the button click."""
         return self._pressed
 
     def default_select(self):
+        """Default action when hovering cursor on the button."""
         pygame.mouse.set_system_cursor(pygame.SYSTEM_CURSOR_HAND)
         self._active_color = pygame.Color(abs(self.surface_color[0] - 40),
                                           abs(self.surface_color[1] - 40),
                                           abs(self.surface_color[2] - 40))
 
     def default_unselect(self):
+        """Default action when remove cursor from the button."""
         pygame.mouse.set_system_cursor(pygame.SYSTEM_CURSOR_ARROW)
         self._active_color = self.surface_color
 
     def check_press(self, mouse_event, change_curr=False):
+        """Checks whether the mouse pointer is located within the boundaries of the button.
+        Parameters
+        ----------
+        mouse_event : pygame.event.Event
+            Mouse event has information about status of mouse.
+        change_curr : bool, optional
+            The mouse pointer is located within the boundaries of another button.
+        Returns
+        -------
+        bool
+            The mouse pointer is located in the button.
+        """
         if self.client_rect.collidepoint(mouse_event.pos):
             self.select()
             if mouse_event.type in (pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP):
@@ -83,6 +174,7 @@ class EventlessButton(Label):
         return change_curr
 
     def draw_pressed(self):
+        """Draw button when it is pressed."""
         self.surface.set_alpha(200)
         try:
             self.parent.blit(self.surface, self.client_rect)
@@ -91,14 +183,15 @@ class EventlessButton(Label):
         self.surface.fill(self._active_color)
         self.draw_text()
 
-    def draw_unpressed(self) -> None:
-        """Summary"""
+    def draw_unpressed(self):
+        """Draw button when it is unpressed."""
         self.surface.set_alpha(255)
         self.parent.blit(self.surface, self.client_rect)
         self.surface.fill(self._active_color)
         self.draw_text()
 
     def draw(self):
+        """Draw button."""
         if self._pressed:
             self.draw_pressed()
         else:

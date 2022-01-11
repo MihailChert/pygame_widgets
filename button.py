@@ -1,13 +1,9 @@
-"""Summary
-"""
 from typing import Union, Optional, Any, Tuple, List, Iterable, Callable
 
 import pygame
 
 from eventlessbutton import EventlessButton
 from modules import Padding, Margin, SizeRange
-
-# pylint: disable=E1101
 
 
 class Button(EventlessButton):

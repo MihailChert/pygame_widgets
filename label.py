@@ -101,8 +101,8 @@ class Label(pygame.sprite.Sprite):
 		self.font = None
 		self.set_font(font)
 		self.visible = True
-		self._id = Label.COUNTER
-		self.name = "Label" + str(self._id)
+		self.id = Label.COUNTER
+		self.name = (type(self).__name__ + str(self.id)) if name is None else name
 		Label.COUNTER += 1
 		self.parent = parent
 		self._text = text
@@ -136,10 +136,6 @@ class Label(pygame.sprite.Sprite):
 		else:
 			self.font = FontProperty(None, 16, Label.default_color)
 		self.font.create_font()
-
-	@property
-	def get_id(self):
-		return self._id
 
 	@property
 	def client_rectangle(self) -> pygame.Rect:
