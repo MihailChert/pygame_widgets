@@ -1,4 +1,4 @@
-from typing import Union, Optional, Any, Tuple, List, Iterable, Callable
+from typing import Union, Optional, Any, Tuple, List, Callable
 
 import pygame
 
@@ -7,7 +7,8 @@ from modules import Padding, Margin, SizeRange
 
 
 class Button(Label):
-
+	COUNTER = 0
+	BUTTONEVENT = pygame.event.custom_type()
 	"""Interactive text element.
 	On press make target.
 	Subclass Label.
@@ -50,13 +51,10 @@ class Button(Label):
 		Push event on pressed.
 	"""
 
-	ID = 0
-	BUTTONEVENT = pygame.event.custom_type()
-
 	def __init__(
 		self,
 		parent,
-		pos: Iterable,
+		pos: Tuple[int, int],
 		font: Optional[Tuple[str, int, pygame.Color]],
 		text: str,
 		background: Any,
@@ -65,7 +63,7 @@ class Button(Label):
 		rect_size: Union[pygame.Rect, List[int], Tuple[int, int, int, int]] = None,
 		size_range: SizeRange = None,
 		padding: Padding = Padding(10),
-		borders: Union[int, List[int], Tuple[int, ...]] = 2,
+		border: Union[int, List[int], Tuple[int, ...]] = 2,
 		border_color: Union[pygame.Color, Tuple[int, int, int]] = (255, 255, 255),
 		margin: Margin = Margin(0),
 		target: Optional[Callable] = None,
@@ -95,7 +93,7 @@ class Button(Label):
 			Internal indent.
 		border : int, optional
 			Size of label borders.
-		border_colors : Union[List[int], Tuple[int, int, int]], optional
+		border_color : Union[List[int], Tuple[int, int, int]], optional
 			Border's color.
 		margin : Margin, optional
 			External indent. The margins of object add up.
@@ -113,14 +111,14 @@ class Button(Label):
 			rect_size,
 			size_range,
 			padding,
-			borders,
+			border,
 			border_color,
 			margin,
 		)
-		Lable.ID -= 1
-		self.id = Button.ID
+		Label.COUNTER -= 1
+		self.id = Button.COUNTER
 		self.name = "Button" + str(self.id)
-		Button.ID += 1
+		Button.COUNTER += 1
 		self.event = pygame.event.Event(Button.BUTTONEVENT)
 		self.event.button = self
 		self.event.button_id = self.id

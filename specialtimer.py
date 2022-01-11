@@ -1,4 +1,4 @@
-from typing import Union, Optional, Callable, List
+from typing import Callable, List
 import threading
 
 import pygame
@@ -18,7 +18,7 @@ class TimersController(threading.Thread):
 		self.timers = []
 		self.start()
 
-	def start_timer(self, timer: Timer):
+	def start_timer(self, timer):
 		"""Connect timer on timers list.
 
 		Parameters
@@ -36,7 +36,7 @@ class TimersController(threading.Thread):
 		timer : Timer
 			Deactivate timer.
 		"""
-		self.timers.remov(timer)
+		self.timers.remove(timer)
 
 	def run(self):
 		"""Main body of timer.
@@ -57,6 +57,9 @@ class TimersController(threading.Thread):
 
 
 class Timer:
+	TIMEREVENT = pygame.event.custom_type()
+	COUNTER = 0
+	CONTROLLER = TimersController()
 	"""Push event and call target cyclically after a period of time.
 
 	Attributes
@@ -78,9 +81,6 @@ class Timer:
 	target : Callable
 		Function call of interval end.
 	"""
-	TIMEREVENT = pygame.event.custom_type()
-	COUNTER = 0
-	CONTROLLER = TimersController()
 
 	def __init__(self, time_interval: int, target: Callable = None, timer_name: str = None):
 		"""
@@ -95,7 +95,7 @@ class Timer:
 		self.id = Timer.COUNTER
 		self._last_activate = None
 		Timer.COUNTER += 1
-		self.name = 'Timer'+str(self.ID) if timer_name is None else timer_name
+		self.name = 'Timer'+str(self.id) if timer_name is None else timer_name
 		self.event = pygame.event.Event(Timer.TIMEREVENT)
 		self.event.timer_id = self.id
 		self.event.timer_name = self.name

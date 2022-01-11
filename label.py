@@ -1,4 +1,4 @@
-from typing import Any, Union, Optional, List, Tuple, Generator
+from typing import Any, Union, Optional, List, Tuple
 from math import ceil
 
 import pygame
@@ -7,7 +7,8 @@ from modules import Padding, Border, Margin, SizeRange, FontProperty
 
 
 class Label(pygame.sprite.Sprite):
-
+	default_color = pygame.Color(255, 255, 255)
+	COUNTER = 0
 	"""Show static text. Text can change only in program.
 
 	Attributes
@@ -46,12 +47,9 @@ class Label(pygame.sprite.Sprite):
 		Determines maximum and minimum size. If equal None, then the size depends only on the text
 	"""
 
-	default_color = pygame.Color(255, 255, 255)
-	COUNTER = 0
-
 	def __init__(
 		self,
-		parent: pygame.sprite.Sprite,
+		parent: pygame.Surface,
 		pos: Tuple[int, int],
 		font: Union[FontProperty, dict, list, None],
 		text: str,
@@ -105,7 +103,7 @@ class Label(pygame.sprite.Sprite):
 		self.parent = parent
 		self._text = text
 		self.padding = padding
-		self.border = Border(border, border_colors, self)
+		self.border = Border(self, border, border_colors)
 		self.margin = margin
 		self.align = "l" if text_align is None else text_align.lower()
 		self.resizable = rect_size is None
@@ -134,7 +132,7 @@ class Label(pygame.sprite.Sprite):
 		elif isinstance(font, (tuple, list)):
 			self.font = FontProperty(*font)
 		else:
-			self.font = FontProperty(None, 16, Lable.default_color)
+			self.font = FontProperty(None, 16, Label.default_color)
 		self.font.create_font()
 
 	def set_rect(self, rect: Union[pygame.Rect, List[int], Tuple[int, ...]]) -> None:
@@ -361,7 +359,7 @@ class Label(pygame.sprite.Sprite):
 			Tuple with intersecting label and deep of intersection.
 		"""
 		for label in collided_labels:
-			if self_rect.colliderect(lable.get_rect):
+			if self_rect.colliderect(label.get_rect):
 				label_rect = label.get_rect
 				delta_x = min(self_rect.w, label_rect.w) - abs(
 					self_rect.x - label_rect.x
@@ -386,7 +384,7 @@ class Label(pygame.sprite.Sprite):
 
 		"""
 		if axis_x:
-			if self.client_rect.x <= lable.client_rect.x:
+			if self.client_rect.x <= label.client_rect.x:
 				if self.client_rect.x - ceil(delta / 2) < self.margin.left:
 					label.client_rect.x += delta - (self.client_rect.x - self.margin.left)
 					self.client_rect.x = self.margin.left
@@ -457,7 +455,7 @@ class Label(pygame.sprite.Sprite):
 				),
 				size,
 			)
-		elif self.aligne[0] == 'l':
+		elif self.align[0] == 'l':
 			rect = pygame.Rect(
 				(
 					self.padding.left + self.border.left,

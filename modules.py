@@ -1,6 +1,6 @@
 """Summary
 """
-from typing import Union, NoReturn, Tuple, Generator
+from typing import Union, Tuple
 from itertools import cycle
 
 import pygame
@@ -45,7 +45,7 @@ class Padding:
                 self.spaces = size_space
             else:
                 raise RuntimeError(f"Can't create '{type(self).__name__}'. Lengths '"
-                                   + {type(self).__name__} + "' list of spaces must be 1, 2, 4.")
+                                   + type(self).__name__ + "' list of spaces must be 1, 2, 4.")
         else:
             raise RuntimeError(
                 f"Can't create '{type(self).__name__}'. {type(self).__name__}'s spaces must be iterable or int.")
@@ -227,9 +227,9 @@ class Border(Padding):
 
     def __init__(
             self,
-            parent: pygame.sprite.Sprite,
+            parent: Union[pygame.Surface],
             border_widths: Union[int, list, tuple],
-            colors: Union[list, tuple, pygame.Color]):
+            color: Union[list, tuple, pygame.Color]):
         """
         Parameters
         ----------
@@ -237,7 +237,7 @@ class Border(Padding):
                 The parent surface on which the label is drawn.
         border_widths : Union[int, list, tuple]
             Width lines of border.
-        colors : Union[list, tuple, pygam.Color]
+        color : Union[list, tuple, pygam.Color]
             Color lines of border.
 
         Raises
@@ -252,7 +252,7 @@ class Border(Padding):
             raise ValueError("Parent can't beDescription None")
         for ind, space in enumerate(self.spaces):
             self.spaces[ind] = space * 2
-        self.color = Border.parse_colors(colors)
+        self.color = Border.parse_colors(color)
 
     def __getattr__(self, name: str) -> tuple:
         """Ability address to 'spaces' such as 'border'.
@@ -276,7 +276,7 @@ class Border(Padding):
             return self.spaces
         raise AttributeError(f"Unexpected attribute with name: {name}")
 
-    def __getitem__(self, key: int) -> Tuple[int, pygame.Color]:
+    def __getitem__(self, key: int):
         """Get border's width by index.
 
         Parameters
@@ -356,7 +356,7 @@ class Border(Padding):
 
     # Generator[YieldType, SendType, ReturnType]
     # pylint: disable = R1708
-    def get_border_points(self) -> Tuple[int, int]:
+    def get_border_points(self):
         """Generation rectangle points for drawing lines.
 
         Yields
@@ -365,8 +365,15 @@ class Border(Padding):
             Rectangle points for drawing lines different width.
         """
         switcher = True
-        iter_y = cycle([0, self._parent.client_rectangle.h])
-        iter_x = cycle([0, self._parent.client_rectangle.w])
+        try:
+            iter_y = cycle([0, self._parent.client_rectangle.h])
+            iter_x = cycle([0, self._parent.client_rectangle.w])
+        except AttributeError as ex:
+            if isinstance(self._parent, pygame.Surface):
+                iter_y = cycle([0, self._parent.get_height()])
+                iter_x = cycle([0, self._parent.get_width()])
+            else:
+                raise ex
         pos_x = next(iter_x)
         pos_y = None
         for _ in range(10):  # limitation loop iterated
@@ -469,10 +476,9 @@ class FontProperty:
             Attribute of class pygame.font.Font
         """
         try:
-            return super().__getattr__(name)
-        except AttributeError:
-            print('name', name)
-        return getattr(self._font, name)
+            return getattr(self._font, name)
+        except AttributeError as ex:
+            raise ex
 
     def create_font(self) -> None:
         """Create font of class pygame.font.Font."""
@@ -525,7 +531,7 @@ class FontProperty:
         return self._size
 
     @size.setter
-    def size(self, size: int) -> None:
+    def size(self, size: int):
         """Set new font size.
         Rebuild text font.
 
@@ -546,7 +552,7 @@ class FontProperty:
             raise ValueError('Size of font must be positive.')
 
     @property
-    def color(self) -> pygame.Color:
+    def color(self):
         """Get font color.
 
         Returns
@@ -557,7 +563,7 @@ class FontProperty:
         return self._color
 
     @color.setter
-    def color(self, color: Union[int, list, tuple, pygame.Color]) -> None:
+    def color(self, color: Union[int, list, tuple, pygame.Color]):
         """Set new Color
 
         Parameters
@@ -592,8 +598,8 @@ class SizeRange:
         max_height : int
             Maximum height
         """
-        self.range_width = (min_width, max_width)
-        self.range_height = (min_height, max_height)
+        self.range_width = [min_width, max_width]
+        self.range_height = [min_height, max_height]
 
     @property
     def min_w(self) -> int:
