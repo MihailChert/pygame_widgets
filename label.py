@@ -21,7 +21,7 @@ class Label(pygame.sprite.Sprite):
 		Font of test.
 	visible : bool
 		Label visibility.
-	id : TYPE
+	id : int
 		Label's id.
 	name : str
 		Label's name. Default 'Label{Label.id}.
@@ -53,7 +53,7 @@ class Label(pygame.sprite.Sprite):
 		pos: Tuple[int, int],
 		font: Union[FontProperty, dict, list, None],
 		text: str,
-		background: Tuple[int, int, int],
+		surface_color: Tuple[int, int, int],
 		text_align: str,
 		transparency: bool = False,
 		rect_size: Union[list, tuple] = None,
@@ -74,7 +74,7 @@ class Label(pygame.sprite.Sprite):
 			Label's text font.
 		text : str
 			Text to write in label. Text can be multiline.
-		background : Tuple[int, int, int]
+		surface_color : Tuple[int, int, int]
 			Color for text background.
 		text_align : str
 			Defined text position. Can be center, left, right. Default text align left.
@@ -98,7 +98,7 @@ class Label(pygame.sprite.Sprite):
 		self.set_font(font)
 		self.visible = True
 		self.id = Label.COUNTER
-		self.name = "Label" + str(self.id)
+		self.name = (type(self).__name__ + str(self.id)) if name is None else name
 		Label.COUNTER += 1
 		self.parent = parent
 		self._text = text
@@ -115,7 +115,7 @@ class Label(pygame.sprite.Sprite):
 		else:
 			self.surface = pygame.Surface(self.client_rect.size)
 		self.surface.fill(background)
-		self.surface_color = background
+		self.surface_color = Border.parse_color(surface_color)
 
 	def set_font(self, font: Union[FontProperty, dict, list, tuple, None]) -> None:
 		"""Set new text font for label.
@@ -135,7 +135,18 @@ class Label(pygame.sprite.Sprite):
 			self.font = FontProperty(None, 16, Label.default_color)
 		self.font.create_font()
 
-	def set_rect(self, rect: Union[pygame.Rect, List[int], Tuple[int, ...]]) -> None:
+	@property
+	def client_rectangle(self) -> pygame.Rect:
+		"""
+		Returns
+		-------
+		pygame.Rect
+			Rectangle of label.
+		"""
+		return self.client_rect
+
+	@client_rectangle.setter
+	def client_rectangle(self, rect: Union[pygame.Rect, List[int], Tuple[int, ...]]) -> None:
 		"""Set new rectangle of object.
 
 		Parameters
@@ -212,7 +223,8 @@ class Label(pygame.sprite.Sprite):
 		"""
 		return self._text
 
-	def set_text(self, text: str) -> None:
+	@text.setter
+	def text(self, text: str) -> None:
 		"""Set new text of object.
 		if object resizable, then object size recalculate.
 
@@ -468,8 +480,7 @@ class Label(pygame.sprite.Sprite):
 		return rect
 
 	def draw_text(self) -> None:
-		"""Draw aligned text on surface.
-		"""
+		"""Draw aligned text on surface."""
 		line_counter = -1
 		for line in self.text.splitlines():
 			line_counter += 1
@@ -512,10 +523,10 @@ class Label(pygame.sprite.Sprite):
 		"""Draw label on parent"""
 		if not self.visible:
 			return
-		if hasattr(self.parent, 'surface'):
-			self.parent.surface.blit(self.surface, self.client_rect)
-		else:
+		try:
 			self.parent.blit(self.surface, self.client_rect)
+		except AttributeError:
+			self.parent.surface.blit(self.surface, self.client_rect)
 		self.surface.fill(self.surface_color)
 		self.draw_text()
 		if hasattr(self.border, 'draw'):
