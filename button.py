@@ -1,29 +1,53 @@
-"""Summary
-"""
 from typing import Union, Optional, Any, Tuple, List, Iterable, Callable
+
 import pygame
+
 from label import Label
 from modules import Padding, Margin, SizeRange
-
-# pylint: disable=E1101
 
 
 class Button(Label):
 
-	"""Summary
+	"""Interactive text element.
+	On press make target.
+	Subclass Label.
 
 	Attributes
 	----------
-	ID : int
-		Description
-	BUTTONEVENT : TYPE
-		Description
+	BUTTONEVENT : int
+		Event type of button
+	COUNTER : int
+		Counts all Labels created in program.
+	font : modules.FontProperty
+		Font of test.
+	visible : bool
+		Label visibility.
 	id : TYPE
-		Description
-	name : TYPE
-		Description
+		Label's id.
+	name : str
+		Label's name. Default 'Label{Label.id}.
+	parent : pygame.Surface
+		The parent surface on which the label is drawn.
+	padding : Padding
+		Internal indent.
+	border : Border
+		Label's border.
+	margin : Margin
+		External indent.
+	align : str
+		Defines the position of text.
+	resizable : bool
+		Determines whether the size ot the label has been adjusted.
+	client_rect : pygame.Rect
+		Label's drawing rectangle
+	surface : pygame.Surface
+		Label's surface. All elements drawing in surface.
+	surface_color : pygame.Color.
+		Color for text background.
+	size_range : SizeRange
+		Determines maximum and minimum size. If equal None, then the size depends only on the text
 	event : TYPE
-		Description
+		Push event on pressed.
 	"""
 
 	ID = 0
@@ -46,36 +70,37 @@ class Button(Label):
 		margin: Margin = Margin(0),
 		target: Optional[Callable] = None,
 	):
-		"""Summary
-
+		"""
 		Parameters
 		----------
-		parent : pygame.sprite.Sprite
-			Description
+		parent : pygame.Surface
+			The parent surface on which the label is drawn.
 		pos : Tuple[int, int]
-			Description
+			Label's position on the parent object.
 		font : Union[FontProperty, dict, list, None]
-			Description
+			Label's text font.
 		text : str
-			Description
+			Text to write in label. Text can be multiline.
 		background : Tuple[int, int, int]
-			Description
+			Color for text background.
 		text_align : str
-			Description
-		trancparency : bool, optional
-			Description
+			Defined text position. Can be center, left, right. Default text align left.
+		transparency : bool, optional
+			Determines label transparency.
 		rect_size : Union[list, tuple], optional
-			Description
+			Label's size. If equal None, then the size of object depends on size range and text.
 		size_range : SizeRange, optional
-			Description
+			Determines maximum and minimum size. If equal None, then the size of object depends only on the text.
 		padding : Padding, optional
-			Description
+			Internal indent.
 		border : int, optional
-			Description
+			Size of label borders.
 		border_colors : Union[List[int], Tuple[int, int, int]], optional
-			Description
+			Border's color.
 		margin : Margin, optional
-			Description
+			External indent. The margins of object add up.
+		target : Callable
+			Function has call on pressed.
 		"""
 		super().__init__(
 			parent,
@@ -105,31 +130,29 @@ class Button(Label):
 
 	@property
 	def ispressed(self) -> bool:
-		"""Summary
+		"""Get status of button.
 
 		Returns
 		-------
 		bool
-			Description
+			Button pressed
 		"""
 		return self._pressed
 
-	def collide(
-		self, mouse_event: pygame.event.Event, chenge_curr: bool = False
-	) -> bool:
-		"""Summary
+	def collide(self, mouse_event: pygame.event.Event, change_curr: bool = False) -> bool:
+		"""Checks whether the mouse pointer is located within the boundaries of the button.
 
 		Parameters
 		----------
 		mouse_event : pygame.event.Event
-			Description
-		chenge_curr : bool, optional
-			Description
+			Mouse event has information about status of mouse.
+		change_curr : bool, optional
+			The mouse pointer is located within the boundaries of another button.
 
 		Returns
 		-------
 		bool
-			Description
+			The mouse pointer is located in the button.
 		"""
 		if self.client_rect.collidepoint(mouse_event.pos):
 			pygame.mouse.set_system_cursor(pygame.SYSTEM_CURSOR_HAND)
@@ -141,28 +164,34 @@ class Button(Label):
 					pygame.event.post(self.event)
 				self._pressed = mouse_event.type == pygame.MOUSEBUTTONDOWN
 			return True
-		if not chenge_curr:
+		if not change_curr:
 			pygame.mouse.set_system_cursor(pygame.SYSTEM_CURSOR_ARROW)
 		self._pressed = False
-		return chenge_curr
+		return change_curr
 
 	def draw(self) -> None:
-		"""Summary"""
+		"""Draw button on parent surface."""
 		if not self._pressed:
 			self.draw_unpressed()
 		else:
 			self.draw_pressed()
 
 	def draw_unpressed(self) -> None:
-		"""Summary"""
+		"""Draw button when it is unpressed."""
 		self.surface.set_alpha(255)
-		self.parent.blit(self.surface, self.client_rect)
+		if hasattr(self.parent, 'surface'):
+			self.parent.surface.blit(self.surface, self.client_rect)
+		else:
+			self.parent.blit(self.surface, self.client_rect)
 		self.surface.fill(self.surface_color)
 		self.draw_text()
 
 	def draw_pressed(self) -> None:
-		"""Summary"""
+		"""Draw button when it is pressed"""
 		self.surface.set_alpha(100)
-		self.parent.blit(self.surface, self.client_rect)
+		if hasattr(self.parent, 'surface'):
+			self.parent.surface.blit(self.surface, self.client_rect)
+		else:
+			self.parent.blit(self.surface, self.client_rect)
 		self.surface.fill(self.surface_color)
 		self.draw_text()

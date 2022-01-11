@@ -7,3 +7,4 @@ widget_venv
 ^*.jpeg
 ^*.png
 ^test_*.py
+./.idea

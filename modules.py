@@ -7,624 +7,717 @@ import pygame
 
 
 class Padding:
+    """Internal indent of object.
 
-	"""Summary
+    Attributes
+    ----------
+    spaces : List[int]
+        List of indents of object like padding in css.
+    """
 
-	Attributes
-	----------
-	spaces : TYPE
-			Description
-	"""
+    def __init__(self, size_space: Union[int, tuple, list]):
+        """
+        Parameters
+        ----------
+        size_space : Union[int, tuple, list]
+            Internal indent of object in pixels.
 
-	def __init__(self, size_space: Union[int, tuple, list]) -> NoReturn:
-		"""Summary
+        Raises
+        ------
+        RuntimeError
+            Can't create padding. Length list of spaces must be, 1, 2, 4.
+        RuntimeError
+            Can't create padding. Spaces must be iterable or int.
+        """
+        if isinstance(size_space, int):
+            self.spaces = [size_space] * 4
+        elif isinstance(size_space, (list, tuple)):
+            if len(size_space) == 1:
+                self.spaces = size_space * 4
+            elif len(size_space) == 2:
+                self.spaces = [
+                    size_space[0],
+                    size_space[1],
+                    size_space[0],
+                    size_space[1],
+                ]
+            elif len(size_space) == 4:
+                self.spaces = size_space
+            else:
+                raise RuntimeError(f"Can't create '{type(self).__name__}'. Lengths '"
+                                   + {type(self).__name__} + "' list of spaces must be 1, 2, 4.")
+        else:
+            raise RuntimeError(
+                f"Can't create '{type(self).__name__}'. {type(self).__name__}'s spaces must be iterable or int.")
 
-		Parameters
-		----------
-		size_space : Union[int, tuple, list]
-				Description
+    def __getattr__(self, name: str) -> tuple:
+        """Ability to address on 'spaces' such as 'padding'.
 
-		Raises
-		------
-		RuntimeError
-				Description
-		"""
-		if isinstance(size_space, int):
-			self.spaces = [size_space] * 4
-		elif isinstance(size_space, (list, tuple)):
-			if len(size_space) == 1:
-				self.spaces = size_space * 4
-			elif len(size_space) == 2:
-				self.spaces = [
-					size_space[0],
-					size_space[1],
-					size_space[0],
-					size_space[1],
-				]
-			elif len(size_space) == 4:
-				self.spaces = size_space
-			else:
-				raise RuntimeError(
-					f"Can't create '{type(self).__name__}'."
-					+ f" Lengths '{type(self).__name__}'"
-					+ " widths must be 1, 2, 4"
-				)
-		else:
-			raise RuntimeError(
-				f"Can't create '{type(self).__name__}'."
-				+ f" {type(self).__name__}'s widths must be list or tuple"
-			)
+        Parameters
+        ----------
+        name : str
+            Name of attribute.
 
-	def __getattr__(self, name: str) -> tuple:
-		"""Summary
+        Returns
+        -------
+        tuple
+            List of indent.
 
-		Parameters
-		----------
-		name : str
-				Description
+        Raises
+        ------
+        AttributeError
+            Unexpected attribute.
+        """
+        if name == "padding":
+            return self.spaces
+        raise AttributeError(f"Unexpected attribute with name: {name}")
 
-		Returns
-		-------
-		tuple
-				Description
+    def __str__(self) -> str:
+        """Convert to string.
 
-		Raises
-		------
-		AttributeError
-				Description
-		"""
-		if name == "padding":
-			return self.spaces
-		raise AttributeError(f"Anexpected antribut with name: {name}")
+        Returns
+        -------
+        str
+            String representation.
+        """
+        return f"top:{self.top}; right:{self.right}; bottom:{self.bottom}; left:{self.left};"
 
-	def __str__(self) -> str:
-		"""Summary
+    @property
+    def top(self) -> int:
+        """Top indent in pixel.
 
-		Returns
-		-------
-		str
-				Description
-		"""
-		return f"top:{self.top}; rigth:{self.rigth}; bottom:{self.bottom}; left:{self.left};"
+        Returns
+        -------
+        int
+            Top indent.
+        """
+        return self.spaces[0]
 
-	@property
-	def top(self) -> int:
-		"""Summary
+    @property
+    def right(self) -> int:
+        """Right indent in pixel.
 
-		Returns
-		-------
-		int
-				Description
-		"""
-		return self.spaces[0]
+        Returns
+        -------
+        int
+            Right indent.
+        """
+        return self.spaces[1]
 
-	@property
-	def rigth(self) -> int:
-		"""Summary
+    @property
+    def bottom(self) -> int:
+        """Bottom indent in pixel.
 
-		Returns
-		-------
-		int
-				Description
-		"""
-		return self.spaces[1]
+        Returns
+        -------
+        int
+            Bottom indent.
+        """
+        return self.spaces[2]
 
-	@property
-	def bottom(self) -> int:
-		"""Summary
+    @property
+    def left(self) -> int:
+        """Left indent in pixel
 
-		Returns
-		-------
-		int
-				Description
-		"""
-		return self.spaces[2]
+        Returns
+        -------
+        int
+            Left indent.
+        """
+        return self.spaces[3]
 
-	@property
-	def left(self) -> int:
-		"""Summary
+    def horizontal_indent(self) -> int:
+        """Sum right and left indent.
 
-		Returns
-		-------
-		int
-				Description
-		"""
-		return self.spaces[3]
+        Returns
+        -------
+        int
+            Right and left indent.
+        """
+        return self.rigth + self.left
 
-	def horizontal_indent(self) -> int:
-		"""Summary
+    def vertical_indent(self) -> int:
+        """Sum top and bottom indent.
 
-		Returns
-		-------
-		int
-				Description
-		"""
-		return self.rigth + self.left
+        Returns
+        -------
+        int
+            Top and bottom indent.
+        """
+        return self.top + self.bottom
 
-	def vertical_indent(self) -> int:
-		"""Summary
+    @staticmethod
+    def absolute_vertical_indent(*spaces) -> int:
+        """Calculates all vertical indents of object.
 
-		Returns
-		-------
-		int
-				Description
-		"""
-		return self.top + self.bottom
+        Parameters
+        ----------
+        *spaces
+            Indents of object.
 
-	@staticmethod
-	def absolute_vertical_indent(*spaces) -> int:
-		"""Summary
+        Returns
+        -------
+        int
+            All vertical indents of object.
 
-		Parameters
-		----------
-		*spaces
-				Description
+        Raises
+        ------
+        RuntimeError
+            Counts of spaces can be 3 or less.
+        TypeError
+            The object must be class or subclasses of 'Padding'.
+        """
+        if len(spaces) > 3:
+            raise RuntimeError("To mani spaces for the object. Spaces can be 3 or les.")
+        res = 0
+        for space in spaces:
+            if isinstance(space, Padding):
+                res += space.top + space.bottom
+            else:
+                raise TypeError(f"The {type(space)} is not space. It must be class or subclasses of 'Padding'.")
+        return res
 
-		Returns
-		-------
-		int
-				Description
+    @staticmethod
+    def absolute_horizontal_indent(*spaces) -> int:
+        """Calculates all horizontal indents of object.
 
-		Raises
-		------
-		RuntimeError
-				Description
-		"""
-		if len(spaces) > 3:
-			raise RuntimeError(
-				"To mani spaces for the object. Can be 3 scpaces or les."
-			)
-		res = 0
-		for space in spaces:
-			if isinstance(space, Padding):
-				res += space.top + space.bottom
-			else:
-				raise RuntimeError(
-					f"The {space} is not space. U can use Padding, Border, Margin"
-				)
-		return res
+        Parameters
+        ----------
+        *spaces
+            Indents of object.
 
-	@staticmethod
-	def absolute_horizontal_indent(*spaces) -> int:
-		"""Summary
+        Returns
+        -------
+        int
+            All horizontal indents of object.
 
-		Parameters
-		----------
-		*spaces
-				Description
-
-		Returns
-		-------
-		int
-				Description
-
-		Raises
-		------
-		RuntimeError
-				Description
-		"""
-		if len(spaces) > 3:
-			raise RuntimeError(
-				"To mani spaces for the object. Can be 3 scpaces or les."
-			)
-		res = 0
-		for space in spaces:
-			if space is None:
-				continue
-			if isinstance(space, Padding):
-				res += space.left + space.rigth
-			else:
-				raise RuntimeError(
-					f"The {space} is not space. U can use Padding, Border, Margin"
-				)
-		return res
+        Raises
+        ------
+        RuntimeError
+            Counts of spaces can be 3 or less.
+        TypeError
+            The object must be class or subclasses of 'Padding'.
+        """
+        if len(spaces) > 3:
+            raise RuntimeError("To mani spaces for the object. Spaces can be 3 or les.")
+        res = 0
+        for space in spaces:
+            if space is None:
+                continue
+            if isinstance(space, Padding):
+                res += space.left + space.rigth
+            else:
+                raise TypeError(f"The {type(space)} is not space. It must be class or subclasses of 'Padding'.")
+        return res
 
 
 class Border(Padding):
+    """Draw borders of object.
+    Subclass to 'Padding'.
 
-	"""Summary
+    Attributes
+    ----------
+    spaces : List[int]
+        Width lines of border.
+    parent : Union[pygame.Surface, pygame.sprite.Sprite]
+        The parent surface on which the label is drawn.
+    color : pygame.Color.
+        Color's lines of border.
+    """
 
-	Attributes
-	----------
-	colors : TYPE
-			Description
-	"""
+    def __init__(
+            self,
+            parent: pygame.sprite.Sprite,
+            border_widths: Union[int, list, tuple],
+            colors: Union[list, tuple, pygame.Color]):
+        """
+        Parameters
+        ----------
+        parent : Union[pygame.sprite.Sprite, pygame.Surface]
+                The parent surface on which the label is drawn.
+        border_widths : Union[int, list, tuple]
+            Width lines of border.
+        colors : Union[list, tuple, pygam.Color]
+            Color lines of border.
 
-	def __init__(
-		self,
-		border_widths: Union[int, list, tuple],
-		colors: Union[list, tuple],
-		parent: pygame.sprite.Sprite,
-	) -> NoReturn:
-		"""Summary
+        Raises
+        ------
+        ValueError
+            Parent can't be None
+        """
+        super().__init__(border_widths)
+        if parent is not None:
+            self._parent = parent
+        else:
+            raise ValueError("Parent can't beDescription None")
+        for ind, space in enumerate(self.spaces):
+            self.spaces[ind] = space * 2
+        self.color = Border.parse_colors(colors)
 
-		Parameters
-		----------
-		border_widths : Union[int, list, tuple]
-				Description
-		colors : Union[list, tuple]
-				Description
-		parent : pygame.sprite.Sprite
-				Description
+    def __getattr__(self, name: str) -> tuple:
+        """Ability address to 'spaces' such as 'border'.
 
-		Raises
-		------
-		RuntimeError
-				Description
-		"""
-		super().__init__(border_widths)
-		if parent is not None:
-			self._parent = parent
-		else:
-			raise RuntimeError("Parent can't be none")
-		for ind, space in enumerate(self.spaces):
-			self.spaces[ind] = space * 2
-		self.color = Border.parse_colors(colors)
+        Parameters
+        ----------
+        name : str
+            Attribute name.
 
-	def __getattr__(self, name: str) -> tuple:
-		"""Summary
+        Returns
+        -------
+        tuple
+            Border's width.
 
-		Parameters
-		----------
-		name : str
-				Description
+        Raises
+        ------
+        AttributeError
+                Unexpected attribute.
+        """
+        if name == 'border':
+            return self.spaces
+        raise AttributeError(f"Unexpected attribute with name: {name}")
 
-		Returns
-		-------
-		tuple
-				Description
+    def __getitem__(self, key: int) -> Tuple[int, pygame.Color]:
+        """Get border's width by index.
 
-		Raises
-		------
-		AttributeError
-				Description
-		"""
-		if name == "widths":
-			return self.spaces
-		raise AttributeError(f"Anexpected antribut with name: {name}")
+        Parameters
+        ----------
+        key : int
+            Index of border's width.
 
-	def __getitem__(self, key: int) -> tuple:
-		"""Summary
+        Returns
+        -------
+        tuple
+            Border's width and border's color.
 
-		Parameters
-		----------
-		key : int
-				Description
+        Raises
+        ------
+        IndexError
+            Index out of range. Range 4
+        """
+        if isinstance(key, int) and -4 <= key < 4:
+            if len(self.color) == 3:
+                return self.spaces[key], self.color
+            return self.spaces[key], self.color
+        raise IndexError("Index out of range. Range size 4.")
 
-		Returns
-		-------
-		tuple
-				Description
+    def __iter__(self) -> Tuple[int, pygame.Color]:
+        """Iteration by border's width and border's color.
 
-		Raises
-		------
-		IndexError
-				Description
-		"""
-		if isinstance(key, int) and key < 4:
-			if len(self.color) == 3:
-				return self.spaces[key], self.color
-			return self.spaces[key], self.color[key]
-		raise IndexError("Index must be int and les 4")
+        Yields
+        ------
+        Tuple[int, pygame.Color]
+            Border's width and border's color
+        """
+        for line in self.spaces:
+            yield line, self.color
 
-	def __iter__(self) -> Tuple[int, pygame.Color]:
-		"""Summary
+    def __str__(self) -> str:
+        """Convert to string.
 
-		Yields
-		------
-		tuple
-				Description
-		"""
-		for line in self.spaces:
-			yield line, self.color
+        Returns
+        -------
+        str
+            String representation.
+        """
+        return super().__str__() + f" colors:{self.color};"
 
-	def __str__(self) -> str:
-		"""Summary
+    @staticmethod
+    def parse_colors(color: Union[int, list, tuple, pygame.Color]) -> pygame.Color:
+        """Convert color representation to single type rgb.
 
-		Returns
-		-------
-		str
-				Description
-		"""
-		return super().__str__() + f" colors:{self.color};"
+        Parameters
+        ----------
+        color : Union[list, tuple]
+            Rgb color representation.
 
-	@staticmethod
-	def parse_colors(colors: Union[list, tuple]) -> pygame.Color:
-		"""Summary
+        Returns
+        -------
+        List[Tuple[int, int, int]]
+            Color in type pygame.Color.
 
-		Parameters
-		----------
-		colors : Union[list, tuple]
-				Description
-		rec : int, optional
-				Description
+        Raises
+        ------
+        TypeError
+            Color must be int, list, tuple, pygame.Color
+        ValueError
+            Length color must be 3(rgb).
+        RuntimeError
+            Large nesting of the list.
+        """
+        if isinstance(color, (int, list, tuple, pygame.Color)):
+            if isinstance(color, (int, pygame.Color)):
+                return pygame.Color(color)
+            if len(color) == 3 and isinstance(color[0], int):
+                return pygame.Color(color)
+            if len(color) == 3 and isinstance(color[0], (list, tuple)):
+                raise RuntimeError("Large nesting of the list")
+            raise ValueError("Invalid color. Can't create color. Lengths color widths must be 3(rgb)")
+        raise TypeError("Colors must be list or tuple.")
 
-		Returns
-		-------
-		List[Tuple[int, int, int]]
-				Description
+    # Generator[YieldType, SendType, ReturnType]
+    # pylint: disable = R1708
+    def get_border_points(self) -> Tuple[int, int]:
+        """Generation rectangle points for drawing lines.
 
-		Raises
-		------
-		RuntimeError
-				Description
-		"""
-		if isinstance(colors, (list, tuple, pygame.Color)):
-			if len(colors) == 3 and isinstance(colors[0], int):
-				return pygame.Color(colors)
-			if len(colors) == 3 and isinstance(colors[0], (list, tuple)):
-				raise RuntimeError(
-					"Invalid color. "
-					+ "Can't create color. Lengths color widths must be 3(rgb)"
-				)
-		raise RuntimeError("Colors must be list or tuple.")
+        Yields
+        ------
+        Tuple[int, int]
+            Rectangle points for drawing lines different width.
+        """
+        switcher = True
+        iter_y = cycle([0, self._parent.client_rectangle.h])
+        iter_x = cycle([0, self._parent.client_rectangle.w])
+        pos_x = next(iter_x)
+        pos_y = None
+        for _ in range(10):  # limitation loop iterated
+            if switcher:
+                pos_y = next(iter_y)
+            else:
+                pos_x = next(iter_x)
+            switcher = not switcher
+            yield pos_x, pos_y
 
-	# Generator[YieldType, SendType, ReturnType]
-	# pylint: disable = R1708
-	def get_border_points(self) -> Generator[Tuple[int, int], None, None]:
-		"""
-		Yields
-		------
-		Generator[Tuple[int, int], None, None]
-				Description
+    # pylint: disable =
 
-		Parameters
-		----------
-		rect : pygame.Rect
-				Description
-		"""
-		switcher = True
-		iter_y = cycle([0, self._parent.client_rectangle.h])
-		iter_x = cycle([0, self._parent.client_rectangle.w])
-		pos_x = next(iter_x)
-		pos_y = None
-		for _ in range(10):
-			if switcher:
-				pos_y = next(iter_y)
-			else:
-				pos_x = next(iter_x)
-			switcher = not switcher
-			yield pos_x, pos_y
-
-	# pylint: disable =
-
-	def draw(self) -> None:
-		"""Summary"""
-		points_iter = self.get_border_points()
-		start_point = next(points_iter)
-		for line, color in self:
-			end_point = next(points_iter)
-			pygame.draw.line(self._parent.surface, color, start_point, end_point, line)
-			start_point = end_point
+    def draw(self) -> None:
+        """Draw borders lines on parent."""
+        points_iter = self.get_border_points()
+        start_point = next(points_iter)
+        for line, color in self:
+            end_point = next(points_iter)
+            if hasattr(self._parent, 'surface'):
+                pygame.draw.line(self._parent.surface, color, start_point, end_point, line)
+            else:
+                pygame.draw.line(self._parent, color, start_point, end_point, line)
+            start_point = end_point
 
 
 class Margin(Padding):
+    """External indent of object.
+    Subclass  to Padding
 
-	"""Summary"""
+    Attributes
+    ----------
+    spaces : Tuple[int]
+        List of indent of object.
+    """
 
-	def __getattr__(self, name: str) -> tuple:
-		"""Summary
+    def __getattr__(self, name: str) -> Tuple[int, int, int, int]:
+        """Ability address to 'spaces' such as 'margin'.
 
-		Parameters
-		----------
-		name : str
-				Description
+        Parameters
+        ----------
+        name : str
+            Attribute name.
 
-		Returns
-		-------
-		tuple
-				Description
+        Returns
+        -------
+        Tuple[int, int, int, int]
+            Margins indent.
 
-		Raises
-		------
-		AttributeError
-				Description
-		"""
-		if name == "margin":
-			return self.spaces
-		raise AttributeError(f"Anexpected antribut with name: {name}")
+        Raises
+        ------
+        AttributeError
+            Unexpected attribute.
+        """
+        if name == "margin":
+            return self.spaces
+        raise AttributeError(f"Unexpected attribute with name: {name}")
 
 
 class FontProperty:
+    """Summary
 
-	"""Summary"""
+    Attributes
+    ----------
+    _name : str
 
-	def __init__(
-		self,
-		font_name: str = None,
-		font_size: int = None,
-		font_color: Union[list, tuple] = None,
-	) -> NoReturn:
-		"""Summary
+    _size : int
 
-		Parameters
-		----------
-		font_name : str, optional
-				Description
-		font_size : int, optional
-				Description
-		font_color : Union[list, tuple], optional
-				Description
-		"""
-		self._name = font_name
-		self._size = font_size
-		self._color = list(font_color)
-		self._font = None
+    _color : pygame.Color
 
-	def __getattr__(self, name: str):
-		"""Summary
+    _font: pygame.font.Font
+    """
 
-		Parameters
-		----------
-		name : str
-				Description
+    def __init__(self, font_name: str = None, font_size: int = 16, font_color: Union[int, list, tuple] = 0):
+        """
+        Parameters
+        ----------
+        font_name : str, optional
+            Name of font. If font equal None, that use default pygame font
+        font_size : int, optional
+            Size of font. Default equal 16.
+        font_color : Union[list, tuple], optional
+            Color of font.
+        """
+        self._name = font_name
+        self._size = font_size
+        self._color = Border.parse_colors(font_color)
+        self._font = None
 
-		Returns
-		-------
-		TYPE
-				Description
-		"""
-		return getattr(self._font, name)
+    def __getattr__(self, name: str):
+        """Accessing the attributes of class pygame.font.Font.
 
-	def create_font(self) -> None:
-		"""Summary"""
-		self._font = pygame.font.Font(self._name, self._size)
+        Parameters
+        ----------
+        name : str
+            Name of attribute.
 
-	@property
-	def font(self) -> pygame.font.Font:
-		"""Summary
+        Returns
+        -------
+        Callable
+            Attribute of class pygame.font.Font
+        """
+        try:
+            return super().__getattr__(name)
+        except AttributeError:
+            print('name', name)
+        return getattr(self._font, name)
 
-		Returns
-		-------
-		pygame.font.Font
-				Description
-		"""
-		return self._font
+    def create_font(self) -> None:
+        """Create font of class pygame.font.Font."""
+        self._font = pygame.font.Font(self._name, self._size)
 
-	@property
-	def font_name(self) -> str:
-		"""Summary
+    @property
+    def font(self) -> pygame.font.Font:
+        """Get font of text.
 
-		Returns
-		-------
-		str
-				Description
-		"""
-		return self._name
+        Returns
+        -------
+        pygame.font.Font.
+            Font of text.
+        """
+        return self._font
 
-	@font_name.setter
-	def set_name(self, name: str) -> None:
-		"""Summary
+    @property
+    def name(self) -> str:
+        """Get font name.
 
-		Parameters
-		----------
-		name : str
-				Description
-		"""
-		self._name = name
-		self.create_font()
+        Returns
+        -------
+        str
+            Font name.
+        """
+        return self._name
 
-	@property
-	def font_size(self) -> int:
-		"""Summary
+    @name.setter
+    def name(self, name: str) -> None:
+        """Set new font name.
+        Rebuild text font.
 
-		Returns
-		-------
-		int
-				Description
-		"""
-		return self._size
+        Parameters
+        ----------
+        name : str
+            New font name.
+        """
+        self._name = name
+        self.create_font()
 
-	@font_size.setter
-	def set_size(self, size: int) -> None:
-		"""Summary
+    @property
+    def size(self) -> int:
+        """Get font size.
 
-		Parameters
-		----------
-		size : int
-				Description
-		"""
-		self._size = size
-		self.create_font()
+        Returns
+        -------
+        int
+            Font size.
+        """
+        return self._size
 
-	@property
-	def color(self) -> tuple:
-		"""Summary
+    @size.setter
+    def size(self, size: int) -> None:
+        """Set new font size.
+        Rebuild text font.
 
-		Returns
-		-------
-		tuple
-				Description
-		"""
-		return self._color
+        Parameters
+        ----------
+        size : int
+            New font size.
 
-	@color.setter
-	def set_color(self, color: tuple) -> None:
-		"""Summary
+        Raises
+        ------
+        ValueError
+            Size of font must be positive.
+        """
+        if isinstance(size, int) and size > 0:
+            self._size = size
+            self.create_font()
+        else:
+            raise ValueError('Size of font must be positive.')
 
-		Parameters
-		----------
-		color : tuple
-				Description
-		"""
-		self._color = color
+    @property
+    def color(self) -> pygame.Color:
+        """Get font color.
+
+        Returns
+        -------
+        pygame.Color
+            Font color.
+        """
+        return self._color
+
+    @color.setter
+    def color(self, color: Union[int, list, tuple, pygame.Color]) -> None:
+        """Set new Color
+
+        Parameters
+        ----------
+        color : Union[int, list, tuple pygame.Color]
+            New color.
+        """
+        self._color = Border.parse_colors(color)
 
 
 class SizeRange:
+    """Range of vertical and horizontal size.
 
-	"""Summary
+    Attributes
+    ----------
+    range_width : Tuple[int, int]
+        Horizontal size range.
+    range_height : Tuple[int, int]
+        Vertical size range.
+    """
 
-	Attributes
-	----------
-	range_width : TYPE
-			Description
-	range_height : TYPE
-			Description
-	"""
+    def __init__(self, min_width: int, max_width: int, min_height: int, max_height: int):
+        """
+        Parameters
+        ----------
+        min_width : int
+            Minimal width.
+        max_width : int
+            Maximum width.
+        min_height : int
+            Minimum height
+        max_height : int
+            Maximum height
+        """
+        self.range_width = (min_width, max_width)
+        self.range_height = (min_height, max_height)
 
-	def __init__(
-		self,
-		min_width: int,
-		max_width: int,
-		min_height: pygame.sprite.Sprite,
-		max_height: int,
-	) -> NoReturn:
-		"""Summary
+    @property
+    def min_w(self) -> int:
+        """GEt minimal width.
 
-		Parameters
-		----------
-		min_width : int
-				Description
-		max_width : int
-				Description
-		min_height : pygame.sprite.Sprite
-				Description
-		max_height : int
-				Description
-		"""
-		self.range_width = (min_width, max_width)
-		self.range_height = (min_height, max_height)
+        Returns
+        -------
+        int
+            Minimum width.
+        """
+        return self.range_width[0]
 
-	@property
-	def min_w(self) -> int:
-		"""Summary
+    @min_w.setter
+    def min_w(self, value: int):
+        """Set new minimal width.
+        New minimal width must be positive and less maximal width.
 
-		Returns
-		-------
-		int
-				Description
-		"""
-		return self.range_width[0]
+        Parameters
+        ----------
+        value : int
+            New minimal width
 
-	@property
-	def max_w(self) -> int:
-		"""Summary
+        Raises
+        ------
+        ValueError
+            New minimal width must be positive and less maximal width.
+        """
+        if 0 <= value < self.range_width[1] or value is None:
+            self.range_width[0] = value
+            return
+        raise ValueError('Minimal width must be positive and less maximum width.')
 
-		Returns
-		-------
-		int
-				Description
-		"""
-		return self.range_width[1]
+    @property
+    def max_w(self) -> int:
+        """Get maximum width.
 
-	@property
-	def min_h(self) -> int:
-		"""Summary
+        Returns
+        -------
+        int
+            Maximum width.
+        """
+        return self.range_width[1]
 
-		Returns
-		-------
-		int
-				Description
-		"""
-		return self.range_height[0]
+    @max_w.setter
+    def max_w(self, value):
+        """Set new maximal width.
 
-	@property
-	def max_h(self) -> int:
-		"""Summary
+        Property
+        --------
+        value : int
+            New maximal width.
+        Raises
+        ------
+        ValueError
+            Maximal width must be positive and more minimal width.
+        """
+        if 0 < value and self.range_width[0] < value or value is None:
+            self.range_width[1] = value
+            return
+        raise ValueError('Maximal width must be positive and more minimal width.')
 
-		Returns
-		-------
-		int
-				Description
-		"""
-		return self.range_height[1]
+    @property
+    def min_h(self) -> int:
+        """Get minimal height.
+
+        Returns
+        -------
+        int
+            Minimal height.
+        """
+        return self.range_height[0]
+
+    @min_h.setter
+    def min_h(self, value: int):
+        """Set new minimal height.
+
+        Parameters
+        ----------
+        value : int
+            New minimal height
+
+        Raises
+        ------
+        ValueError
+            New minimal height must be positive and less maximal height.
+        """
+        if 0 <= value < self.range_height[1] or value is None:
+            self.range_height[0] = value
+            return
+        raise ValueError('Minimal width must be positive and less maximum width.')
+
+    @property
+    def max_h(self) -> int:
+        """Get maximal height.
+
+        Returns
+        -------
+        int
+            Maximal height.
+        """
+        return self.range_height[1]
+
+    @max_w.setter
+    def max_w(self, value):
+        """Set new maximal height.
+
+        Property
+        --------
+        value : int
+            New maximal width.
+        Raises
+        ------
+        ValueError
+            Maximal width must be positive and more minimal width.
+        """
+        if 0 < value and self.range_height[0] < value or value is None:
+            self.range_height[1] = value
+            return
+        raise ValueError('Maximal width must be positive and more minimal width.')
+
+
+if __name__ == '__main__':
+    font = FontProperty()
+    font.color = pygame.Color(2)
+    font.name = 'Times new roman'
+    font.size = 25
+    print(font.name, font.size)
