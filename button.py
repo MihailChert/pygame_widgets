@@ -92,18 +92,17 @@ class Button(EventlessButton):
 			borders,
 			border_color,
 			margin,
-			target,
+			target
 		)
 		self.event = pygame.event.Event(Button.BUTTONEVENT)
 		self.event.button = self
 		self.event.button_id = self._id
 		self.event.button_name = self.name
 
-	def check_press(self, mouse_event, chenge_curr=False):
+	def check_press(self, mouse_event, change_curr=False):
 		if self.client_rect.collidepoint(mouse_event.pos):
 			self.select()
-			if (mouse_event.type in 
-				(pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP)):
+			if mouse_event.type in (pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP):
 				if self._pressed ^ (mouse_event.type == pygame.MOUSEBUTTONDOWN):
 					try:
 						self.target()
@@ -114,10 +113,10 @@ class Button(EventlessButton):
 						self.post()
 				self._pressed = mouse_event.type == pygame.MOUSEBUTTONDOWN
 			return True
-		if not chenge_curr:
+		if not change_curr:
 			self.unselect()
 		self._pressed = False
-		return chenge_curr
+		return change_curr
 
 	def post(self):
 		pygame.event.post(self.event)

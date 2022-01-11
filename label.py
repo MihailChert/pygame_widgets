@@ -52,13 +52,13 @@ class Label(pygame.sprite.Sprite):
 
 	def __init__(
 		self,
-		parent: pygame.sprite.Sprite,
+		parent: pygame.Surface,
 		pos: Tuple[int, int],
 		font: Union[FontProperty, dict, list, None],
 		text: str,
 		background: Tuple[int, int, int],
 		text_align: str,
-		trancparency: bool = False,
+		transparency: bool = False,
 		rect_size: Union[list, tuple] = None,
 		size_range: SizeRange = None,
 		padding: Padding = Padding(5),
@@ -82,7 +82,7 @@ class Label(pygame.sprite.Sprite):
 				Description
 		text_align : str
 				Description
-		trancparency : bool, optional
+		transparency : bool, optional
 				Description
 		rect_size : Union[list, tuple], optional
 				Description
@@ -113,7 +113,7 @@ class Label(pygame.sprite.Sprite):
 		self.resizble = rect_size is None
 		self.client_rect = pygame.Rect(pos, rect_size if not self.resizble else (0, 0))
 		self.set_size_range(size_range)
-		if trancparency:
+		if transparency:
 			self.surface = pygame.Surface(self.client_rect.size, pygame.SRCALPHA)
 		else:
 			self.surface = pygame.Surface(self.client_rect.size)
