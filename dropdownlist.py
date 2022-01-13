@@ -1,4 +1,5 @@
 import pygame
+import pdb
 
 from modules import FontProperty, Padding
 
@@ -11,7 +12,6 @@ class DropDownList(pygame.sprite.Sprite):
                  parent,
                  pos,
                  item_height,
-                 name: str = None,
                  surface_color=(255, 255, 255),
                  max_width=0,
                  item_padding: Padding = Padding((3, 10))
@@ -45,6 +45,7 @@ class DropDownList(pygame.sprite.Sprite):
         if 0 < self.max_width < self.client_rect.width:
             self.client_rect.width = self.max_width
         item.client_rect = pygame.Rect(0, self.client_rect.height, self.client_rect.width, self.item_height)
+        # item.padding = self.item_padding
         self.client_rect.height += self.item_height
         self.surface = pygame.Surface(self.client_rect.size)
 

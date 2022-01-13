@@ -6,6 +6,6 @@ widget_venv
 ^*.pyc
 ^*.jpeg
 ^*.png
-^test_*.py
+./test_*
 ./.idea
 tokens
