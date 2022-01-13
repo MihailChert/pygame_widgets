@@ -70,7 +70,7 @@ class Padding:
         """
         if name == "padding":
             return self.spaces
-        raise AttributeError("Unexpected attribute with name: " + name)
+        raise AttributeError(f"Unexpected attribute with name: {name}")
 
     def __str__(self) -> str:
         """Convert to string.
@@ -370,8 +370,8 @@ class Border(Padding):
             iter_x = cycle([0, self._parent.client_rectangle.w-2])
         except AttributeError as ex:
             if isinstance(self._parent, pygame.Surface):
-                iter_y = cycle([0, self._parent.get_height()-1])
-                iter_x = cycle([0, self._parent.get_width()-1])
+                iter_y = cycle([0, self._parent.get_height()-2])
+                iter_x = cycle([0, self._parent.get_width()-2])
             else:
                 raise ex
         pos_x = next(iter_x)
@@ -519,7 +519,8 @@ class FontProperty:
         self._name = name
         self.create_font()
 
-    def get_size(self) -> int:
+    @property
+    def font_size(self) -> int:
         """Get font size.
 
         Returns
@@ -529,7 +530,8 @@ class FontProperty:
         """
         return self._size
 
-    def set_size(self, size: int):
+    @font_size.setter
+    def font_size(self, size: int):
         """Set new font size.
         Rebuild text font.
 
