@@ -51,7 +51,7 @@ class EventlessButton(Label):
     unselect: function
         Action when removing the cursor from the object.
     target: function
-        Function has call on pressed.
+        Function has call on pressed. Function must have one parameter.
     """
 
     def __init__(
@@ -101,7 +101,7 @@ class EventlessButton(Label):
         margin : Margin, optional
             External indent. The margins of object add up.
         target : Callable
-            Function has call on pressed.
+            Function has call on pressed. Function must have one parameter.
         """
         super().__init__(
             parent,
@@ -162,7 +162,7 @@ class EventlessButton(Label):
             if mouse_event.type in (pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP):
                 if self._pressed ^ (mouse_event.type == pygame.MOUSEBUTTONDOWN):
                     try:
-                        self.target()
+                        self.target(self)
                     except TypeError as er:
                         if self.target is not None:
                             raise er

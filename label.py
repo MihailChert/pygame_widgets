@@ -76,7 +76,7 @@ class Label(pygame.sprite.Sprite):
 			Text to write in label. Text can be multiline.
 		surface_color : Tuple[int, int, int]
 			Color for text background.
-		text_align : str
+		text_align : string
 			Defined text position. Can be center, left, right. Default text align left.
 		transparency : bool, optional
 			Determines label transparency.
@@ -451,8 +451,8 @@ class Label(pygame.sprite.Sprite):
 			rect = pygame.Rect(
 				(
 					self.client_rect.w
-					- self.padding.rigth
-					- self.border.rigth
+					- self.padding.right
+					- self.border.right
 					- size[0],
 					self.padding.top + self.border.top + size[1] * line_number,
 				),

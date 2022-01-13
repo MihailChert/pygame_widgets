@@ -5,7 +5,7 @@ from itertools import cycle
 
 import pygame
 
-import pdb
+
 class Padding:
     """Internal indent of object.
 
@@ -134,7 +134,7 @@ class Padding:
         int
             Right and left indent.
         """
-        return self.rigth + self.left
+        return self.right + self.left
 
     def vertical_indent(self) -> int:
         """Sum top and bottom indent.
@@ -392,7 +392,6 @@ class Border(Padding):
         start_point = next(points_iter)
         for line, color in self:
             end_point = next(points_iter)
-            # pdb.set_trace()
             if hasattr(self._parent, 'surface'):
                 pygame.draw.line(self._parent.surface, color, start_point, end_point, line)
             else:

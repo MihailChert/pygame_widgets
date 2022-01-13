@@ -34,18 +34,22 @@ class DropDownList(pygame.sprite.Sprite):
         self.event = pygame.event.Event(DropDownList.DROPDOWNLISTEVENT)
         self.event.list_name = self.name
         self.event.list_id = self._id
-        self.event.item_id = None
+        self.event.selected_id = None
 
     def add_item(self, item):
         if (hasattr(item, 'event') or hasattr(item, 'post')) and not hasattr(item, 'target'):
-            raise RuntimeError('useless post event and havent target')
+            raise RuntimeError('useless post event and haven\'t target')
         self.items.append(item)
         item.parent = self
+        item.target = self.post
+        item.id = len(self.items)
         self.client_rect.width = max(item.client_rect.width, self.client_rect.width)
         if 0 < self.max_width < self.client_rect.width:
             self.client_rect.width = self.max_width
-        item.client_rect = pygame.Rect(0, self.client_rect.height, self.client_rect.width, self.item_height)
-        # item.padding = self.item_padding
+        for iter, elem in enumerate(self.items):
+            elem.client_rect.width = self.client_rect.width
+        item.padding = self.item_padding
+        item.client_rect.y = self.client_rect.height
         self.client_rect.height += self.item_height
         self.surface = pygame.Surface(self.client_rect.size)
 
@@ -54,7 +58,18 @@ class DropDownList(pygame.sprite.Sprite):
         self.client_rect.height -= self.item_height
         for iter, elem in enumerate(self.items):
             elem.client_rect.pos = (0, iter * self.item_height)
+            elem.id = iter
         self.surface = pygame.Surface(self.client_rect.size)
+
+    def post(self, button):
+        print(button.client_rect)
+        self.event.selected_id = self.selected_item = button.id
+        pygame.event.post(self.event)
+
+    def check_press(self, mouse_event, change_curr=False):
+        for item in self.items:
+            change_curr = item.check_press(mouse_event, change_curr)
+        return change_curr
 
     def draw(self):
         if not self.visible:
@@ -63,5 +78,6 @@ class DropDownList(pygame.sprite.Sprite):
             self.parent.blit(self.surface, self.client_rect)
         except AttributeError:
             self.parent.surface.blit(self.surfae, self.client_rect)
+        self.surface.fill(self.surface_color)
         for item in self.items:
             item.draw()
