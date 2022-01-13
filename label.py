@@ -98,7 +98,7 @@ class Label(pygame.sprite.Sprite):
 		self.set_font(font)
 		self.visible = True
 		self.id = Label.COUNTER
-		self.name = (type(self).__name__ + str(self.id)) if name is None else name
+		self.name = (type(self).__name__ + str(self.id))
 		Label.COUNTER += 1
 		self.parent = parent
 		self._text = text
@@ -114,8 +114,7 @@ class Label(pygame.sprite.Sprite):
 			self.surface = pygame.Surface(self.client_rect.size, pygame.SRCALPHA)
 		else:
 			self.surface = pygame.Surface(self.client_rect.size)
-		self.surface.fill(background)
-		self.surface_color = Border.parse_color(surface_color)
+		self.surface_color = Border.parse_colors(surface_color)
 
 	def set_font(self, font: Union[FontProperty, dict, list, tuple, None]) -> None:
 		"""Set new text font for label.

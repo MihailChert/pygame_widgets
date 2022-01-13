@@ -8,3 +8,4 @@ widget_venv
 ^*.png
 ^test_*.py
 ./.idea
+tokens

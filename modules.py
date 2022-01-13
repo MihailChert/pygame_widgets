@@ -70,7 +70,7 @@ class Padding:
         """
         if name == "padding":
             return self.spaces
-        raise AttributeError(f"Unexpected attribute with name: {name}")
+        raise AttributeError("Unexpected attribute with name: " + name)
 
     def __str__(self) -> str:
         """Convert to string.
@@ -205,7 +205,7 @@ class Padding:
             if space is None:
                 continue
             if isinstance(space, Padding):
-                res += space.left + space.rigth
+                res += space.left + space.right
             else:
                 raise TypeError(f"The {type(space)} is not space. It must be class or subclasses of 'Padding'.")
         return res
@@ -519,8 +519,7 @@ class FontProperty:
         self._name = name
         self.create_font()
 
-    @property
-    def size(self) -> int:
+    def get_size(self) -> int:
         """Get font size.
 
         Returns
@@ -530,8 +529,7 @@ class FontProperty:
         """
         return self._size
 
-    @size.setter
-    def size(self, size: int):
+    def set_size(self, size: int):
         """Set new font size.
         Rebuild text font.
 
