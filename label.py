@@ -98,7 +98,7 @@ class Label(pygame.sprite.Sprite):
 		self.set_font(font)
 		self.visible = True
 		self.id = Label.COUNTER
-		self.name = (type(self).__name__ + str(self.id)) if name is None else name
+		self.name = (type(self).__name__ + str(self.id))
 		Label.COUNTER += 1
 		self.parent = parent
 		self._text = text
@@ -110,12 +110,12 @@ class Label(pygame.sprite.Sprite):
 		self.client_rect = pygame.Rect(pos, rect_size if not self.resizable else (0, 0))
 		self.size_range = None
 		self.set_size_range(size_range)
+		self.transparency = transparency
 		if transparency:
 			self.surface = pygame.Surface(self.client_rect.size, pygame.SRCALPHA)
 		else:
 			self.surface = pygame.Surface(self.client_rect.size)
-		self.surface.fill(background)
-		self.surface_color = Border.parse_color(surface_color)
+		self.surface_color = Border.parse_colors(surface_color)
 
 	def set_font(self, font: Union[FontProperty, dict, list, tuple, None]) -> None:
 		"""Set new text font for label.
@@ -452,8 +452,8 @@ class Label(pygame.sprite.Sprite):
 			rect = pygame.Rect(
 				(
 					self.client_rect.w
-					- self.padding.rigth
-					- self.border.rigth
+					- self.padding.right
+					- self.border.right
 					- size[0],
 					self.padding.top + self.border.top + size[1] * line_number,
 				),
@@ -523,6 +523,11 @@ class Label(pygame.sprite.Sprite):
 		"""Draw label on parent"""
 		if not self.visible:
 			return
+		if self.surface.get_size()[0] != self.client_rect.width or self.surface.get_size()[1] != self.client_rect.height:
+			if self.transparency:
+				self.surface = pygame.Surface(self.client_rect.size, pygame.SRCALPHA)
+			else:
+				self.surface = pygame.Surface(self.client_rect.size)
 		try:
 			self.parent.blit(self.surface, self.client_rect)
 		except AttributeError:

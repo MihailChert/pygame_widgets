@@ -2,9 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1a77c28f-3dbb-45e6-aa99-87c2d693f2fe" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/eventlessbutton.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/button.py" beforeDir="false" afterPath="$PROJECT_DIR$/button.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eventlessbutton.py" beforeDir="false" afterPath="$PROJECT_DIR$/eventlessbutton.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/label.py" beforeDir="false" afterPath="$PROJECT_DIR$/label.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

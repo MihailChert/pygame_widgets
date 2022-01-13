@@ -134,7 +134,7 @@ class Padding:
         int
             Right and left indent.
         """
-        return self.rigth + self.left
+        return self.right + self.left
 
     def vertical_indent(self) -> int:
         """Sum top and bottom indent.
@@ -205,7 +205,7 @@ class Padding:
             if space is None:
                 continue
             if isinstance(space, Padding):
-                res += space.left + space.rigth
+                res += space.left + space.right
             else:
                 raise TypeError(f"The {type(space)} is not space. It must be class or subclasses of 'Padding'.")
         return res
@@ -520,7 +520,7 @@ class FontProperty:
         self.create_font()
 
     @property
-    def size(self) -> int:
+    def font_size(self) -> int:
         """Get font size.
 
         Returns
@@ -530,8 +530,8 @@ class FontProperty:
         """
         return self._size
 
-    @size.setter
-    def size(self, size: int):
+    @font_size.setter
+    def font_size(self, size: int):
         """Set new font size.
         Rebuild text font.
 
