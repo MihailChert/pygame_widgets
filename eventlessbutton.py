@@ -189,10 +189,12 @@ class EventlessButton(Label):
             self.parent.blit(self.surface, self.client_rect)
         except AttributeError:
             self.parent.surface.blit(self.surface, self.client_rect)
-        if hasattr(self.border, 'draw'):
-            self.border.draw()
+
+        self.surface.fill(self._active_color)
         if not self._pressed:
             self.draw_unpressed()
         else:
             self.draw_pressed()
         self.draw_text()
+        if hasattr(self.border, 'draw'):
+            self.border.draw()
