@@ -16,7 +16,7 @@ FPS = 30
 
 display = pygame.display.set_mode(DISPLAY_SIZE)
 clock = pygame.time.Clock()
-button = EventlessButton(display, (10, 10), None, 'some', (200, 200, 200), 'c', target=foo)
+button = EventlessButton(display, (10, 10), None, 'some', (200, 200, 200), 'c', target=foo, borders=3)
 
 while True:
     clock.tick(FPS)

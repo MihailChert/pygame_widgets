@@ -5,7 +5,7 @@ from itertools import cycle
 
 import pygame
 
-
+import pdb
 class Padding:
     """Internal indent of object.
 
@@ -366,12 +366,12 @@ class Border(Padding):
         """
         switcher = True
         try:
-            iter_y = cycle([0, self._parent.client_rectangle.h])
-            iter_x = cycle([0, self._parent.client_rectangle.w])
+            iter_y = cycle([0, self._parent.client_rectangle.h-2])
+            iter_x = cycle([0, self._parent.client_rectangle.w-2])
         except AttributeError as ex:
             if isinstance(self._parent, pygame.Surface):
-                iter_y = cycle([0, self._parent.get_height()])
-                iter_x = cycle([0, self._parent.get_width()])
+                iter_y = cycle([0, self._parent.get_height()-1])
+                iter_x = cycle([0, self._parent.get_width()-1])
             else:
                 raise ex
         pos_x = next(iter_x)
@@ -392,6 +392,7 @@ class Border(Padding):
         start_point = next(points_iter)
         for line, color in self:
             end_point = next(points_iter)
+            # pdb.set_trace()
             if hasattr(self._parent, 'surface'):
                 pygame.draw.line(self._parent.surface, color, start_point, end_point, line)
             else:
