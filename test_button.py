@@ -4,7 +4,7 @@ import pdb
 from eventlessbutton import EventlessButton
 
 
-def foo():
+def foo(button):
     print('event')
 
 
@@ -29,5 +29,4 @@ while True:
 
     display.fill(0)
     button.draw()
-    # pdb.set_trace()
     pygame.display.flip()

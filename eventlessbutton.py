@@ -185,8 +185,9 @@ class EventlessButton(Label):
         """Draw button."""
         if not self.visible:
             return
-        if self.surface.get_size()[0] != self.client_rect.width or self.surface.get_rect()[1] != self.client_rect.height:
-            if transparency:
+        if (self.surface.get_size()[0] != self.client_rect.width
+                or self.surface.get_size()[1] != self.client_rect.height):
+            if self.transparency:
                 self.surface = pygame.Surface(self.client_rect.size, pygame.SRCALPHA)
             else:
                 self.surface = pygame.Surface(self.client_rect.size)
