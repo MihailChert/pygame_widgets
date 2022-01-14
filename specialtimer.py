@@ -3,6 +3,8 @@ import threading
 
 import pygame
 
+from ieventbound import IEventBound
+
 
 class TimersController(threading.Thread):
 	"""Control Timers on single thread for push event cyclically after a period of time.
@@ -46,17 +48,15 @@ class TimersController(threading.Thread):
 		while True:
 			try:
 				for ind, timer in enumerate(self.timers):
-					now = pygame.time.get_ticks() - timer._last_activate
+					now = pygame.time.get_ticks() - timer.last_activate
 					if now >= timer.interval:
-						timer.target()
-						pygame.event.post(timer.event)
-						timer._last_activate = pygame.time.get_ticks()
+						timer.post()
 			except Exception as ex:
 				print(ex)
 				break
 
 
-class Timer:
+class Timer(IEventBound):
 	TIMEREVENT = pygame.event.custom_type()
 	COUNTER = 0
 	CONTROLLER = TimersController()
@@ -96,10 +96,18 @@ class Timer:
 		self._last_activate = None
 		Timer.COUNTER += 1
 		self.name = 'Timer'+str(self.id) if timer_name is None else timer_name
-		self.event = pygame.event.Event(Timer.TIMEREVENT)
-		self.event.timer_id = self.id
-		self.event.timer_name = self.name
+		self._event = pygame.event.Event(Timer.TIMEREVENT)
+		self._event.timer_id = self.id
+		self._event.timer_name = self.name
 		self.target = target
+
+	@property
+	def last_active(self):
+		return self._last_activate
+
+	@property
+	def event(self):
+		return self._event
 
 	def start(self):
 		"""Activate timer."""

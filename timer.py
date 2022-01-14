@@ -2,8 +2,10 @@ import pygame
 import threading
 import time
 
+from ieventbound import IEventBound
 
-class Timer(threading.Thread):
+
+class Timer(threading.Thread, IEventBound):
 	COUNTER = 0
 	TIMEREVENT = pygame.event.custom_type()
 	"""Push event cyclically after a period of time.
@@ -43,11 +45,15 @@ class Timer(threading.Thread):
 		self.interval = time_interval
 		self.id = Timer.COUNTER
 		self.name = timer_name if timer_name is not None else 'Timer' + str(self.id)
-		self.event = pygame.event.Event(Timer.TIMEREVENT)
-		self.event.timer_id = Timer.COUNTER
+		self._event = pygame.event.Event(Timer.TIMEREVENT)
+		self._event.timer_id = Timer.COUNTER
 		Timer.COUNTER += 1
-		self.event.timer = self
-		self.event.timer_name = self.name
+		self._event.timer = self
+		self._event.timer_name = self.name
+
+	@property
+	def event(self):
+		return self._event
 
 	def start(self):
 		"""Activate timer."""
@@ -65,10 +71,13 @@ class Timer(threading.Thread):
 			try:
 				if self.active:
 					time.sleep(self.interval / 1000)
-					pygame.event.post(self.event)
+					self.post()
 			except Exception as ex:
 				print(ex)
 				break
+
+	def post(self):
+		pygame.event.post(self.event)
 
 	def stop(self):
 		"""Timer stop without kill thread."""
@@ -119,7 +128,7 @@ class TargetTimer(Timer):
 				if self.active:
 					time.sleep(self.interval / 1000)
 					self.target()
-					pygame.event.post(self.event)
+					self.post()
 			except Exception as ex:
 				print(ex)
 				break

@@ -1,9 +1,10 @@
 import pygame
 
 from modules import FontProperty, Padding
+from ieventbound import IEventBound
 
 
-class DropDownList(pygame.sprite.Sprite):
+class DropDownList(pygame.sprite.Sprite, IEventBound):
     COUNTER = 0
     EVENT_ID = pygame.event.custom_type()
     default_font_color = (0, 0, 0)
@@ -32,6 +33,10 @@ class DropDownList(pygame.sprite.Sprite):
         self.surface = pygame.Surface()
         self.surface_color = beckground_color
 
+    @property
+    def event(self):
+        return self._event
+
     def set_font(self, font):
         if isinstance(font, FontProperty):
             self.font = font
@@ -56,7 +61,7 @@ class DropDownList(pygame.sprite.Sprite):
         self.items.append(item_name)
         self.rect.h += self.font.get_height() + self.item_padding.vertical_indent()
         self.rect.w = max(item_width, self.font.size(item_name)[0], self.rect.width)
-        if self.max_width > 0 and self.rect.width > self.max_width:
+        if 0 < self.max_width < self.rect.width:
             self.rect.width = self.max_width
         self.draw()
 
