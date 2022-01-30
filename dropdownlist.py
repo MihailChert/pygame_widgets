@@ -77,7 +77,7 @@ class DropDownList(pygame.sprite.Sprite):
         try:
             self.parent.blit(self.surface, self.client_rect)
         except AttributeError:
-            self.parent.surface.blit(self.surfae, self.client_rect)
+            self.parent.surface.blit(self.surface, self.client_rect)
         self.surface.fill(self.surface_color)
         for item in self.items:
             item.draw()

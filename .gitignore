@@ -2,9 +2,10 @@
 .pylintrc
 __pycache__
 widget_venv
-^*.pyc
-^*.jpeg
-^*.png
-./test_*
-./.idea
+*.pyc
+*.jpeg
+*.png
+test_*
+.idea
 tokens
+.idea/workspace.xml
