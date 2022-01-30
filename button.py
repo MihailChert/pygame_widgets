@@ -8,14 +8,14 @@ from ieventbound import IEventBound
 
 
 class Button(EventlessButton, IEventBound):
-	BUTTONEVENT = pygame.event.custom_type()
+	BUTTON_EVENT = pygame.event.custom_type()
 	"""Interactive text element.
 	On press make target.
 	Subclass EventlessButton.
 
 	Attributes
 	----------
-	BUTTONEVENT : int
+	BUTTON_EVENT : int
 		Event type of button
 	COUNTER : int
 		Counts all buttons created in program.
@@ -116,7 +116,7 @@ class Button(EventlessButton, IEventBound):
 			margin,
 			target
 		)
-		self._event = pygame.event.Event(Button.BUTTONEVENT)
+		self._event = pygame.event.Event(Button.BUTTON_EVENT)
 		self.event.button = self
 		self.event.button_id = self.id
 		self.event.button_name = self.name

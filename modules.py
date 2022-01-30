@@ -227,7 +227,7 @@ class Border(Padding):
 
     def __init__(
             self,
-            parent: Union[pygame.Surface],
+            parent: Union[pygame.Surface, pygame.sprite.Sprite],
             border_widths: Union[int, list, tuple],
             color: Union[list, tuple, pygame.Color]):
         """
@@ -366,8 +366,8 @@ class Border(Padding):
         """
         switcher = True
         try:
-            iter_y = cycle([0, self._parent.client_rectangle.h-2])
-            iter_x = cycle([0, self._parent.client_rectangle.w-2])
+            iter_y = cycle([0, self._parent.client_rect.h-2])
+            iter_x = cycle([0, self._parent.client_rect.w-2])
         except AttributeError as ex:
             if isinstance(self._parent, pygame.Surface):
                 iter_y = cycle([0, self._parent.get_height()-2])
@@ -446,7 +446,9 @@ class FontProperty:
     _font: pygame.font.Font
     """
 
-    def __init__(self, font_name: str = None, font_size: int = 16, font_color: Union[int, list, tuple] = 0):
+    def __init__(self, font_name: str = None,
+                 font_size: int = 16,
+                 font_color: Union[int, list, tuple, pygame.Color] = 0):
         """
         Parameters
         ----------
@@ -585,17 +587,20 @@ class SizeRange:
         Vertical size range.
     """
 
-    def __init__(self, min_width: int, max_width: int, min_height: int, max_height: int):
+    def __init__(self, min_width: int = None,
+                 max_width: int = None,
+                 min_height: int = None,
+                 max_height: int = None):
         """
         Parameters
         ----------
-        min_width : int
+        min_width : int, optional
             Minimal width.
-        max_width : int
+        max_width : int, optional
             Maximum width.
-        min_height : int
+        min_height : int, optional
             Minimum height
-        max_height : int
+        max_height : int, optional
             Maximum height
         """
         self.range_width = [min_width, max_width]
@@ -627,7 +632,7 @@ class SizeRange:
         ValueError
             New minimal width must be positive and less maximal width.
         """
-        if 0 <= value < self.range_width[1] or value is None:
+        if None in self.range_width or value is None or 0 <= value < self.range_width[1]:
             self.range_width[0] = value
             return
         raise ValueError('Minimal width must be positive and less maximum width.')
@@ -644,7 +649,7 @@ class SizeRange:
         return self.range_width[1]
 
     @max_w.setter
-    def max_w(self, value):
+    def max_w(self, value: int):
         """Set new maximal width.
 
         Property
@@ -656,7 +661,7 @@ class SizeRange:
         ValueError
             Maximal width must be positive and more minimal width.
         """
-        if 0 < value and self.range_width[0] < value or value is None:
+        if None in self.range_width or value is None or 0 < value and self.range_width[0] < value:
             self.range_width[1] = value
             return
         raise ValueError('Maximal width must be positive and more minimal width.')
@@ -686,7 +691,7 @@ class SizeRange:
         ValueError
             New minimal height must be positive and less maximal height.
         """
-        if 0 <= value < self.range_height[1] or value is None:
+        if None in self.range_height or value is None or 0 <= value < self.range_height[1]:
             self.range_height[0] = value
             return
         raise ValueError('Minimal width must be positive and less maximum width.')
@@ -715,7 +720,7 @@ class SizeRange:
         ValueError
             Maximal width must be positive and more minimal width.
         """
-        if 0 < value and self.range_height[0] < value or value is None:
+        if None in self.range_height or value is None or 0 < value and self.range_height[0] < value:
             self.range_height[1] = value
             return
         raise ValueError('Maximal width must be positive and more minimal width.')

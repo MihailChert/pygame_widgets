@@ -271,11 +271,8 @@ class Label(pygame.sprite.Sprite):
 				size = self.font.size(line)[0]
 				if max_size[0] < size:
 					max_size[0] = size
-			elif self.font.size(line)[
-				0
-			] <= self.size_range.max_w - Padding.absolute_horizontal_indent(
-				self.padding, self.border
-			):
+			elif self.font.size(line)[0] <= (self.size_range.max_w
+			                                 - Padding.absolute_horizontal_indent(self.padding, self.border)):
 				size = self.font.size(line)[0]
 				if max_size[0] < size:
 					max_size[0] = size

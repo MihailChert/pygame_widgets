@@ -94,7 +94,7 @@ class EventlessButton(Label):
             Determines maximum and minimum size. If equal None, then the size of object depends only on the text.
         padding : Padding, optional
             Internal indent.
-        border : int, optional
+        borders : int, optional
             Size of label borders.
         border_color : Union[List[int], Tuple[int, int, int]], optional
             Border's color.
