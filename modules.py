@@ -366,12 +366,12 @@ class Border(Padding):
         """
         switcher = True
         try:
-            iter_y = cycle([0, self._parent.client_rectangle.h])
-            iter_x = cycle([0, self._parent.client_rectangle.w])
+            iter_y = cycle([0, self._parent.client_rectangle.h-2])
+            iter_x = cycle([0, self._parent.client_rectangle.w-2])
         except AttributeError as ex:
             if isinstance(self._parent, pygame.Surface):
-                iter_y = cycle([0, self._parent.get_height()])
-                iter_x = cycle([0, self._parent.get_width()])
+                iter_y = cycle([0, self._parent.get_height()-2])
+                iter_x = cycle([0, self._parent.get_width()-2])
             else:
                 raise ex
         pos_x = next(iter_x)

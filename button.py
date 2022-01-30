@@ -98,7 +98,7 @@ class Button(EventlessButton, IEventBound):
 		margin : Margin, optional
 			External indent. The margins of object add up.
 		target : Callable
-			Function has call on pressed.
+			Function has call on pressed. Function must have one parameter.
 		"""
 		super().__init__(
 			parent,
@@ -132,7 +132,7 @@ class Button(EventlessButton, IEventBound):
 			if mouse_event.type in (pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP):
 				if self._pressed ^ (mouse_event.type == pygame.MOUSEBUTTONDOWN):
 					try:
-						self.target()
+						self.target(self)
 					except TypeError as er:
 						if self.target is not None:
 							raise er
