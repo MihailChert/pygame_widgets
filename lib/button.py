@@ -2,13 +2,12 @@ from typing import Union, Optional, Tuple, List, Callable
 
 import pygame
 
-from eventlessbutton import EventlessButton
-from modules import Padding, Margin, SizeRange
-from ieventbound import IEventBound
+from .eventlessbutton import EventlessButton
+from .modules import Padding, Margin, SizeRange
+from .ieventbound import IEventBound
 
 
 class Button(EventlessButton, IEventBound):
-	BUTTON_EVENT = pygame.event.custom_type()
 	"""Interactive text element.
 	On press make target.
 	Subclass EventlessButton.
@@ -50,6 +49,8 @@ class Button(EventlessButton, IEventBound):
 	event : pygame.event.Event
 		Push event on pressed.
 	"""
+
+	BUTTON_EVENT = pygame.event.custom_type()
 
 	def __init__(
 		self,

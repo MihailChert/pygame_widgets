@@ -1,10 +1,11 @@
 import pygame
 
-from modules import Padding
-from ieventbound import IEventBound
+from .modules import Padding
+from .ieventbound import IEventBound
 
 
 class DropDownList(pygame.sprite.Sprite, IEventBound):
+
     COUNTER = 0
     DROP_DOWN_LIST_EVENT = pygame.event.custom_type()
 
