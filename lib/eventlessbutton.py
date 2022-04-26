@@ -2,12 +2,11 @@ from typing import Union, Optional, Any, Tuple, List, Callable
 
 import pygame
 
-from label import Label
-from modules import Padding, Margin, SizeRange
+from .label import Label
+from .modules import Padding, Margin, SizeRange
 
 
 class EventlessButton(Label):
-    COUNTER = 0
     """Interactive text element.
     On press make target.
     Subclass Label.
@@ -53,6 +52,8 @@ class EventlessButton(Label):
     target: function
         Function has call on pressed. Function must have one parameter.
     """
+
+    COUNTER = 0
 
     def __init__(
             self,

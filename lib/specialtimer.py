@@ -3,7 +3,7 @@ import threading
 
 import pygame
 
-from ieventbound import IEventBound
+from .ieventbound import IEventBound
 
 
 class TimersController(threading.Thread):
@@ -57,9 +57,6 @@ class TimersController(threading.Thread):
 
 
 class Timer(IEventBound):
-	TIMEREVENT = pygame.event.custom_type()
-	COUNTER = 0
-	CONTROLLER = TimersController()
 	"""Push event and call target cyclically after a period of time.
 
 	Attributes
@@ -81,6 +78,10 @@ class Timer(IEventBound):
 	target : Callable
 		Function call of interval end.
 	"""
+
+	TIMEREVENT = pygame.event.custom_type()
+	COUNTER = 0
+	CONTROLLER = TimersController()
 
 	def __init__(self, time_interval: int, target: Callable = None, timer_name: str = None):
 		"""

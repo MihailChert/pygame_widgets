@@ -2,12 +2,10 @@ import pygame
 import threading
 import time
 
-from ieventbound import IEventBound
+from .ieventbound import IEventBound
 
 
 class Timer(threading.Thread, IEventBound):
-	COUNTER = 0
-	TIMEREVENT = pygame.event.custom_type()
 	"""Push event cyclically after a period of time.
 	One new timer create new thread.
 	Subclass Thread(daemon)
@@ -28,8 +26,10 @@ class Timer(threading.Thread, IEventBound):
 		Timer's id.
 	event : pygame.event.Event.
 		Event push of interval end.
-
 	"""
+
+	COUNTER = 0
+	TIMEREVENT = pygame.event.custom_type()
 
 	def __init__(self, time_interval: int, timer_name: str = None):
 		"""

@@ -3,12 +3,10 @@ from math import ceil
 
 import pygame
 
-from modules import Padding, Border, Margin, SizeRange, FontProperty
+from .modules import Padding, Border, Margin, SizeRange, FontProperty
 
 
 class Label(pygame.sprite.Sprite):
-	default_color = pygame.Color(255, 255, 255)
-	COUNTER = 0
 	"""Show static text. Text can change only in program.
 
 	Attributes
@@ -46,6 +44,9 @@ class Label(pygame.sprite.Sprite):
 	size_range : SizeRange
 		Determines maximum and minimum size. If equal None, then the size depends only on the text
 	"""
+
+	default_color = pygame.Color(255, 255, 255)
+	COUNTER = 0
 
 	def __init__(
 		self,

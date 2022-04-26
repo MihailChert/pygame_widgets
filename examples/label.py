@@ -1,12 +1,7 @@
 import pygame
 import sys
-import pdb
-from eventlessbutton import EventlessButton
 
-
-def foo(button):
-    print('event')
-
+from lib import Label
 
 pygame.font.init()
 pygame.init()
@@ -16,17 +11,16 @@ FPS = 30
 
 display = pygame.display.set_mode(DISPLAY_SIZE)
 clock = pygame.time.Clock()
-button = EventlessButton(display, (10, 10), None, 'some', (200, 200, 200), 'c', target=foo, borders=3)
-
+label = Label(display, (10, 10), None, 'some', (100, 100, 100), 'c')
+label.client_rect.width = 200
 while True:
+    display.fill(0)
     clock.tick(FPS)
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
             pygame.quit()
             sys.exit()
-        if event.type in [pygame.MOUSEMOTION, pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP]:
-            button.check_press(event)
 
-    display.fill(0)
-    button.draw()
+    label.draw()
     pygame.display.flip()
