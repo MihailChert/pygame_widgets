@@ -260,59 +260,52 @@ class Label(pygame.sprite.Sprite):
 		"""
 		line_counter = 0
 		max_size = [
-			0
-			if self.size_range is None or self.size_range.min_w is None
+			0 if self.size_range is None or self.size_range.min_w is None
 			else self.size_range.min_w,
-			0
-			if self.size_range is None or self.size_range.min_h is None
-			else self.size_range.min_h,
+			0 if self.size_range is None or self.size_range.min_h is None
+			else self.size_range.min_h
 		]
 		for line in self.text.splitlines():
-			if self.size_range is None or self.size_range.max_w is None:
+			try:
 				size = self.font.size(line)[0]
-				if max_size[0] < size:
-					max_size[0] = size
-			elif self.font.size(line)[0] <= (self.size_range.max_w
-			                                 - Padding.absolute_horizontal_indent(self.padding, self.border)):
-				size = self.font.size(line)[0]
-				if max_size[0] < size:
-					max_size[0] = size
-			else:
-				buffer = []
-				line = line.split()
-				while len(line) != 0 or self.font.size(" ".join(line))[
-					0
-				] > self.size_range.max_w - Padding.ansolute_horizontal_indent(
-					self.padding, self.border
-				):
-					while self.font.size(" ".join(line))[
-						0
-					] > self.size_range.max_w - Padding.absolute_horizontal_indent(
-						self.padding, self.border
-					):
-						buffer.append(line.pop())
-					# pdb.set_trace()
-					if len(line) == 0:
-						raise RuntimeError("Too small rectangle size for text word.")
-					size = self.font.size(" ".join(line))[0]
+				if size < (self.size_range.max_w - Padding.absolute_horizontal_indent(self.padding, self.border)):
 					if max_size[0] < size:
 						max_size[0] = size
-					line = buffer
-					line.reverse()
-					buffer = []
+					continue
+				draw_words_width = 0
+				for word in line.replace('\t', ' ').split(' '):
+					size = self.font.size(word)
+					if draw_words_width <= (
+							self.size_range.max_w - Padding.absolute_horizontal_indent(self.padding, self.border)):
+						draw_words_width += size
+					else:
+						if draw_words_width > max_size[0]:
+							max_size[0] = draw_words_width
+						draw_words_width = 0
+						line_counter += 1
+			except AttributeError:
+				size = self.font.size(line)[0]
+				if self.size_range is None or self.size_range.max_w is None:
+					if max_size[0] < size:
+						max_size[0] = size
 					line_counter += 1
 				else:
-					break
-			line_counter += 1
-		size = self.font.size("5")[1] * line_counter
-		if self.size_range is None or self.size_range.max_h is None:
-			if size > max_size[1]:
-				max_size[1] = size
-		elif size < self.size_range.max_h:
-			if size > max_size[1]:
-				max_size[1] = size
-		else:
-			max_size[1] = self.size_range.max_h
+					raise RuntimeError('Calculation error size_range.max_w isn\'t None')
+
+		try:
+			size = self.font.size('s')[1] * line_counter
+			if size <= (self.size_range.max_h - Padding.absolute_vertical_indent(self.pading, self.border)):
+				if max_size[1] < size:
+					max_size[1] = size
+			else:
+				if max_size[1] < size:
+					max_size[1] = size
+		except AttributeError:
+			if self.size_range is None or self.size_range.max_h is None:
+				if max_size[1] < size:
+					max_size[1] = size
+			else:
+				raise RuntimeError('Calculation error size_range.max_h isn\'t None')
 		max_size[0] += Padding.absolute_horizontal_indent(self.padding, self.border)
 		max_size[1] += Padding.absolute_vertical_indent(self.padding, self.border)
 		return pygame.Rect(pos, max_size)
@@ -378,7 +371,7 @@ class Label(pygame.sprite.Sprite):
 					self_rect.y - label_rect.y
 				)
 				yield label, delta_x, delta_y
-				
+
 	def _move(self, label, axis_x: bool, delta):
 		"""Both labels move.
 		If one of labels near top border, that one do not move.
@@ -477,45 +470,33 @@ class Label(pygame.sprite.Sprite):
 			raise ValueError(f'Unexpected text align: {self.align}.')
 		return rect
 
-	def draw_text(self) -> None:
+	def draw_text(self):
 		"""Draw aligned text on surface."""
-		line_counter = -1
+		line_counter = 0
 		for line in self.text.splitlines():
-			line_counter += 1
-			if self.font.size(line)[
-				0
-			] <= self.client_rect.width - Padding.absolute_horizontal_indent(
-				self.padding, self.border
-			):
+			size = self.font.size(line)
+			if size[0] < self.client_rect.width - Padding.absolute_horizontal_indent(self.padding, self.border):
 				render = self.font.render(line, False, self.font.color)
-				size = self.font.size(line)
-				# pdb.set_trace()
-			else:
-				buffer = []
-				line = line.split()
-				while len(line) != 0 or self.font.size(" ".join(line))[
-					0
-				] > self.client_rect.width - Padding.absolute_horizontal_indent(
-					self.padding, self.border
-				):
-					while self.font.size(" ".join(line))[
-						0
-					] > self.client_rect.width - Padding.absolute_horizontal_indent(
-						self.padding, self.border
-					):
-						buffer.append(line.pop())
-					size = self.font.size(" ".join(line))
-					render = self.font.render(" ".join(line), False, self.font.color)
-					rect = self.get_rect_align(size, line_counter)
-					self.surface.blit(render, rect)
-					line = buffer
-					line.reverse()
-					buffer = []
+				self.surface.blit(render, self.get_rect_align(size, line_counter))
+				line_counter += 1
+				continue
+			draw_words_length = 0
+			draw_words_width = 0
+			for word in line.replace('\t', ' ').split(' '):
+				if draw_words_width < self.client_rect.width - Padding.absolute_horisontal_indent(self.padding, self.border):
+					draw_words_length += len(word)
+					draw_words_width += self.font.size(word)[0]
+				else:
+					if draw_words_length == 0:
+						raise RuntimeError('Rect calculated wrong')
+					render = self.font.render(line[:draw_words_length], False, self.font.color)
+					size = (draw_words_width, self.font.size('l')[1])
+					self.surface.blit(render, self.get_rect_align(size, line_counter))
 					line_counter += 1
-				render = self.font.render(" ".join(line), False, self.font.color)
-				size = self.font.size(" ".join(line))
-			rect = self.get_rect_align(size, line_counter)
-			self.surface.blit(render, rect)
+					line = line[draw_words_length:]
+					draw_words_length = 0
+					draw_words_width = 0
+
 
 	def draw(self) -> None:
 		"""Draw label on parent"""
