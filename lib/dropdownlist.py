@@ -67,7 +67,6 @@ class DropDownList(pygame.sprite.Sprite, IEventBound):
         self.surface = pygame.Surface(self.client_rect.size)
 
     def create_post(self, button):
-        print(button.client_rect)
         self.event.selected_id = self.selected_item = button.id
         self.post()
 
