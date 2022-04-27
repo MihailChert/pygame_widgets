@@ -1,8 +1,8 @@
-import pygame
 import threading
 import time
 
 from .ieventbound import IEventBound
+from .event import Event
 
 
 class Timer(threading.Thread, IEventBound):
@@ -14,7 +14,7 @@ class Timer(threading.Thread, IEventBound):
 	----------
 	COUNTER : id
 		Counts all timers created in program.
-	TIMEREVENT : int
+	EVENT_TYPE : int
 		Event type of timer.
 	active : bool
 		Timer is active.
@@ -29,7 +29,7 @@ class Timer(threading.Thread, IEventBound):
 	"""
 
 	COUNTER = 0
-	TIMEREVENT = pygame.event.custom_type()
+	EVENT_TYPE = Event.custom_type()
 
 	def __init__(self, time_interval: int, timer_name: str = None):
 		"""
@@ -45,11 +45,8 @@ class Timer(threading.Thread, IEventBound):
 		self.interval = time_interval
 		self.id = Timer.COUNTER
 		self.name = timer_name if timer_name is not None else 'Timer' + str(self.id)
-		self._event = pygame.event.Event(Timer.TIMEREVENT)
-		self._event.timer_id = Timer.COUNTER
+		self._event = Event(Timer.EVENT_TYPE, timer_id=self.id, timer_name=self.name)
 		Timer.COUNTER += 1
-		self._event.timer = self
-		self._event.timer_name = self.name
 
 	@property
 	def event(self):
@@ -77,7 +74,7 @@ class Timer(threading.Thread, IEventBound):
 				break
 
 	def post(self):
-		pygame.event.post(self.event)
+		self._event.post()
 
 	def stop(self):
 		"""Timer stop without kill thread."""
@@ -117,7 +114,7 @@ class TargetTimer(Timer):
 			Function has call on end of interval.
 		"""
 		super().__init__(time_interval, timer_name)
-		self.target = target
+		self._event.add_custom_attrs(target=target)
 
 	def run(self):
 		"""Main body of timer.
@@ -127,7 +124,7 @@ class TargetTimer(Timer):
 			try:
 				if self.active:
 					time.sleep(self.interval / 1000)
-					self.target()
+					self._event.target()
 					self.post()
 			except Exception as ex:
 				print(ex)

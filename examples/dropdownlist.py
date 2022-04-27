@@ -1,7 +1,7 @@
 import sys
 import pygame
-
 from lib import Label, DropDownList, EventlessButton, Button
+
 
 pygame.font.init()
 pygame.init()
@@ -25,7 +25,7 @@ while True:
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
             pygame.quit()
             sys.exit()
-        if event.type == DropDownList.DROP_DOWN_LIST_EVENT:
+        if event.type == DropDownList.EVET_TYPE:
             print('dropdown item', event.selected_id)
         if event.type in [pygame.MOUSEMOTION, pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP]:
             drop_list.check_press(event)

@@ -4,6 +4,7 @@ import threading
 import pygame
 
 from .ieventbound import IEventBound
+from .event import Event
 
 
 class TimersController(threading.Thread):
@@ -61,7 +62,7 @@ class Timer(IEventBound):
 
 	Attributes
 	----------
-	TIMEREVENT : int
+	EVENT_TYPE : int
 		Event type for pygame.
 	COUNTER : int
 		Count all timers created in program.
@@ -79,7 +80,7 @@ class Timer(IEventBound):
 		Function call of interval end.
 	"""
 
-	TIMEREVENT = pygame.event.custom_type()
+	EVENT_TYPE = Event.custom_type()
 	COUNTER = 0
 	CONTROLLER = TimersController()
 
@@ -97,10 +98,7 @@ class Timer(IEventBound):
 		self._last_activate = None
 		Timer.COUNTER += 1
 		self.name = 'Timer'+str(self.id) if timer_name is None else timer_name
-		self._event = pygame.event.Event(Timer.TIMEREVENT)
-		self._event.timer_id = self.id
-		self._event.timer_name = self.name
-		self.target = target
+		self._event = Event(Timer.EVENT_TYPE, timer_id=self.id, timer_nmme=self.name, target=target)
 
 	@property
 	def last_active(self):
@@ -121,7 +119,7 @@ class Timer(IEventBound):
 
 	def post(self):
 		"""Post event and call target."""
-		pygame.event.post(self.event)
-		if self.target is not None:
-			self.target()
+		self._event.post()
+		if self._event.target is not None:
+			self._event.target()
 		self._last_activate = pygame.time.get_ticks()

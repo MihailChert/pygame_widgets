@@ -2,12 +2,13 @@ import pygame
 
 from .modules import Padding
 from .ieventbound import IEventBound
+from .event import Event
 
 
 class DropDownList(pygame.sprite.Sprite, IEventBound):
 
     COUNTER = 0
-    DROP_DOWN_LIST_EVENT = pygame.event.custom_type()
+    EVENT_TYPE = Event.custom_type()
 
     def __init__(self,
                  parent,
@@ -32,10 +33,7 @@ class DropDownList(pygame.sprite.Sprite, IEventBound):
         self.surface = pygame.Surface(self.client_rect.size)
         self.surface_color = surface_color
 
-        self._event = pygame.event.Event(DropDownList.DROP_DOWN_LIST_EVENT)
-        self._event.list_name = self.name
-        self._event.list_id = self.id
-        self._event.selected_id = None
+        self._event = Event(DropDownList.EVENT_TYPE, list_name=self.name, list_id=self.id, selected_id=None)
 
     @property
     def event(self):
@@ -71,7 +69,7 @@ class DropDownList(pygame.sprite.Sprite, IEventBound):
         self.post()
 
     def post(self):
-        pygame.event.post(self._event)
+        self._event.post()
 
     def check_press(self, mouse_event, change_curr=False):
         for item in self.items:
