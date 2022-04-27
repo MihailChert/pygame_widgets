@@ -15,7 +15,7 @@ class Button(EventlessButton, IEventBound):
 
 	Attributes
 	----------
-	BUTTON_EVENT : int
+	EVENT_TYPE : int
 		Event type of button
 	COUNTER : int
 		Counts all buttons created in program.

@@ -1,9 +1,7 @@
 import sys
 import pygame
-from label import Label
-from dropdownlist import DropDownList
-from eventlessbutton import EventlessButton
-from button import Button
+from lib import Label, DropDownList, EventlessButton, Button
+
 
 pygame.font.init()
 pygame.init()
