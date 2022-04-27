@@ -5,6 +5,7 @@ import pygame
 from .eventlessbutton import EventlessButton
 from .modules import Padding, Margin, SizeRange
 from .ieventbound import IEventBound
+from .event import Event
 
 
 class Button(EventlessButton, IEventBound):
@@ -50,7 +51,7 @@ class Button(EventlessButton, IEventBound):
 		Push event on pressed.
 	"""
 
-	BUTTON_EVENT = pygame.event.custom_type()
+	EVENT_TYPE = Event.custom_type()
 
 	def __init__(
 		self,
@@ -117,10 +118,11 @@ class Button(EventlessButton, IEventBound):
 			margin,
 			target
 		)
-		self._event = pygame.event.Event(Button.BUTTON_EVENT)
-		self.event.button = self
-		self.event.button_id = self.id
-		self.event.button_name = self.name
+		self._event = Event(Button.EVENT_TYPE, button=self, button_id=self.id, button_name=self.name)
+		# self._event = pygame.event.Event(Button.BUTTON_EVENT)
+		# self.event.button = self
+		# self.event.button_id = self.id
+		# self.event.button_name = self.name
 		self._pressed = False
 
 	@property
@@ -147,4 +149,4 @@ class Button(EventlessButton, IEventBound):
 		return change_curr
 
 	def post(self):
-		pygame.event.post(self.event)
+		self._event.post()
