@@ -6,6 +6,7 @@ import pdb
 class Event:
     TYPE = pygame.event.custom_type()
     __event_type_counter = 0
+    __disabled_event_types = set()
 
     def __init__(self, event_type, **kwargs):
         self._event = pygame.event.Event(Event.TYPE)
@@ -35,9 +36,19 @@ class Event:
             setattr(self._event, key, value)
 
     def post(self):
+        if self._event.event_type in Event.__disabled_event_types:
+            return
         pygame.event.post(self._event)
 
     @staticmethod
     def custom_type():
         Event.__event_type_counter += 1
         return Event.__event_type_counter
+
+    @staticmethod
+    def blocked_event_type(event_type):
+        Event.__disbled_event_types.add(event_type)
+
+    @staticmethod
+    def allove_event_type(event_type):
+        Event.__disbled_event_type.discard(event_type)
