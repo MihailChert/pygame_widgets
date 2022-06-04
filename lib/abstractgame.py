@@ -106,7 +106,7 @@ class AbstractGame(abc.ABC):
                 self.before_quit()
                 pygame.quit()
                 sys.exit()
-            if pygame.event.get_blocked((pygame.MOUSEMOTION, pygame.MULTIGESTURE)):
+            if not pygame.event.get_blocked((pygame.MOUSEMOTION, pygame.MULTIGESTURE)):
                 self.mouse_event(
                                 pygame.event.get(
                                     [
@@ -118,7 +118,7 @@ class AbstractGame(abc.ABC):
                                     ]
                                 )
                             )
-            if pygame.event.get_blocked(pygame.KEYDOWN) and pygame.event.get_blocked(pygame.KEYUP):
+            if not pygame.event.get_blocked(pygame.KEYDOWN) and not pygame.event.get_blocked(pygame.KEYUP):
                 self.key_event(
                                 pygame.event.get(
                                     [
@@ -127,7 +127,7 @@ class AbstractGame(abc.ABC):
                                     ]
                                 )
                             )
-            if pygame.event.get_blocked(Event.TYPE):
+            if not pygame.event.get_blocked(Event.TYPE):
                 self.custom_event(pygame.event.get(Event.TYPE))
             pygame.event.clear()
 

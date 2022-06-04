@@ -497,7 +497,6 @@ class Label(pygame.sprite.Sprite):
 					draw_words_length = 0
 					draw_words_width = 0
 
-
 	def draw(self) -> None:
 		"""Draw label on parent"""
 		if not self.visible:
