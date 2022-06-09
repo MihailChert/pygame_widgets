@@ -67,8 +67,7 @@ class EventlessButton(Label):
             rect_size: Union[pygame.Rect, List[int], Tuple[int, int, int, int]] = None,
             size_range: SizeRange = None,
             padding: Padding = Padding(10),
-            borders: Union[int, List[int], Tuple[int, ...]] = 2,
-            border_color: Union[pygame.Color, Tuple[int, int, int]] = (255, 255, 255),
+            border: Union[int, List[int], Tuple[int, ...]] = 2,
             margin: Margin = Margin(0),
             target: Optional[Callable] = None,
     ):
@@ -97,8 +96,6 @@ class EventlessButton(Label):
             Internal indent.
         borders : int, optional
             Size of label borders.
-        border_color : Union[List[int], Tuple[int, int, int]], optional
-            Border's color.
         margin : Margin, optional
             External indent. The margins of object add up.
         target : Callable
@@ -115,8 +112,7 @@ class EventlessButton(Label):
             rect_size,
             size_range,
             padding,
-            borders,
-            border_color,
+            border,
             margin,
         )
         Label.COUNTER -= 1

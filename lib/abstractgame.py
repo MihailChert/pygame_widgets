@@ -11,7 +11,7 @@ from .screen import Screen
 class AbstractGame(abc.ABC):
 
     @abc.abstractmethod
-    def __init__(self, size, fps=None, is_font=False, is_music=False, is_resizable=False, is_full_screen=False, flags=0):
+    def __init__(self, size, fps=0, is_font=False, is_music=False, is_resizable=False, is_full_screen=False, flags=0):
         if is_font:
             pygame.font.init()
         if is_music:
@@ -100,8 +100,7 @@ class AbstractGame(abc.ABC):
 
     def run(self):
         while True:
-            if self.fps is not None:
-                self.clock.tick(self.fps)
+            self.clock.tick(self.fps)
             if pygame.event.peek(pygame.QUIT):
                 self.before_quit()
                 pygame.quit()

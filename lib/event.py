@@ -1,6 +1,5 @@
 import sys
 import pygame
-import pdb
 
 
 class Event:
@@ -13,13 +12,13 @@ class Event:
         self._event.event_type = event_type
         self._set_custom_attrs(kwargs)
 
-    def __getattr__(self, atr):
-        return getattr(self._event, atr)
-
-    def __setattr__(self, key, value):
-        if not hasattr(self._event, key):
-            raise AttributeError('Unexpected attribute' + key)
-        setattr(self._event, key, value)
+    # def __getattr__(self, atr):
+    #     return getattr(self._event, atr)
+    #
+    # def __setattr__(self, key, value):
+    #     if not hasattr(self._event, key):
+    #         raise AttributeError('Unexpected attribute' + key)
+    #     setattr(self._event, key, value)
 
     def _set_custom_attrs(self, custom_args):
         if not isinstance(custom_args, dict):

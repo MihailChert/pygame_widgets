@@ -3,7 +3,7 @@ from typing import Union, Optional, Tuple, List, Callable
 import pygame
 
 from .eventlessbutton import EventlessButton
-from .modules import Padding, Margin, SizeRange
+from .modules import Padding, Border, Margin, SizeRange
 from .ieventbound import IEventBound
 from .event import Event
 
@@ -63,11 +63,10 @@ class Button(EventlessButton, IEventBound):
 		text_align: str,
 		transparency: bool = False,
 		rect_size: Union[pygame.Rect, List[int], Tuple[int, int, int, int]] = None,
-		size_range: SizeRange = None,
-		padding: Padding = Padding(10),
-		border: Union[int, List[int], Tuple[int, ...]] = 2,
-		border_color: Union[pygame.Color, Tuple[int, int, int]] = (255, 255, 255),
-		margin: Margin = Margin(0),
+		size_range: Optional[SizeRange] = None,
+		padding: Optional[Padding] = Padding(10),
+		border: Optional[Border]= None,
+		margin: Optional[Margin] = Margin(0),
 		target: Optional[Callable] = None,
 	):
 		"""
@@ -95,8 +94,6 @@ class Button(EventlessButton, IEventBound):
 			Internal indent.
 		border : int, optional
 			Size of label borders.
-		border_color : Union[List[int], Tuple[int, int, int]], optional
-			Border's color.
 		margin : Margin, optional
 			External indent. The margins of object add up.
 		target : Callable
@@ -114,7 +111,6 @@ class Button(EventlessButton, IEventBound):
 			size_range,
 			padding,
 			border,
-			border_color,
 			margin,
 			target
 		)

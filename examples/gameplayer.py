@@ -3,15 +3,13 @@ import sys
 from lib.abstractgame import AbstractGame
 from ffpyplayer.player import MediaPlayer
 from ffpyplayer.pic import SWScale
-import pdb
 
 
 class GamePlayer(AbstractGame):
 
-    def __init__(self, video_path, size, fps=None, is_font=False, is_music=False, is_resizable=False,
+    def __init__(self, video_path, size, fps=0, is_font=False, is_music=False, is_resizable=False,
                  is_full_screen=False, flags=0):
         super().__init__(size, fps, is_font, is_music, is_resizable, is_full_screen, flags)
-        # pdb.set_trace()
         self.path = video_path
         ff_opt = {'sync': 'video', 'paused': True}
         self.player = MediaPlayer(self.path, ff_opts=ff_opt)
@@ -31,7 +29,6 @@ class GamePlayer(AbstractGame):
         return
 
     def key_event(self, events):
-        # pdb.set_trace()
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:

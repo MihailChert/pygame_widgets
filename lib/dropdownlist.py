@@ -25,7 +25,7 @@ class DropDownList(pygame.sprite.Sprite, IEventBound):
         DropDownList.COUNTER += 1
         self.name = type(self).__name__ + str(self.id)
         self.items = []
-        self.selected_item = None
+        self.selected_item_id = float('nan')
         self.client_rect = pygame.Rect(pos, (0, 0))
         self.max_width = max_width
         self.item_height = item_height
@@ -38,6 +38,17 @@ class DropDownList(pygame.sprite.Sprite, IEventBound):
     @property
     def event(self):
         return self._event
+    
+    @property
+    def selected_item(self):
+        return self.items[self.selected_item_id]
+    
+    @selected_item.setter
+    def selected_item(self, item):
+        if item in self.items:
+            self.selected_item_id = self.items.index(item)
+        else:
+            raise RuntimeError(f'Unexpected value in dropdownlist with name {self.name} in items.')
 
     def add_item(self, item):
         if (hasattr(item, 'event') or hasattr(item, 'post')) and not hasattr(item, 'target'):
@@ -65,7 +76,7 @@ class DropDownList(pygame.sprite.Sprite, IEventBound):
         self.surface = pygame.Surface(self.client_rect.size)
 
     def create_post(self, button):
-        self.event.selected_id = self.selected_item = button.id
+        self.event.selected_id = self.selected_item_id = button.id
         self.post()
 
     def post(self):

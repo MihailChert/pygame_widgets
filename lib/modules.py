@@ -1,12 +1,14 @@
 """Summary
 """
+import pdb
 from typing import Union, Tuple
 from itertools import cycle
+from .objectcheck import ObjectCheck
 
 import pygame
 
 
-class Padding:
+class Padding(ObjectCheck):
     """Internal indent of object.
 
     Attributes
@@ -14,6 +16,8 @@ class Padding:
     spaces : List[int]
         List of indents of object like padding in css.
     """
+
+    DEFAULT_VALUES = {'size_space': 0}
 
     def __init__(self, size_space: Union[int, tuple, list]):
         """
@@ -225,6 +229,8 @@ class Border(Padding):
         Color's lines of border.
     """
 
+    DEFAULT_VALUES = {'border_widths': 0, 'color': 0, 'parent': None}
+
     def __init__(
             self,
             parent: Union[pygame.Surface, pygame.sprite.Sprite],
@@ -250,6 +256,7 @@ class Border(Padding):
             self._parent = parent
         else:
             raise ValueError("Parent can't beDescription None")
+
         for ind, space in enumerate(self.spaces):
             self.spaces[ind] = space * 2
         self.color = Border.parse_colors(color)
@@ -353,6 +360,14 @@ class Border(Padding):
                 raise RuntimeError("Large nesting of the list")
             raise ValueError("Invalid color. Can't create color. Lengths color widths must be 3(rgb)")
         raise TypeError("Colors must be list or tuple.")
+
+    @classmethod
+    def is_object_exist_else_get_default(cls, obj, **kwargs):
+        if 'parent' not in kwargs:
+            raise RuntimeError('Don\'t get parameter: \'parent\', for check')
+        cls.DEFAULT_VALUES['parent'] = kwargs['parent']
+        # pdb.set_trace()
+        return super().is_object_exist_else_get_default(obj, **kwargs)
 
     # Generator[YieldType, SendType, ReturnType]
     # pylint: disable = R1708
@@ -463,6 +478,7 @@ class FontProperty:
         self._size = font_size
         self._color = Border.parse_colors(font_color)
         self._font = None
+        self.create_font()
 
     def __getattr__(self, name: str):
         """Accessing the attributes of class pygame.font.Font.
@@ -576,7 +592,7 @@ class FontProperty:
         self._color = Border.parse_colors(color)
 
 
-class SizeRange:
+class SizeRange(ObjectCheck):
     """Range of vertical and horizontal size.
 
     Attributes
@@ -587,10 +603,12 @@ class SizeRange:
         Vertical size range.
     """
 
-    def __init__(self, min_width: int = None,
-                 max_width: int = None,
-                 min_height: int = None,
-                 max_height: int = None):
+    DEFAULT_VALUES = {'min_width': 0, 'max_width': float('inf'), 'min_height': 0, 'max_height': float('inf')}
+
+    def __init__(self, min_width: int = 0,
+                 max_width: int = 0,
+                 min_height: int = 0,
+                 max_height: int = 0):
         """
         Parameters
         ----------

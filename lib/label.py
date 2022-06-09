@@ -1,12 +1,14 @@
+import pdb
 from typing import Any, Union, Optional, List, Tuple
 from math import ceil
 
 import pygame
 
 from .modules import Padding, Border, Margin, SizeRange, FontProperty
+from .objectcheck import ObjectCheck
 
 
-class Label(pygame.sprite.Sprite):
+class Label(pygame.sprite.Sprite, ObjectCheck):
 	"""Show static text. Text can change only in program.
 
 	Attributes
@@ -57,12 +59,11 @@ class Label(pygame.sprite.Sprite):
 		surface_color: Tuple[int, int, int],
 		text_align: str,
 		transparency: bool = False,
-		rect_size: Union[list, tuple] = None,
-		size_range: SizeRange = None,
-		padding: Padding = Padding(3),
-		border: int = 4,
-		border_colors: Union[List[int], Tuple[int, int, int]] = (255, 255, 255),
-		margin: Margin = Margin(0),
+		rect_size: Optional[Union[list, tuple]] = None,
+		size_range: Optional[SizeRange] = None,
+		padding: Optional[Padding] = Padding(3),
+		border: Optional[Border] = 4,
+		margin: Optional[Margin] = None,
 	):
 		"""
 		Parameters
@@ -103,10 +104,12 @@ class Label(pygame.sprite.Sprite):
 		Label.COUNTER += 1
 		self.parent = parent
 		self._text = text
-		self.padding = padding
-		self.border = Border(self, border, border_colors)
-		self.margin = margin
-		self.align = "l" if text_align is None else text_align.lower()
+		self.padding = Padding.is_object_exist_else_get_default(padding)
+		self.border = Border.is_object_exist_else_get_default(border, parent=self)
+		self.margin = Margin.is_object_exist_else_get_default(margin)
+		if text_align.lower()[0] not in ['l', 'c', 'r']:
+			raise RuntimeError('Unexpected value text align. Use one of list: "right", "center", "left"')
+		self.align = text_align.lower()[0]
 		self.resizable = rect_size is None
 		self.client_rect = pygame.Rect(pos, rect_size if not self.resizable else (0, 0))
 		self.size_range = None
@@ -134,7 +137,6 @@ class Label(pygame.sprite.Sprite):
 			self.font = FontProperty(*font)
 		else:
 			self.font = FontProperty(None, 16, Label.default_color)
-		self.font.create_font()
 
 	@property
 	def client_rectangle(self) -> pygame.Rect:
@@ -178,10 +180,10 @@ class Label(pygame.sprite.Sprite):
 		TypeError
 			Expected type - SizeRange
 		"""
-		if not isinstance(size_range, (SizeRange, type(None))):
-			raise TypeError("Expected type - SizeRange")
+		# if not isinstance(size_range, SizeRange) or size_range is not None:
+		# 	raise TypeError("Unexpected type - SizeRange")
 		if not self.resizable:
-			self.size_range = None
+			self.size_range = SizeRange.is_exist_object_else_get_default(size_range)
 		else:
 			self.size_range = size_range
 			self.client_rect = self.calc_rect((self.client_rect.x, self.client_rect.y))
@@ -483,7 +485,7 @@ class Label(pygame.sprite.Sprite):
 			draw_words_length = 0
 			draw_words_width = 0
 			for word in line.replace('\t', ' ').split(' '):
-				if draw_words_width < self.client_rect.width - Padding.absolute_horisontal_indent(self.padding, self.border):
+				if draw_words_width < self.client_rect.width - Padding.absolute_horizontal_indent(self.padding, self.border):
 					draw_words_length += len(word)
 					draw_words_width += self.font.size(word)[0]
 				else:
