@@ -11,8 +11,9 @@ FPS = 30
 
 display = pygame.display.set_mode(DISPLAY_SIZE)
 clock = pygame.time.Clock()
-label = Label(display, (10, 10), None, 'some', (100, 100, 100), 'c')
-label.client_rect.width = 200
+label = Label(display, (10, 10), None, 'some', (100, 100, 100), 'l ')
+label.text = Label.__doc__
+# label.client_rect.width = 200
 while True:
     display.fill(0)
     clock.tick(FPS)
