@@ -1,4 +1,3 @@
-import pdb
 from typing import Any, Union, Optional, List, Tuple
 from math import ceil
 
@@ -477,22 +476,22 @@ class Label(pygame.sprite.Sprite, ObjectCheck):
 		line_counter = 0
 		for line in self.text.splitlines():
 			size = self.font.size(line)
-			if size[0] < self.client_rect.width - Padding.absolute_horizontal_indent(self.padding, self.border):
-				render = self.font.render(line, False, self.font.color)
+			if size[0] <= self.client_rect.width - Padding.absolute_horizontal_indent(self.padding, self.border):
+				render = self.font.render(line, True, self.font.color)
 				self.surface.blit(render, self.get_rect_align(size, line_counter))
 				line_counter += 1
 				continue
 			draw_words_length = 0
 			draw_words_width = 0
 			for word in line.replace('\t', ' ').split(' '):
-				if draw_words_width < self.client_rect.width - Padding.absolute_horizontal_indent(self.padding, self.border):
+				if draw_words_width <= self.client_rect.width - Padding.absolute_horizontal_indent(self.padding, self.border):
 					draw_words_length += len(word)
 					draw_words_width += self.font.size(word)[0]
 				else:
 					if draw_words_length == 0:
 						raise RuntimeError('Rect calculated wrong')
-					render = self.font.render(line[:draw_words_length], False, self.font.color)
-					size = (draw_words_width, self.font.size('l')[1])
+					render = self.font.render(line[:draw_words_length], True, self.font.color)
+					size = (draw_words_width, size[1])
 					self.surface.blit(render, self.get_rect_align(size, line_counter))
 					line_counter += 1
 					line = line[draw_words_length:]
