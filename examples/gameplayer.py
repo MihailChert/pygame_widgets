@@ -59,6 +59,6 @@ class GamePlayer(AbstractGame):
 
 
 # if __name__ == '__main__':
-player = GamePlayer('/home/mihail/Видео/freak kithen - freak of the week.mp4', (600, 500), fps=None, is_font=True)
+player = GamePlayer('/home/mihail/Видео/freak kithen - freak of the week.mp4', (600, 500), is_font=True)
 # pdb.set_trace()
 player.run()

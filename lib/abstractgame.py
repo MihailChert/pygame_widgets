@@ -22,6 +22,8 @@ class AbstractGame(abc.ABC):
         self.active_screen = Screen(self, self.window)
         self.screens = [self.active_screen]
         self.clock = pygame.time.Clock()
+        if fps is None:
+            raise TypeError('FPS can\'t be None')
         self.fps = fps
 
     def add_screen(self, new_screen):
