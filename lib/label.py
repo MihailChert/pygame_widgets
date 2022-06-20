@@ -2,6 +2,7 @@ from typing import Any, Union, Optional, List, Tuple
 from math import ceil
 
 import pygame
+import pdb
 
 from .modules import Padding, Border, Margin, SizeRange, FontProperty
 from .objectcheck import ObjectCheck
@@ -182,9 +183,10 @@ class Label(pygame.sprite.Sprite, ObjectCheck):
 		# if not isinstance(size_range, SizeRange) or size_range is not None:
 		# 	raise TypeError("Unexpected type - SizeRange")
 		if not self.resizable:
-			self.size_range = SizeRange.is_exist_object_else_get_default(size_range)
+			self.size_range = SizeRange.is_object_exist_else_get_default(None)
+			self.size_range.max_w, self.size_range.max_h = self.client_rect.size
 		else:
-			self.size_range = size_range
+			self.size_range = SizeRange.is_object_exist_else_get_default(size_range)
 			self.client_rect = self.calc_rect((self.client_rect.x, self.client_rect.y))
 
 	@property
@@ -260,53 +262,33 @@ class Label(pygame.sprite.Sprite, ObjectCheck):
 			Too small rectangle size for text word.
 		"""
 		line_counter = 0
-		max_size = [
-			0 if self.size_range is None or self.size_range.min_w is None
-			else self.size_range.min_w,
-			0 if self.size_range is None or self.size_range.min_h is None
-			else self.size_range.min_h
-		]
-		for line in self.text.splitlines():
-			try:
-				size = self.font.size(line)[0]
-				if size < (self.size_range.max_w - Padding.absolute_horizontal_indent(self.padding, self.border)):
-					if max_size[0] < size:
-						max_size[0] = size
-					continue
-				draw_words_width = 0
-				for word in line.replace('\t', ' ').split(' '):
-					size = self.font.size(word)
-					if draw_words_width <= (
-							self.size_range.max_w - Padding.absolute_horizontal_indent(self.padding, self.border)):
-						draw_words_width += size
-					else:
-						if draw_words_width > max_size[0]:
-							max_size[0] = draw_words_width
-						draw_words_width = 0
-						line_counter += 1
-			except AttributeError:
-				size = self.font.size(line)[0]
-				if self.size_range is None or self.size_range.max_w is None:
-					if max_size[0] < size:
-						max_size[0] = size
-					line_counter += 1
-				else:
-					raise RuntimeError('Calculation error size_range.max_w isn\'t None')
+		max_size = [self.size_range.min_w, self.size_range.min_h]
 
-		try:
-			size = self.font.size('s')[1] * line_counter
-			if size <= (self.size_range.max_h - Padding.absolute_vertical_indent(self.pading, self.border)):
-				if max_size[1] < size:
-					max_size[1] = size
-			else:
-				if max_size[1] < size:
-					max_size[1] = size
-		except AttributeError:
-			if self.size_range is None or self.size_range.max_h is None:
-				if max_size[1] < size:
-					max_size[1] = size
-			else:
-				raise RuntimeError('Calculation error size_range.max_h isn\'t None')
+		for line in self.text.splitlines():
+			line = line.replace('\t', ' '*4)
+			size = self.font.size(line)
+			if size[0] <= self.size_range.max_w - Padding.absolute_horizontal_indent(self.padding, self.border):
+				if max_size[0] < size[0]:
+					max_size[0] = size[0]
+				line_counter += 1
+				continue
+			draw_words_width = 0
+			for word in line.replace('\t', ' ').split(' '):
+				if draw_words_width <= self.size_range.max_w - Padding.absolute_horizontal_indent(self.padding, self.border):
+					draw_words_width += self.font.size(word)[0]
+				else:
+					if draw_words_width > max_size[0]:
+						max_size[0] = draw_words_width
+					line_counter += 1
+					draw_words_width = 0
+
+		height = self.font.font_size * line_counter
+		if height <= (self.size_range.max_h - Padding.absolute_vertical_indent(self.padding, self.border)):
+			if max_size[1] < height:
+				max_size[1] = height
+		else:
+			max_size = self.size_range.max_h
+
 		max_size[0] += Padding.absolute_horizontal_indent(self.padding, self.border)
 		max_size[1] += Padding.absolute_vertical_indent(self.padding, self.border)
 		return pygame.Rect(pos, max_size)
@@ -447,7 +429,7 @@ class Label(pygame.sprite.Sprite, ObjectCheck):
 					- self.padding.right
 					- self.border.right
 					- size[0],
-					self.padding.top + self.border.top + size[1] * line_number,
+					self.padding.top + self.border.top + self.font.font_size * line_number + (self.font.font_size - size[1]),
 				),
 				size,
 			)
@@ -455,7 +437,7 @@ class Label(pygame.sprite.Sprite, ObjectCheck):
 			rect = pygame.Rect(
 				(
 					self.client_rect.w // 2 - size[0] // 2,
-					self.padding.top + self.border.top + size[1] * line_number,
+					self.padding.top + self.border.top + self.font.font_size * line_number + (self.font.font_size - size[1]),
 				),
 				size,
 			)
@@ -463,7 +445,7 @@ class Label(pygame.sprite.Sprite, ObjectCheck):
 			rect = pygame.Rect(
 				(
 					self.padding.left + self.border.left,
-					self.padding.top + self.border.top + size[1] * line_number,
+					self.padding.top + self.border.top + self.font.font_size * line_number + (self.font.font_size - size[1]),
 				),
 				size,
 			)
@@ -475,6 +457,7 @@ class Label(pygame.sprite.Sprite, ObjectCheck):
 		"""Draw aligned text on surface."""
 		line_counter = 0
 		for line in self.text.splitlines():
+			line = line.replace('\t', ' '*4)
 			size = self.font.size(line)
 			if size[0] <= self.client_rect.width - Padding.absolute_horizontal_indent(self.padding, self.border):
 				render = self.font.render(line, True, self.font.color)

@@ -1,7 +1,7 @@
 """Summary
 """
 import pdb
-from typing import Union, Tuple
+from typing import Union, Tuple, Optional
 from itertools import cycle
 from .objectcheck import ObjectCheck
 
@@ -606,9 +606,9 @@ class SizeRange(ObjectCheck):
     DEFAULT_VALUES = {'min_width': 0, 'max_width': float('inf'), 'min_height': 0, 'max_height': float('inf')}
 
     def __init__(self, min_width: int = 0,
-                 max_width: int = 0,
+                 max_width: int = float('inf'),
                  min_height: int = 0,
-                 max_height: int = 0):
+                 max_height: int = float('inf')):
         """
         Parameters
         ----------
@@ -624,6 +624,16 @@ class SizeRange(ObjectCheck):
         self.range_width = [min_width, max_width]
         self.range_height = [min_height, max_height]
 
+    @classmethod
+    def is_object_exist_else_get_default(cls, obj, **kwargs):
+        if obj is None:
+            return cls(**cls.DEFAULT_VALUES)
+        if None in obj.range_width:
+            obj.range_width = [cls.DEFAULT_VALUES['min_width'], cls.DEFAULT_VALUES['max_width']]
+        if None not in obj.range_height:
+            obj.range_height = [cls.DEFAULT_VALUES['min_height'], cls.DEFAULT_VALUES['max_height']]
+        return obj
+
     @property
     def min_w(self) -> int:
         """GEt minimal width.
@@ -636,22 +646,25 @@ class SizeRange(ObjectCheck):
         return self.range_width[0]
 
     @min_w.setter
-    def min_w(self, value: int):
+    def min_w(self, value: Optional[int]):
         """Set new minimal width.
         New minimal width must be positive and less maximal width.
 
         Parameters
         ----------
-        value : int
-            New minimal width
+        value : int, optional
+            New minimal width. If value is None, minimal width reset to default: 0.
 
         Raises
         ------
         ValueError
             New minimal width must be positive and less maximal width.
         """
-        if None in self.range_width or value is None or 0 <= value < self.range_width[1]:
+        if value < self.range_width[1]:
             self.range_width[0] = value
+            return
+        elif value is None:
+            self.range_width[0] = 0
             return
         raise ValueError('Minimal width must be positive and less maximum width.')
 
@@ -667,20 +680,23 @@ class SizeRange(ObjectCheck):
         return self.range_width[1]
 
     @max_w.setter
-    def max_w(self, value: int):
+    def max_w(self, value: Optional[int]):
         """Set new maximal width.
 
         Property
         --------
-        value : int
-            New maximal width.
+        value : int, optional
+            New maximal width. If value is None, maximal width reset to default: inf
         Raises
         ------
         ValueError
             Maximal width must be positive and more minimal width.
         """
-        if None in self.range_width or value is None or 0 < value and self.range_width[0] < value:
+        if self.range_width[0] < value:
             self.range_width[1] = value
+            return
+        elif value is None:
+            self.range_width[1] = float('inf')
             return
         raise ValueError('Maximal width must be positive and more minimal width.')
 
@@ -696,21 +712,24 @@ class SizeRange(ObjectCheck):
         return self.range_height[0]
 
     @min_h.setter
-    def min_h(self, value: int):
+    def min_h(self, value: Optional[int]):
         """Set new minimal height.
 
         Parameters
         ----------
-        value : int
-            New minimal height
+        value : int, optional
+            New minimal height. If value is None, minimal height reset value to default: 0.
 
         Raises
         ------
         ValueError
             New minimal height must be positive and less maximal height.
         """
-        if None in self.range_height or value is None or 0 <= value < self.range_height[1]:
+        if value < self.range_height[1]:
             self.range_height[0] = value
+            return
+        if value is None:
+            self.range_height[0] = 0
             return
         raise ValueError('Minimal width must be positive and less maximum width.')
 
@@ -725,21 +744,24 @@ class SizeRange(ObjectCheck):
         """
         return self.range_height[1]
 
-    @max_w.setter
-    def max_w(self, value):
+    @max_h.setter
+    def max_h(self, value: Optional[int]):
         """Set new maximal height.
 
         Property
         --------
-        value : int
-            New maximal width.
+        value : int, optional
+            New maximal height. If value is None, maximal height reset to default: inf.
         Raises
         ------
         ValueError
             Maximal width must be positive and more minimal width.
         """
-        if None in self.range_height or value is None or 0 < value and self.range_height[0] < value:
+        if self.range_height[0] < value:
             self.range_height[1] = value
+            return
+        if value is None:
+            self.range_height[1] = float('inf')
             return
         raise ValueError('Maximal width must be positive and more minimal width.')
 
