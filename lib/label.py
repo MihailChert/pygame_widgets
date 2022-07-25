@@ -497,4 +497,4 @@ class Label(pygame.sprite.Sprite, ObjectCheck):
 		self.surface.fill(self.surface_color)
 		self.draw_text()
 		if hasattr(self.border, 'draw'):
-			self.border.draw()
+			self.border.draw(1)

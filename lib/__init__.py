@@ -4,4 +4,4 @@ from .timer import Timer, TargetTimer
 from .specialtimer import Timer
 from .button import Button
 from .eventlessbutton import EventlessButton
-from .dropdownlist import DropDownList
+from .menulist import MenuList

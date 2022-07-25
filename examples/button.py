@@ -33,5 +33,5 @@ while True:
             print('Event custom button id=', event.button_id)
 
     display.fill(0)
-    button.draw()
+    button.draw(1)
     pygame.display.flip()

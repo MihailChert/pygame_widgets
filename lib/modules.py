@@ -765,6 +765,24 @@ class SizeRange(ObjectCheck):
             return
         raise ValueError('Maximal width must be positive and more minimal width.')
 
+    def get_max_width_from_range(self, widths):
+        res_width = self.min_w
+        for width in widths:
+            if res_width < width:
+                res_width = width
+            if res_width >= self.max_w:
+                return self.max_w
+        return res_width
+
+    def get_max_height_from_range(self, heights):
+        res_height = self.min_h
+        for height in heights:
+            if res_height < height:
+                res_height = height
+            if res_height >= self.max_h:
+                return res_height
+        return res_height
+
 
 if __name__ == '__main__':
     font = FontProperty()

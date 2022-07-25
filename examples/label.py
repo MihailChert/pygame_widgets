@@ -23,5 +23,5 @@ while True:
             pygame.quit()
             sys.exit()
 
-    label.draw()
+    label.draw(1)
     pygame.display.flip()

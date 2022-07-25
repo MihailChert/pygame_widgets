@@ -31,5 +31,5 @@ while True:
             drop_list.check_press(event)
 
     display.fill(0)
-    drop_list.draw()
+    drop_list.draw(1)
     pygame.display.flip()
