@@ -252,10 +252,7 @@ class Border(Padding):
             Parent can't be None
         """
         super().__init__(border_widths)
-        if parent is not None:
-            self._parent = parent
-        else:
-            raise ValueError("Parent can't beDescription None")
+        self._parent = parent
 
         for ind, space in enumerate(self.spaces):
             self.spaces[ind] = space * 2
@@ -327,6 +324,11 @@ class Border(Padding):
             String representation.
         """
         return super().__str__() + f" colors:{self.color};"
+
+    def set_parent(self, new_parent):
+        if new_parent is None:
+            raise RuntimeError('Parent can\'t be none type')
+        self._parent = new_parent
 
     @staticmethod
     def parse_colors(color: Union[int, list, tuple, pygame.Color]) -> pygame.Color:

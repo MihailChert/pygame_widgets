@@ -5,3 +5,4 @@ from .specialtimer import Timer
 from .button import Button
 from .eventlessbutton import EventlessButton
 from .menulist import MenuList
+from .event import Event

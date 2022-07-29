@@ -12,20 +12,21 @@ class Event:
         self._event.event_type = event_type
         self._set_custom_attrs(kwargs)
 
-    # def __getattr__(self, atr):
-    #     return getattr(self._event, atr)
-    #
-    # def __setattr__(self, key, value):
-    #     if not hasattr(self._event, key):
-    #         raise AttributeError('Unexpected attribute' + key)
-    #     setattr(self._event, key, value)
+    def __getattr__(self, atr):
+        return getattr(self._event, atr)
+
+    def __setattr__(self, key, value):
+        if '_event' == key:
+            super().__setattr__(key, value)
+            return
+        self._event.__dict__[key] = value
 
     def _set_custom_attrs(self, custom_args):
         if not isinstance(custom_args, dict):
             raise RuntimeError('Event custom property mast have name.')
         for key, value in custom_args.items():
             if key[0].isdigit():
-                raise ValueError('Unexpected name of attribute: ' + key)
+                raise ValueError('Invalid name of attribute: ' + key)
             setattr(self._event, key, value)
 
     def add_custom_attr(self, **kwargs):
