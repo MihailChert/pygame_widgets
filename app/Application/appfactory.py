@@ -11,6 +11,7 @@ class AppFactory(AbstractFactory):
 	def __init__(self, name, app, factories):
 		super().__init__(name, app)
 		self.factories = factories
+		self.clock = pygame.time.Clock()
 		self._single_existing['display_mod'] = app.config['display_mod']
 
 	@staticmethod
@@ -42,7 +43,7 @@ class AppFactory(AbstractFactory):
 		if isinstance(factory, AbstractFactory):
 			self._single_existing[factory_name] = factory
 			return
-		raise ValueError('Factory mst implement AbstractFactory')
+		raise ValueError('Factory mast implement AbstractFactory')
 
 	def init(self):
 		if pygame.get_init():
@@ -51,6 +52,10 @@ class AppFactory(AbstractFactory):
 		for factory in self.factories.values():
 			factory.init()
 		self._single_existing['surface'] = pygame.display.set_mode(self._single_existing['display_mod'])
+		try:
+			self.get_controller().set_cation(self._app.config['caption'])
+		except KeyError:
+			pass
 
 	def get_controller(self):
 		if not self.is_single_exist('controller'):
@@ -62,6 +67,9 @@ class AppFactory(AbstractFactory):
 			return self.factories[module_name].get_controller().get_event_id()
 		except KeyError:
 			raise ValueError(f'Unexpected module with name: {module_name}')
+
+	def get_clock(self):
+		return self.clock
 
 	def get_surface(self):
 		if not self.is_single_exist('surface'):

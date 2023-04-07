@@ -23,7 +23,7 @@ class Application:
 
 	@staticmethod
 	def set_default_config():
-		return {'display_mod': (100, 100)}
+		return {'display_mod': (500, 500), 'display_flags': 0}
 
 	def update_includes(self, factory_name, factory):
 		self.factories_config[factory_name] = factory
@@ -34,6 +34,8 @@ class Application:
 
 	def run(self):
 		self._main_factory.init()
+		clock = self._main_factory.get_clock()
 		while True:
+			clock.tick()
 			for controller in self._main_factory.get_all_controllers():
 				controller._listen()

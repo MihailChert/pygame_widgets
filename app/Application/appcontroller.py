@@ -23,6 +23,10 @@ class AppController(AbstractController):
 	def get_event_id(self):
 		return self._selected_event
 
+	@staticmethod
+	def set_caption(new_caption):
+		pygame.display.set_caption(new_caption)
+
 	def destroy(self):
 		pass
 
@@ -36,7 +40,8 @@ class AppController(AbstractController):
 				print(er)
 				self.empty_method(event)
 
-	def quit(self, event):
+	@staticmethod
+	def quit(event):
 		pygame.quit()
 		sys.exit()
 
