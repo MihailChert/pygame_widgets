@@ -1,14 +1,17 @@
+import pdb
 from abc import ABC, abstractmethod
 
 
 class AbstractFactory(ABC):
 
 	@abstractmethod
-	def __init__(self, name, app):
+	def __init__(self, name, app, main_factory):
 		self._single_existing = {'controller': None, 'logger': None}
 		app.update_includes(name, self)
 		self._name = name
 		self._app = app
+		self.logger = main_factory.get_logger(name)
+		self.config_logger()
 
 	@abstractmethod
 	def init(self):
@@ -26,8 +29,11 @@ class AbstractFactory(ABC):
 	def update_single_object(self, single_name, single_object=None):
 		self._single_existing[single_name] = single_object
 
-	def get_logger(self, sub_name=''):
-		return self.logger.getLogger(sub_name)
+	def config_logger(self):
+		pass
+
+	def get_logger(self, sub_name):
+		return self.logger.getChild(sub_name)
 
 	@abstractmethod
 	def get_controller(self):

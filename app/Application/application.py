@@ -23,7 +23,7 @@ class Application:
 
 	@staticmethod
 	def set_default_config():
-		return {'display_mod': (500, 500), 'display_flags': 0}
+		return {'display_mod': (500, 500), 'display_flags': 0, 'caption': 'Game'}
 
 	def update_includes(self, factory_name, factory):
 		self.factories_config[factory_name] = factory
