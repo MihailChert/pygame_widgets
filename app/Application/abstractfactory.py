@@ -9,7 +9,7 @@ class AbstractFactory(ABC):
 		self._single_existing = {'controller': None, 'logger': None}
 		app.update_includes(name, self)
 		self._name = name
-		self._app = app
+		self._main_factory = main_factory
 		self.logger = main_factory.get_logger(name)
 		self.config_logger()
 
@@ -20,8 +20,8 @@ class AbstractFactory(ABC):
 	def get_name(self):
 		return self._name
 
-	def get_app(self):
-		return self._app
+	def get_main_factory(self):
+		return self._main_factory
 
 	def is_single_exist(self, object_name):
 		return self._single_existing.get(object_name, None) is not None
