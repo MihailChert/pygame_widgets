@@ -6,18 +6,33 @@ from .simplefigure import SimpleFigure
 
 class DrawingFactory(AbstractFactory):
 
-	def __init__(self, name, app, main_factory):
-		super().__init__(self, name, app, main_factory)
+	def __init__(self, name, main_factory, factory_config):
+		super().__init__(name, main_factory)
 		self._surface = None
 		self._controller = None
 		self._simple_figure = None
-		self._background = None
+		config = self.get_default_config()
+		config.update(factory_config)
+		self.set_background(config['background'])
 
-	def init(self):
-		self.logger.info('init drawing factory')
+	@classmethod
+	def init(cls, name, main_factory, config):
+		f_drawing = cls(name, main_factory, config)
+		f_drawing.logger.info('init drawing factory')
+
+	def after_pygame_init(self):
+		self.get_surface()
+		print(self._surface)
+
+	@staticmethod
+	def get_default_config():
+		return {
+			'background': 100
+		}
 
 	def set_background(self, background):
 		if isinstance(background, (int, list, tuple, Color)):
+			self._background = self.draw_simple_figure()
 			self._simple_figure.set_background(Color(background))
 		else:
 			self._background = background
@@ -34,7 +49,8 @@ class DrawingFactory(AbstractFactory):
 
 	def get_surface(self):
 		if self._surface is None:
-			self._main_factory.get_surface()
+			self._surface = self._main_factory.get_surface()
+			self._simple_figure.set_surface(self._surface)
 		return self._surface
 
 	def fill_background(self):

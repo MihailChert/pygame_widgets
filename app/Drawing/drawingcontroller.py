@@ -5,7 +5,7 @@ from ..Application import AbstractController
 class DrawingController(AbstractController):
 
 	def __init__(self, factory):
-		super().__init__(self, factory)
+		super().__init__(factory)
 
 	def create_event(self, event_attrs):
 		pass

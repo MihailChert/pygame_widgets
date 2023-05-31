@@ -12,6 +12,9 @@ class SimpleFigure:
 	def set_background(self, color):
 		self._back_color = color
 
+	def set_surface(self, surface):
+		self._surface = surface
+
 	def rect(self, color, rect_points, width=0, border_radius=None):
 		"""
 		Parameters

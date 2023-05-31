@@ -1,2 +1,2 @@
-from Application import *
-from Drawing import *
+from .Application import *
+from .Drawing import *

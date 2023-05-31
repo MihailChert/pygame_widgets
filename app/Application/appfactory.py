@@ -8,7 +8,7 @@ import os
 import pygame
 
 
-class AppFactory(AbstractFactory):
+class AppFactory:
 
 	def __init__(self, name, app, factories):
 		self._single_existing = {'controller': None}
@@ -19,7 +19,7 @@ class AppFactory(AbstractFactory):
 		self.set_logger_config(app.config.get('logger', self.default_logging()))
 		self.factories = factories
 		self.clock = pygame.time.Clock()
-		self._single_existing['display_mod'] = app.config['display_mod']
+		self._single_existing['display_mod'] = app.config['main']['display_mod']
 
 	@staticmethod
 	def default_logging():
@@ -47,6 +47,10 @@ class AppFactory(AbstractFactory):
 		}
 
 	@staticmethod
+	def get_default_config():
+		pass
+
+	@staticmethod
 	def set_logger_config(config):
 		if isinstance(config, str) and os.path.isfile(config):
 			logging.config.fileConfig(config)
@@ -55,7 +59,7 @@ class AppFactory(AbstractFactory):
 
 	def update_factory(self, factory_name, factory):
 		if isinstance(factory, AbstractFactory):
-			self._single_existing[factory_name] = factory
+			self.factories[factory_name] = factory
 			return
 		raise ValueError('Factory mast implement AbstractFactory')
 
@@ -65,10 +69,11 @@ class AppFactory(AbstractFactory):
 		if pygame.get_init():
 			return
 		log.info('init factories')
-		for factory in self.factories.values():
+		for f_name, factory in self.factories.items():
 			if factory is self:
 				continue
-			factory.init()
+			fact_conf = self._app.config.get(f_name, dict())
+			factory.init(f_name, self, fact_conf)
 		log.info('finish init factories')
 		log.info('init pygame')
 		pygame.init()
@@ -80,11 +85,27 @@ class AppFactory(AbstractFactory):
 			log.debug('set default caption')
 		except Exception as ex:
 			log.error(ex)
+		for factory in self.factories.values():
+			if factory is self:
+				continue
+			factory.after_pygame_init()
 
 	def get_controller(self):
 		if not self.is_single_exist('controller'):
 			self.update_single_object('controller', AppController(self))
 		return self._single_existing['controller']
+
+	def get_name(self):
+		return self._name
+
+	def is_single_exist(self, object_name):
+		return self._single_existing.get(object_name, None) is not None
+
+	def update_single_object(self, single_name, single_object=None):
+		self._single_existing[single_name] = single_object
+
+	def get_logger(self, sub_name):
+		return self.logger.getChild(sub_name)
 
 	def get_event_id(self, module_name):
 		try:
@@ -108,6 +129,8 @@ class AppFactory(AbstractFactory):
 
 	def get_all_controllers(self):
 		controllers = []
+		print(self.factories)
 		for factory in self.factories.values():
+			print(factory)
 			controllers.append(factory.get_controller())
 		return controllers
