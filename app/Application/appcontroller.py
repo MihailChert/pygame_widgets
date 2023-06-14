@@ -41,7 +41,6 @@ class AppController(AbstractController):
 	def _listen(self):
 		for event in pygame.event.get(self._event_ids.values()):
 			method = self._event_ids(event.type)
-			self.logger.debug(f'try call method: {method.name}')
 			try:
 				getattr(self, method.name)(event)
 			except AttributeError as er:

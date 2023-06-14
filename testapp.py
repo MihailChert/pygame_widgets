@@ -1,4 +1,7 @@
 from app.Application import Application
+from app.Drawing import DrawingFactory
 
-app = Application()
+factories = {'drawing': DrawingFactory}
+
+app = Application(factories)
 app.run()

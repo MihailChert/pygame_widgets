@@ -1,5 +1,3 @@
-import pdb
-
 from .abstractfactory import AbstractFactory
 from .appcontroller import AppController
 import logging.config
@@ -129,8 +127,6 @@ class AppFactory:
 
 	def get_all_controllers(self):
 		controllers = []
-		print(self.factories)
 		for factory in self.factories.values():
-			print(factory)
 			controllers.append(factory.get_controller())
 		return controllers

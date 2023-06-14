@@ -1,7 +1,7 @@
-from pygame import Color
 from ..Application import AbstractFactory
 from .drawingcontroller import DrawingController
 from .simplefigure import SimpleFigure
+from .node import Node
 
 
 class DrawingFactory(AbstractFactory):
@@ -13,7 +13,6 @@ class DrawingFactory(AbstractFactory):
 		self._simple_figure = None
 		config = self.get_default_config()
 		config.update(factory_config)
-		self.set_background(config['background'])
 
 	@classmethod
 	def init(cls, name, main_factory, config):
@@ -22,20 +21,12 @@ class DrawingFactory(AbstractFactory):
 
 	def after_pygame_init(self):
 		self.get_surface()
-		print(self._surface)
 
 	@staticmethod
 	def get_default_config():
 		return {
 			'background': 100
 		}
-
-	def set_background(self, background):
-		if isinstance(background, (int, list, tuple, Color)):
-			self._background = self.draw_simple_figure()
-			self._simple_figure.set_background(Color(background))
-		else:
-			self._background = background
 
 	def get_controller(self):
 		if self._controller is None:
@@ -47,11 +38,15 @@ class DrawingFactory(AbstractFactory):
 			self._simple_figure = SimpleFigure(self._surface)
 		return self._simple_figure
 
+	@staticmethod
+	def get_node(name, pos, size, parent):
+		return Node(name, pos, size, parent)
+
+	def share_surface(self):
+		self.draw_simple_figure()
+
 	def get_surface(self):
 		if self._surface is None:
 			self._surface = self._main_factory.get_surface()
-			self._simple_figure.set_surface(self._surface)
+			self.share_surface()
 		return self._surface
-
-	def fill_background(self):
-		self._background.draw_background()

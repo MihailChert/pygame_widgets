@@ -11,6 +11,7 @@ class AbstractController(ABC):
 		factory.get_logger('controller').info('create custom event')
 		self.event = None
 		self._listeners_list = {}
+		self._listeners_update = []
 		self.factory = factory
 		self.logger = factory.get_logger('Controller')
 
@@ -19,7 +20,7 @@ class AbstractController(ABC):
 		return pygame.event.custom_type()
 
 	@abstractmethod
-	def create_event(self, event_attrs):
+	def create_event(self, method, event_attrs):
 		pass
 
 	def crate_default_event(self):
@@ -52,3 +53,5 @@ class AbstractController(ABC):
 			except AttributeError:
 				self.logger.critical(f'add method in class with name {event.method}')
 				raise AttributeError(f'Override controller for event method {event.method} and add change in factory')
+		for update_method in self._listeners_update:
+			update_method(self)

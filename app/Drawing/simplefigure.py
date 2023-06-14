@@ -103,16 +103,16 @@ class SimpleFigure:
 					case 4:
 						return border_r
 					case _:
-						raise ValueError('Incorect border length: ' + len(border_r))
+						raise ValueError('Incorrect border length: ' + len(border_r))
 			else:
 				if len(border_r) == 2:
 					return [border_r[0], border_r[0], border_r[1], border_r[1]]
 				elif len(border_r) == 4:
 					return border_r
 				else:
-					raise ValueError('Incorect border length: ' + len(border_r))
+					raise ValueError('Incorrect border length: ' + len(border_r))
 		if isinstance(border_r, dict):
 			pass  # TODO: parser for dict border
 
-	def draw_background(self):
-		self._surface.fill(self._back_color)
+	def draw_background(self, color):
+		self._surface.fill(color)

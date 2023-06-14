@@ -1,7 +1,4 @@
-import pygame
-import sys
 from .appfactory import AppFactory
-from .abstractfactory import AbstractFactory
 '''
 All action before create window and start controllers listeners
 Import controllers and factories from config
