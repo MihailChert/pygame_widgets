@@ -47,6 +47,8 @@ class Node(AbstractNode):
 	def _draw_node(self, factory, controller):
 		self.draw(factory)
 		for child in self._children:
+			if isinstance(child, pygame.Surface):  # TODO: draw image or text
+				pass
 			child._draw_node(factory, controller)
 		self._has_change = False
 

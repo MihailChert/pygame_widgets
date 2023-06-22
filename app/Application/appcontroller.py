@@ -35,6 +35,20 @@ class AppController(AbstractController):
 	def set_caption(new_caption):
 		pygame.display.set_caption(new_caption)
 
+	def find_loader(self, source):
+		try:
+			return getattr(self.factory, source.get_loader_method())
+		except AttributeError:
+			pass
+		for factory in self.factroy.factories.values():
+			try:
+				return getattr(factory, source.get_loader_method())
+			except AttributeError:
+				self.logger.warning(f'Cant find {source.get_logger_method()} in {factory.get_name()} factory')
+				continue
+		self.logger.error(f'Cant find loader with type {source.get_type()}. Please check method with name {source.get_loader_method()}')
+		raise TypeError(f'Cant find loader with type {source.get_type()}. Please check method with name {source.get_loader_method()}')
+
 	def destroy(self):
 		pass
 

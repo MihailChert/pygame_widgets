@@ -33,6 +33,12 @@ class AbstractController(ABC):
 	def find_object(self, needle_object):
 		pass
 
+	def find_loader(self, source):
+		try:
+			return getattr(self.factory, source.get_loader_method())
+		except AttributeError:
+			return self.factory.get_main_factory().get_controller().find_loader(source)
+
 	@abstractmethod
 	def destroy(self):
 		pass
