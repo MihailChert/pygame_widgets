@@ -37,6 +37,9 @@ class AbstractNode(ABC):
 	def get_name(self):
 		return self._name
 
+	def get_parent(self):
+		return self._parent
+
 	def convert_point_to_global(self, point):
 		if self._parent is not None:
 			return self._parent.convert_point_to_global(
