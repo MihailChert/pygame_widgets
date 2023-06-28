@@ -6,19 +6,27 @@ import sys
 
 class AppController(AbstractController):
 
-	def __init__(self):
+	def __init__(self, factory):
 		self._event_ids = SystemEvents
 		self._selected_event = None
+		self.factory = factory
+		self.logger = factory.get_logger('Controller')
 
 	def create_event(self, event_attrs):
 		if self._selected_event is None:
+			self.logger.error('event type dont set')
 			raise ValueError('Set event type before create')
 		if type(event_attrs) is dict:
 			event = pygame.event.Event(self._selected_event.value, **event_attrs)
 		if type(event_attrs) is list:
 			event = pygame.event.Event(self._selected_event.value, *event_attrs)
 		self._selected_event = None
+		self.logger.info(f'create event {self._selected_event}')
 		return event
+
+	@staticmethod
+	def create_event_id():
+		return SystemEvents
 
 	def get_event_id(self):
 		return self._selected_event
@@ -33,11 +41,11 @@ class AppController(AbstractController):
 	def _listen(self):
 		for event in pygame.event.get(self._event_ids.values()):
 			method = self._event_ids(event.type)
+			self.logger.debug(f'try call method: {method.name}')
 			try:
 				getattr(self, method.name)(event)
 			except AttributeError as er:
-				# TODO: log error
-				print(er)
+				self.logger.warning(er)
 				self.empty_method(event)
 
 	@staticmethod
@@ -46,8 +54,9 @@ class AppController(AbstractController):
 		sys.exit()
 
 	def set_event(self, event_name_or_id):
+		self.logger.info(f'try set event {event_name_or_id}')
 		if event_name_or_id in self._event_ids:
-			self._selected_event = event_name_or_id
+			self._selected_event = event_name_or_id  # TODO: set event id
 
 	def find_object(self, needle_object):
 		pass

@@ -6,10 +6,13 @@ class AbstractController(ABC):
 
 	@abstractmethod
 	def __init__(self, factory):
+		factory.get_logger('controller').info('init controller')
 		self._event_id = self.create_event_id()
+		factory.get_logger('controller').info('create custom event')
 		self.event = None
 		self._listeners_list = {}
 		self.factory = factory
+		self.logger = factory.get_logger('Controller')
 
 	@staticmethod
 	def create_event_id():
@@ -35,6 +38,7 @@ class AbstractController(ABC):
 
 	def add_listener_to(self, listened_method, handler):
 		if listened_method == 'empty_method':
+			self.logger.error('add listener to empty method')
 			raise ValueError('\'empty_method\' can\'t have any listeners')
 		self._listeners_list.get(listened_method, default=[]).append(handler)
 
@@ -46,4 +50,5 @@ class AbstractController(ABC):
 			try:
 				getattr(self, event.method)(event.attrs_dict)
 			except AttributeError:
+				self.logger.critical(f'add method in class with name {event.method}')
 				raise AttributeError(f'Override controller for event method {event.method} and add change in factory')
