@@ -9,11 +9,11 @@ class AbstractController(ABC):
 		factory.get_logger('controller').info('init controller')
 		self._event_id = self.create_event_id()
 		factory.get_logger('controller').info('create custom event')
-		self.event = None
 		self._listeners_list = {}
 		self._listeners_update = []
 		self.factory = factory
 		self.logger = factory.get_logger('Controller')
+		self.event = None
 
 	@staticmethod
 	def create_event_id():
@@ -21,10 +21,22 @@ class AbstractController(ABC):
 
 	@abstractmethod
 	def create_event(self, method, event_attrs):
-		pass
+		if method not in self._listeners_list.keys():
+			self.logger.warn('Event method has no listeners')
+		event = pygame.event.Event(self._event_id, method=method, **event_attrs)
+		self.event = event
 
 	def crate_default_event(self):
 		self.event = pygame.event.Event(self._event_id, method='empty_method', attrs={})
+
+	def post(self):
+		if isinstance(self.event, pygame.event.Event):
+			pygame.event.post(self.event)
+		elif self.event is not None:
+			self.logger.critical('Unsupported event type.')
+			raise TypeError('Unsupported type for posted event.')
+		else:
+			self.logger.warn('Create event before post.')
 
 	def empty_method(self, attrs):
 		pass
@@ -47,17 +59,18 @@ class AbstractController(ABC):
 		if listened_method == 'empty_method':
 			self.logger.error('add listener to empty method')
 			raise ValueError('\'empty_method\' can\'t have any listeners')
-		self._listeners_list.get(listened_method, default=[]).append(handler)
+		try:
+			self._listeners_list[listened_method].append(handler)
+		except KeyError:
+			self._listeners_list[listened_method] = [handler]
 
 	def get_event_id(self):
 		return self._event_id
 
 	def _listen(self):
 		for event in pygame.event.get(self.get_event_id()):
-			try:
-				getattr(self, event.method)(event.attrs_dict)
-			except AttributeError:
-				self.logger.critical(f'add method in class with name {event.method}')
-				raise AttributeError(f'Override controller for event method {event.method} and add change in factory')
+			listeners = self._listeners_list.get(event.method)
+			for handler in listeners:
+				handler(event)
 		for update_method in self._listeners_update:
 			update_method(self)

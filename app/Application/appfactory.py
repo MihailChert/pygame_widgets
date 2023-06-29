@@ -1,9 +1,10 @@
-from .abstractfactory import AbstractFactory
-from .appcontroller import AppController
 import logging.config
 import logging
 import os
 import pygame
+from .abstractfactory import AbstractFactory
+from .appcontroller import AppController
+from .systemevent import SystemEvent
 
 
 class AppFactory:
@@ -54,6 +55,10 @@ class AppFactory:
 			logging.config.fileConfig(config)
 		else:
 			logging.config.dictConfig(config)
+
+	@staticmethod
+	def get_system_event():
+		return SystemEvent
 
 	def update_factory(self, factory_name, factory):
 		if isinstance(factory, AbstractFactory):
