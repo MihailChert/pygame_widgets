@@ -6,13 +6,11 @@ class AbstractController(ABC):
 
 	@abstractmethod
 	def __init__(self, factory):
-		factory.get_logger('controller').info('init controller')
-		self._event_id = self.create_event_id()
-		factory.get_logger('controller').info('create custom event')
+		self.logger = factory.get_logger('Controller')
+		self.logger.info('init controller')
 		self._listeners_list = {}
 		self._listeners_update = []
 		self.factory = factory
-		self.logger = factory.get_logger('Controller')
 		self.event = None
 
 	@staticmethod
@@ -39,7 +37,7 @@ class AbstractController(ABC):
 			self.logger.warn('Create event before post.')
 
 	def empty_method(self, attrs):
-		pass
+		self.logger.info('Call empty method')
 
 	@abstractmethod
 	def find_object(self, needle_object):
@@ -52,7 +50,7 @@ class AbstractController(ABC):
 			return self.factory.get_main_factory().get_controller().find_loader(source)
 
 	@abstractmethod
-	def destroy(self):
+	def destroy(self, event):
 		pass
 
 	def add_listener_to(self, listened_method, handler):
