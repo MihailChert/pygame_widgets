@@ -13,6 +13,7 @@ class Application:
 		self.factories_config = self._update_config(self.get_default_factories(), factories)
 		self.config = self.get_default_config()
 		self.config.update(config)
+		self._fps = self.config['main']['fps']
 		self._main_factory = self.factories_config['main']('main', self, self.factories_config)
 
 	@staticmethod
@@ -25,7 +26,8 @@ class Application:
 			'main': {
 				'display_mod': (500, 500),
 				'display_flag': 0,
-				'caption': 'Game'
+				'caption': 'Game',
+				'fps': 60
 			}
 		}
 
@@ -51,6 +53,6 @@ class Application:
 		clock = self._main_factory.get_clock()
 		controllers = self._main_factory.get_all_controllers()
 		while True:
-			clock.tick()
+			clock.tick(self._fps)
 			for controller in controllers:
 				controller._listen()
