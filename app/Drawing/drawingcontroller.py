@@ -8,6 +8,7 @@ class DrawingController(AbstractController):
 		super().__init__(factory)
 		self._root_node = None
 		self._update_zone = pygame.Rect(0, 0, 0, 0)
+		self._event_id = self.create_event_id()
 
 	def create_event(self, method, event_attrs):
 		event = pygame.event.Event(self._event_id)
@@ -20,7 +21,7 @@ class DrawingController(AbstractController):
 			return self._root_node
 		return self._root_node.find(needle_object)
 
-	def destroy(self):
+	def destroy(self, event):
 		self._root_node.destroy()
 
 	def get_root_node(self):
