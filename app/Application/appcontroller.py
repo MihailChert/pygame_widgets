@@ -9,7 +9,7 @@ class AppController(AbstractController):
 		super().__init__(factory)
 		self._event_ids = factory.get_system_event()
 		self._selected_event = None
-		self.add_listener_to([pygame.QUIT], self.destroy)
+		self.add_listener_to(pygame.QUIT, self.destroy)
 
 	def create_event(self, event_type, event_attrs):
 		if self._selected_event is None:
