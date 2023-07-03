@@ -7,8 +7,6 @@ class AbstractController(ABC):
 	@abstractmethod
 	def __init__(self, factory):
 		factory.get_logger('controller').info('init controller')
-		self._event_id = self.create_event_id()
-		factory.get_logger('controller').info('create custom event')
 		self.event = None
 		self._listeners_list = {}
 		self._listeners_update = []
