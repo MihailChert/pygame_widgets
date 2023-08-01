@@ -1,15 +1,36 @@
 import warnings
-import pdb
 from .source import Source
 
 
 class Builder:
+	"""
+	Строит из переданого графа дерева ресурсов.
+	Дерево ресурсов строится в соответствии с зависимости ресурсов.
+	После загружабтся данные ресурсов загрузщиками, которые вустраивают отношения внутри звгруженого обекта.
 
-	def __init__(self, sources):
+	Parameters
+	----------
+	sources: list
+		Граф ресурсов
+	"""
+
+	def __init__(self, sources: list):
 		self._sources = sources
 
 	@classmethod
 	def build_from(cls, build_content):
+		"""
+		Меотод автоматически определяющий тип из которого должно гененрироватся граф ресурсов
+		Поддерживаемые типы: dict, list
+		Parameters
+		----------
+		build_content
+			Контент из которого должно генерировтся граф ресурсов
+
+		Returns
+		-------
+		Загрузщик с гравом из ресурсов
+		"""
 		if isinstance(build_content, dict):
 			sources = cls.build_from_dict(build_content)
 			return cls(sources)
@@ -47,13 +68,32 @@ class Builder:
 			self._sources.append(new_source)
 
 	@staticmethod
-	def load(queue, controller):
+	def load(queue: list, controller):
+		"""
+		Разворачивает очеред из дерева и вызывает загрузщики ресурсов.
+		Развороточереди необходим для более раней загрузки ресурсов, которые не имеют зависемостей.
+		Parameters
+		----------
+		queue: list
+			Очередь созданая из дерева, в которой порядок элементов соответсвует обходу дерева в глубь(от корня к листьям)
+		controller: AbstractController
+			Контроллер в котором начинается поиск, если загрузщик не находится- ищет контролер приложения по всем контролерам.
+		"""
 		queue.reverse()
 		for source in queue:
 			source.load(controller)
 
 	@staticmethod
 	def tree_to_queue(tree):
+		"""Обходит граф, одерщащий несвязные графы и деревья, вглубь и записывает посещеные ресурсы в очередь.
+		Типы кроме ресурсов не попадают в очередь тк они могут быть именами для русерсов.
+		Для увеличения скорости по обходу дерева при поиске и линковке ресурсов
+		Parameters
+		----------
+		tree:
+			Дерево или граф которые необходимо обойти один или более раз
+		"""
+		# TODO: Проверку на циклическую ссылку
 		queue = tree.copy()
 		result_queue = []
 		while bool(queue):
@@ -71,6 +111,27 @@ class Builder:
 
 	@staticmethod
 	def find(haystack, needle_name):
+		"""
+		Поиск ресурса в графе, конвертированого в очередь, по имени.
+		Если в качестве имени передан ресурс, возвращается ресурс.
+		Parameters
+		----------
+		haystack: list
+			Граф конвертированый в очередь, для более быстрого поиска
+		needle_name:
+			Имя ресурсо который нужно найти в графе.
+
+		Returns
+		-------
+		Ресерс с заданым именем
+
+		Raises
+		------
+		NameError
+			Если не найдено имя ресурса в очереди, обхода графа
+		TypeError
+			Если имя ресурса не строчка.
+		"""
 		if isinstance(needle_name, Source):
 			return needle_name
 		elif isinstance(needle_name, str):
@@ -81,6 +142,11 @@ class Builder:
 		raise TypeError('Unsupported type for source name.')
 
 	def link_sources(self):
+		"""
+		Связывает зависимости ресурсов из графа ресурсов в дерево ресурсов, для последующей загрузке.
+		Заменяет идентификатор ресурса от которого зависит иследуемый ресурс на ресурс хранящийся в графе.
+		"""
+		# TODO: Проверка н ациклическую ссылку
 		queue = self.tree_to_queue(self._sources)
 		for source in queue:
 			if source.has_dependence():
@@ -93,9 +159,21 @@ class Builder:
 				source.propagate_depend()
 
 	def build_sources(self, controller):
+		"""
+		Связывает и зергужает ресурсы.
+		Parameters
+		----------
+		controller: AbstractController
+			Контроллер в котором первоначально происхоит поиск загрузщика.
+			Если загрузщик не найден, идет поиск по всем контролерам.
+
+		Returns
+		-------
+		Контент корневого узла дерева, который зависет от остальных ресурсов и любой другой ресурс не зависит от текущего.
+		"""
 		self.link_sources()
 		root = self._sources[0]
 		while root.depended is not None:
 			root = root.depended
 		self.load(self.tree_to_queue([root]), controller)
-		return root
+		return root.get_content()

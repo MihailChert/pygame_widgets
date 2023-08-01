@@ -6,10 +6,21 @@ Import controllers and factories from config
 
 
 class Application:
+	"""
+	Первоначальная загрузка конфигурации и главной фабрики, упрвление игровым циклом.
+	"""
 
 	INCLUDE_FACTORY = {}
 
 	def __init__(self, factories=dict(), config=dict()):
+		"""
+		Parameters
+		----------
+		factories: list
+			Список классов фабрик которые определятся после определения главной фабрики и заменятся на свои определения.
+		config
+			Конфигурция всего приложения как словарь.
+		"""
 		self.factories_config = self._update_config(self.get_default_factories(), factories)
 		self.config = self.get_default_config()
 		self.config.update(config)
