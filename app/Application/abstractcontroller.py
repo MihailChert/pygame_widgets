@@ -17,7 +17,6 @@ class AbstractController(ABC):
 	def create_event_id():
 		return pygame.event.custom_type()
 
-	@abstractmethod
 	def create_event(self, method, event_attrs):
 		if method not in self._listeners_list.keys():
 			self.logger.warn('Event method has no listeners')
@@ -25,7 +24,7 @@ class AbstractController(ABC):
 		self.event = event
 
 	def crate_default_event(self):
-		self.event = pygame.event.Event(self._event_id, method='empty_method', attrs={})
+		self.event = pygame.event.Event(self._event_id, method='empty_method')
 
 	def post(self):
 		if isinstance(self.event, pygame.event.Event):

@@ -10,12 +10,6 @@ class DrawingController(AbstractController):
 		self._update_zone = pygame.Rect(0, 0, 0, 0)
 		self._event_id = self.create_event_id()
 
-	def create_event(self, method, event_attrs):
-		event = pygame.event.Event(self._event_id)
-		event.__dict__['method'] = method
-		event.__dict__.update(event_attrs)
-		return event
-
 	def find_object(self, needle_object):
 		if needle_object == 'root':
 			return self._root_node
