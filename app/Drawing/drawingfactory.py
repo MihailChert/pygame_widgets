@@ -7,20 +7,30 @@ from .node import Node
 class DrawingFactory(AbstractFactory):
 
 	def __init__(self, name, main_factory, factory_config):
-		super().__init__(name, main_factory)
+		super().__init__(name, main_factory, factory_config)
 		self._surface = None
 		self._controller = None
 		self._simple_figure = None
 		config = self.get_default_config()
 		config.update(factory_config)
+		self.scenes = factory_config['scenes']
+		self.main_scene = factory_config['main_scene']
+		self.config = config
+
+	def init(self, name, main_factory):
+		super().init(name, main_factory)
+		self.logger.info('init drawing factory')
 
 	@classmethod
-	def init(cls, name, main_factory, config):
-		f_drawing = cls(name, main_factory, config)
-		f_drawing.logger.info('init drawing factory')
+	def get_factory_loader(cls, source):
+		factory = super(DrawingFactory, cls).get_factory_loader(source)
+		return factory
 
 	def after_pygame_init(self):
 		self.get_surface()
+		for scene_name in self.scenes.keys():
+			builder = self._main_factory.get_builder(self.scenes[scene_name])
+			self.scenes[scene_name] = builder.build_sources(self.get_controller())
 
 	@staticmethod
 	def get_default_config():

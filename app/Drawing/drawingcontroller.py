@@ -10,6 +10,20 @@ class DrawingController(AbstractController):
 		self._update_zone = pygame.Rect(0, 0, 0, 0)
 		self._event_id = self.create_event_id()
 
+	def get_node_loader(self, source):
+		source.meta['controller'] = self
+		cls = None
+		source.meta['pos'] = source.meta.get('pos', (0, 0))
+		if source.depended is None:
+			source.meta['size'] = source.meta.get('size', self.factory.get_surface().get_size())
+		else:
+			source.meta['size'] = source.meta.get('size', source.depended.meta.get('size', self.factory.get_surface().get_size()))
+		for dependence in source.get_dependencies():
+			if dependence.get_name() == source.get_source():
+				cls = dependence.get_content()
+				break
+		return cls.create_from_source(source)
+
 	def create_event(self, method, event_attrs):
 		event = pygame.event.Event(self._event_id)
 		event.__dict__['method'] = method
@@ -22,13 +36,11 @@ class DrawingController(AbstractController):
 		return self._root_node.find(needle_object)
 
 	def destroy(self, event):
-		self._root_node.destroy()
+		for scene in self.factory.scenes.values():
+			scene.destroy()
 
 	def get_root_node(self):
-		if self._root_node is None:
-			self._root_node = self.factory.get_node('root', (0, 0), self.factory.get_surface().get_size(), None)
-			self._listeners_update.append(self._root_node.update)
-		return self._root_node
+		return self.factory.scenes[self.factory.main_scene]
 
 	def calc_update_zone(self, rect):
 		self._update_zone = self._update_zone.union(rect)

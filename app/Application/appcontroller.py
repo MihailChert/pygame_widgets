@@ -10,6 +10,7 @@ class AppController(AbstractController):
 		self._event_ids = factory.get_system_event()
 		self._selected_event = None
 		self.add_listener_to(pygame.QUIT, self.destroy)
+		self.factory.get_logger('controller').info('create_logger')
 
 	def create_event(self, event_type, event_attrs):
 		if self._selected_event is None:
@@ -50,14 +51,18 @@ class AppController(AbstractController):
 
 	def find_loader(self, source):
 		try:
-			return getattr(self.factory, source.get_loader_method())
+			return getattr(self, source.get_loader_method())
 		except AttributeError:
 			pass
-		for factory in self.factroy.factories.values():
+		try:
+			return self.factory.get_app().find_loader(source)
+		except TypeError:
+			pass
+		for factory in self.factory.factories.values():
 			try:
-				return getattr(factory, source.get_loader_method())
+				return getattr(factory.get_conteroller(), source.get_loader_method())
 			except AttributeError:
-				self.logger.warning(f'Cant find {source.get_logger_method()} in {factory.get_name()} factory')
+				self.logger.warning(f'Cant find {source.get_loder_method()} in {factory.get_name()} factory')
 				continue
 		self.logger.error(f'Cant find loader with type {source.get_type()}. Please check method with name {source.get_loader_method()}')
 		raise TypeError(f'Cant find loader with type {source.get_type()}. Please check method with name {source.get_loader_method()}')

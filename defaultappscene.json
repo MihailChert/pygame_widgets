@@ -1,0 +1,18 @@
+{
+  "class": [
+    {
+      "name": "Node",
+      "ref": "app.Drawing.node"
+    }
+  ],
+  "node": [
+    {
+      "name": "main",
+      "ref": "Node",
+      "dependence": ["Node"],
+      "meta": {
+        "background": [255, 255, 255]
+      }
+    }
+  ]
+}

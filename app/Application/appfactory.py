@@ -5,20 +5,41 @@ import pygame
 from .abstractfactory import AbstractFactory
 from .appcontroller import AppController
 from .systemevent import SystemEvent
+from .builder import Builder
 
 
 class AppFactory:
 
-	def __init__(self, name, app, factories):
+	def __init__(self, name, app, factories, config):
 		self._single_existing = {'controller': None}
 		app.update_includes(name, self)
 		self._name = name
-		self._app = app
 		self.logger = logging.getLogger(name)
-		self.set_logger_config(app.config.get('logger', self.default_logging()))
+		self.set_logger_config(config.get('logger', self.default_logging()))
 		self.factories = factories
 		self.clock = pygame.time.Clock()
-		self._single_existing['display_mod'] = app.config['main']['display_mod']
+		self._single_existing.update(config)
+		self._single_existing['application'] = app
+
+	@classmethod
+	def get_factory_loader(cls, source):
+		config = {
+			'caption': source.meta.get('caption', 'Game'),
+			'display_mod': source.meta['display_mod'],
+			'flags': source.meta.get('flags', 0),
+			'logger': source.meta.get('logger', cls.default_logging())
+		}
+		app = source.meta['application']
+		factories = {}
+		for factory_name in source.meta['factories']:
+			for dependence in source.get_dependencies():
+				if dependence.get_name() == factory_name:
+					factories[factory_name] = dependence.get_content()
+					app.update_includes(factory_name, dependence.get_content())
+		factory = cls(source.get_name(), source.meta['application'], factories, config)
+		app.update_includes('main', factory)
+		app.set_fps(source.meta.get('fps', 0))
+		return factory
 
 	@staticmethod
 	def default_logging():
@@ -60,6 +81,10 @@ class AppFactory:
 	def get_system_event():
 		return SystemEvent
 
+	@staticmethod
+	def get_builder(content):
+		return Builder.build_from(content)
+
 	def update_factory(self, factory_name, factory):
 		if isinstance(factory, AbstractFactory):
 			self.factories[factory_name] = factory
@@ -75,15 +100,14 @@ class AppFactory:
 		for f_name, factory in self.factories.items():
 			if factory is self:
 				continue
-			fact_conf = self._app.config.get(f_name, dict())
-			factory.init(f_name, self, fact_conf)
+			factory.init(f_name, self)
 		log.info('finish init factories')
 		log.info('init pygame')
 		pygame.init()
 		log.info('finish init pygame')
 		self._single_existing['surface'] = pygame.display.set_mode(self._single_existing['display_mod'])
 		try:
-			self.get_controller().set_caption(self._app.config['caption'])
+			self.get_controller().set_caption(self.get_single_object('caption'))
 		except KeyError:
 			log.debug('set default caption')
 		except Exception as ex:
@@ -106,6 +130,9 @@ class AppFactory:
 
 	def update_single_object(self, single_name, single_object=None):
 		self._single_existing[single_name] = single_object
+
+	def get_single_object(self, key):
+		return self._single_existing[key]
 
 	def get_logger(self, sub_name):
 		return self.logger.getChild(sub_name)
@@ -131,7 +158,7 @@ class AppFactory:
 		return self._single_existing['application']
 
 	def get_all_controllers(self):
-		controllers = []
+		controllers = [self.get_controller()]
 		for factory in self.factories.values():
 			controllers.append(factory.get_controller())
 		return controllers

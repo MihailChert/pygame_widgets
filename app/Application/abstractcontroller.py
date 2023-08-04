@@ -45,7 +45,7 @@ class AbstractController(ABC):
 
 	def find_loader(self, source):
 		try:
-			return getattr(self.factory, source.get_loader_method())
+			return getattr(self, source.get_loader_method())
 		except AttributeError:
 			return self.factory.get_main_factory().get_controller().find_loader(source)
 

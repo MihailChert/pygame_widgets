@@ -1,22 +1,25 @@
-import pdb
 from abc import ABC, abstractmethod
 
 
 class AbstractFactory(ABC):
 
 	@abstractmethod
-	def __init__(self, name, main_factory):
+	def __init__(self, name, main_factory, factory_config):
 		self._single_existing = {'controller': None, 'logger': None}
-		main_factory.update_factory(name, self)
 		self._name = name
 		self._main_factory = main_factory
+		self.logger = None
+
+	@abstractmethod
+	def init(self, name, main_factory):
+		self._main_factory = main_factory
 		self.logger = main_factory.get_logger(name)
-		self.config_logger()
 
 	@classmethod
 	@abstractmethod
-	def init(cls, name, main_factory, app_config):
-		pass
+	def get_factory_loader(cls, source):
+		factory = cls(source.get_name(), None, source.meta)
+		return factory
 
 	@abstractmethod
 	def after_pygame_init(self):
@@ -39,8 +42,6 @@ class AbstractFactory(ABC):
 	def update_single_object(self, single_name, single_object=None):
 		self._single_existing[single_name] = single_object
 
-	def config_logger(self):
-		pass
 
 	def get_logger(self, sub_name):
 		return self.logger.getChild(sub_name)

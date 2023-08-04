@@ -1,4 +1,7 @@
+import importlib
 from .appfactory import AppFactory
+from .builder import Builder
+from .source import SourceType
 '''
 All action before create window and start controllers listeners
 Import controllers and factories from config
@@ -9,27 +12,25 @@ class Application:
 
 	INCLUDE_FACTORY = {}
 
-	def __init__(self, factories=dict(), config=dict()):
-		self.factories_config = self._update_config(self.get_default_factories(), factories)
-		self.config = self.get_default_config()
-		self.config.update(config)
-		self._fps = self.config['main']['fps']
-		self._main_factory = self.factories_config['main']('main', self, self.factories_config)
+	def __init__(self, factories=dict()):
+		self.factories_config = factories
+		self._fps = 0
+		self._main_factory = self.factories_config.get('main', AppFactory)('main', self, self.factories_config, {})
+
+	@classmethod
+	def create_from_builder(cls, builder):
+		application = cls()
+		builder.build_sources(application)
+		return application
+
+	@staticmethod
+	def get_code_loader(source):
+		module = importlib.import_module(source.get_source())
+		return getattr(module, source.get_name())
 
 	@staticmethod
 	def get_default_factories():
 		return {'main': AppFactory}
-
-	@staticmethod
-	def get_default_config():
-		return {
-			'main': {
-				'display_mod': (500, 500),
-				'display_flag': 0,
-				'caption': 'Game',
-				'fps': 60
-			}
-		}
 
 	@staticmethod
 	def _update_config(global_config, custom_config):
@@ -40,6 +41,19 @@ class Application:
 			if conf_fact_name not in global_config.keys():
 				global_config[conf_fact_name] = fact_conf
 		return global_config
+
+	def set_fps(self, new_fps):
+		self._fps = new_fps
+
+	def find_loader(self, source):
+		if source.get_type() == SourceType.code:
+			return getattr(self, source.get_loader_method())
+		elif source.get_type() == SourceType.factory:
+			source.meta['application'] = self
+			for factory_class in source.get_dependencies():
+				if factory_class.get_type() == SourceType.code:
+					return getattr(factory_class.get_content(), source.get_loader_method())
+		raise TypeError(f'Cant find loader with type {source.get_type()}. Please check method with name {source.get_loader_method()}')
 
 	def update_includes(self, factory_name, factory):
 		self.factories_config[factory_name] = factory
