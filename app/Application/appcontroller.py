@@ -9,7 +9,7 @@ class AppController(AbstractController):
 		super().__init__(factory)
 		self._event_ids = factory.get_system_event()
 		self._selected_event = None
-		self.add_listener_to(pygame.QUIT, self.destroy)
+		self.add_listener(pygame.QUIT, self.destroy)
 		self.factory.get_logger('controller').info('create_logger')
 
 	def create_event(self, event_type, event_attrs):
@@ -36,18 +36,34 @@ class AppController(AbstractController):
 	def set_caption(new_caption):
 		pygame.display.set_caption(new_caption)
 
-	def add_listener_to(self, listener_method, handler):
+	def add_listener(self, listener_method, handler, order=None):
+		if listener_method == 'update':
+			if order is None:
+				self._listeners_update.append(handler)
+			else:
+				self._listeners_update.insert(order, handler)
+			return
 		if isinstance(listener_method, int):
 			listener_method = self._event_ids(listener_method)
 		elif isinstance(listener_method, str):
 			listener_method = self._event_ids[listener_method]
 		try:
-			self._listeners_list[listener_method.value].append(handler)
+			if order is None:
+				self._listeners_list[listener_method.value].append(handler)
+			else:
+				self._listeners_list[listener_method.value].insert(order, handler)
 		except KeyError:
 			self._listeners_list[listener_method.value] = [handler]
 		except AttributeError:
 			self.logger.error('Invalid type of event name')
 			raise TypeError('Unsupported name type of event. Support string(event type by name) or int (event type).')
+
+	def add_listener_to(self, controller_name, listener_method, handler, order=None):
+		if controller_name == self.factory.get_name():
+			self.add_listener(listener_method, handler, order)
+			return
+		controller = self.factory.get_factory(controller_name).get_controller()
+		controller.add_listener(listener_method, handler, order)
 
 	def find_loader(self, source):
 		try:

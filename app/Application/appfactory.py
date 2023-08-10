@@ -91,6 +91,9 @@ class AppFactory:
 			return
 		raise ValueError('Factory mast implement AbstractFactory')
 
+	def get_factory(self, factory_name):
+		return self.factories[factory_name]
+
 	def init(self):
 		log = self.get_logger('init')
 

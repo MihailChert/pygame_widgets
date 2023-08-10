@@ -4,7 +4,7 @@ import pygame
 
 class Node(AbstractNode):
 
-	def __init__(self, name, pos, size, parent, bg_color=(0,0,0)):
+	def __init__(self, name, pos, size, parent, bg_color=(0, 0, 0)):
 		super().__init__(name, pos, size, parent)
 		self._children = []
 		self.background_color = pygame.Color(bg_color)
@@ -17,6 +17,10 @@ class Node(AbstractNode):
 			if dependence.get_type() != source.TYPE.code:
 				dependence.get_content()._parent = node
 				node.add_child(dependence.get_content())
+		controller = source.meta['controller']
+		for controller_name, listeners in source.meta.get('listeners', {}).items():
+			for listener_method, listener_handler in listeners.items():
+				controller.add_listener_to(controller_name, listener_method, getattr(node, listener_handler))
 		return node
 
 	def add_child(self, new_node):
