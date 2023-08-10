@@ -1,0 +1,79 @@
+{
+  "factory": [
+    {
+      "name": "main",
+      "ref": "AppFactory",
+      "dependence": ["AppFactory" ,"drawing", "text"],
+      "meta": {
+        "factories": [
+          "drawing",
+          "text"
+        ],
+        "caption": "Default game",
+        "fps": 60,
+        "display_mod": [
+          500,
+          500
+        ],
+        "flags": 0,
+        "logger": {
+          "version": 1,
+          "handlers": {
+            "main_handler": {
+              "class": "logging.FileHandler",
+              "formatter": "standard_format",
+              "filename": "app_config.log"
+            }
+          },
+          "loggers": {
+            "main": {
+              "handlers": ["main_handler"],
+              "level": "DEBUG"
+            }
+          },
+          "formatters": {
+            "standard_format": {
+              "format": "%(levelname)-8s\t%(asctime)s\t%(name)s %(filename)s LINE %(lineno)d\t%(message)s",
+              "datefmt": "%H:%M:%S"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "drawing",
+      "ref": "DrawingFactory",
+      "dependence": ["DrawingFactory"],
+      "meta": {
+        "main_scene": "main",
+        "scenes": {
+          "main": "defaultappscene.json"
+        }
+      }
+    },
+    {
+      "name": "text",
+      "ref": "TextFactory",
+      "dependence": ["TextFactory"],
+      "meta": {}
+    }
+  ],
+  "class": [
+    {
+      "name": "AppFactory",
+      "ref": "app.Application.appfactory"
+    },
+    {
+      "name": "DrawingFactory",
+      "ref": "app.Drawing.drawingfactory"
+    },
+    {
+      "name": "TextFactory",
+      "ref": "app.Drawing.TextDrawing.textfactory"
+    },
+    {
+      "name": "Node",
+      "ref": "app.Drawing.node"
+    }
+  ]
+}

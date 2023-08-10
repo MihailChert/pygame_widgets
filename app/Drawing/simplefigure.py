@@ -29,11 +29,12 @@ class SimpleFigure:
 		-------
 		pygame.Rect
 		"""
+		if border_radius is None:
+			return pygame.draw.rect(self._surface, color, rect_points, width=width)
 		if isinstance(border_radius, int) or isinstance(border_radius, (list, tuple)) and len(border_radius) == 1:
 			return pygame.draw.rect(self._surface, color, rect_points, border_radius=border_radius, width=width)
-		else:
-			b_r = self.parse_border(border_radius)
-			return pygame.draw.rect(self._surface, color, rect_points, width, 0, b_r[0], b_r[1], b_r[2], b_r[3])
+		b_r = self.parse_border(border_radius)
+		return pygame.draw.rect(self._surface, color, rect_points, width, 0, b_r[0], b_r[1], b_r[2], b_r[3])
 
 	def rot_rect(self, color, rect_points, width=0, antialiased=False):
 		points = []

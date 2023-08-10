@@ -1,0 +1,39 @@
+{
+  "class": [
+    {
+      "name": "Node",
+      "ref": "app.Drawing.node"
+    }
+  ],
+  "node": [
+    {
+      "name": "main",
+      "ref": "Node",
+      "dependence": ["Node", "rect"],
+      "meta": {
+        "background": [255, 255, 255],
+        "listeners": {
+          "drawing": {
+            "update": "update"
+          }
+        }
+      }
+    },
+    {
+      "name": "rect",
+      "ref": "Node",
+      "dependence": ["Node"],
+      "meta": {
+        "background": [255, 0, 0],
+        "pos": [50, 50],
+        "size": [50, 50],
+        "listeners": {
+          "drawing": {
+            "update": "update"
+          }
+        }
+      }
+
+    }
+  ]
+}

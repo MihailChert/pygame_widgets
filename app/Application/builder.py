@@ -1,5 +1,6 @@
 import warnings
-import pdb
+import os.path as path
+import json
 from .source import Source
 
 
@@ -16,13 +17,26 @@ class Builder:
 		if isinstance(build_content, list):
 			source = cls.build_from_list(build_content)
 			return cls(source)
+		if isinstance(build_content, str) and path.isfile(build_content) and build_content[-4:] == 'json':
+			return cls.build_from_json(build_content)
+
+	@classmethod
+	def build_from_json(cls, content):
+		with open(content) as file_cont:
+			content = json.load(file_cont)
+		if isinstance(content, dict):
+			return cls(cls.build_from_dict(content))
+		elif isinstance(content, list):
+			return cls(cls.build_from_list(content))
 
 	@staticmethod
 	def build_from_dict(content):
 		sources = []
-		for source_name, source_data in content:
-			source_data['name'] = source_name if source_data.get('name', None) is None else source_data['name']
-			sources.append(Source.build_from_dict(source_data))
+		for source_type, type_content_list in content.items():
+			for type_content in type_content_list:
+				type_content['type'] = source_type
+				source = Source.build_from_dict(type_content)
+				sources.append(source)
 		return sources
 
 	@staticmethod
@@ -91,6 +105,20 @@ class Builder:
 				except TypeError:
 					source.update_dependencies(self.find(queue, depends))
 				source.propagate_depend()
+		root = self._sources[0]
+		while bool(root.depended):
+			root = root.depended
+		self._sources = [root]
+
+	@staticmethod
+	def source_to_weak_tree(tree):
+		res = {}
+		for element in tree:
+			res = {
+				'name': element.get_name(),
+				'dependencies': Builder.source_to_weak_tree(element.get_dependencies())
+			}
+		return res
 
 	def build_sources(self, controller):
 		self.link_sources()
@@ -98,4 +126,4 @@ class Builder:
 		while root.depended is not None:
 			root = root.depended
 		self.load(self.tree_to_queue([root]), controller)
-		return root
+		return root.get_content()

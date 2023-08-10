@@ -4,10 +4,24 @@ import pygame
 
 class Node(AbstractNode):
 
-	def __init__(self, name, pos, size, parent):
+	def __init__(self, name, pos, size, parent, bg_color=(0, 0, 0)):
 		super().__init__(name, pos, size, parent)
 		self._children = []
-		self._has_change = False
+		self.background_color = pygame.Color(bg_color)
+		self._has_change = True
+
+	@classmethod
+	def create_from_source(cls, source):
+		node = cls(source.get_name(), source.meta['pos'], source.meta['size'], None, source.meta['background'])
+		for dependence in source.get_dependencies():
+			if dependence.get_type() != source.TYPE.code:
+				dependence.get_content()._parent = node
+				node.add_child(dependence.get_content())
+		controller = source.meta['controller']
+		for controller_name, listeners in source.meta.get('listeners', {}).items():
+			for listener_method, listener_handler in listeners.items():
+				controller.add_listener_to(controller_name, listener_method, getattr(node, listener_handler))
+		return node
 
 	def add_child(self, new_node):
 		self._children.append(new_node)
@@ -45,6 +59,11 @@ class Node(AbstractNode):
 		controller.calc_update_zone(self.convert_rect_to_global(rect))
 
 	def _draw_node(self, factory, controller):
+		if self._parent is None:
+			factory.draw_simple_figure().draw_background(self.background_color)
+		else:
+			rect = self.convert_rect_to_global(self._rect)
+			factory.draw_simple_figure().rect(self.background_color, rect)
 		self.draw(factory)
 		for child in self._children:
 			if isinstance(child, pygame.Surface):  # TODO: draw image or text
@@ -53,7 +72,7 @@ class Node(AbstractNode):
 		self._has_change = False
 
 	def draw(self, factory):
-		factory.draw_simple_figure().draw_background((255, 255, 255))
+		pass
 
 	def destroy(self):
 		for child in self._children:

@@ -8,6 +8,8 @@ class SourceType(Enum):
 	node = 'node'
 	text = 'text'
 	settings = 'config'
+	code = 'class'
+	factory = 'factory'
 	save = 'save'
 
 
@@ -40,11 +42,11 @@ class Source:
 				dependence.append(source)
 		content['type'] = cls.TYPE(content['type'])
 		return cls(
-				content['type']
-			,	content['name']
-			,	content['ref']
-			,	content['meta']
-			,	dependence
+			content['type'],
+			content['name'],
+			content['ref'],
+			content.get('meta', {}),
+			dependence
 		)
 
 	def get_type(self):
@@ -87,6 +89,8 @@ class Source:
 			dependence.depended = self
 
 	def load(self, controller):
+		if self.is_load():
+			return
 		content = controller.find_loader(self)(self)
 		if content is not None and not isinstance(content, (int, str, tuple, bool)):
 			self._content = content

@@ -45,7 +45,7 @@ class AbstractController(ABC):
 
 	def find_loader(self, source):
 		try:
-			return getattr(self.factory, source.get_loader_method())
+			return getattr(self, source.get_loader_method())
 		except AttributeError:
 			return self.factory.get_main_factory().get_controller().find_loader(source)
 
@@ -53,14 +53,30 @@ class AbstractController(ABC):
 	def destroy(self, event):
 		pass
 
-	def add_listener_to(self, listened_method, handler):
+	def add_listener(self, listened_method, handler, order=None):
 		if listened_method == 'empty_method':
 			self.logger.error('add listener to empty method')
 			raise ValueError('\'empty_method\' can\'t have any listeners')
+		if listened_method == 'update':
+			if order is None:
+				self._listeners_update.append(handler)
+			else:
+				self._listeners_update.insert(order, handler)
+			return
 		try:
-			self._listeners_list[listened_method].append(handler)
+			if order is None:
+				self._listeners_list[listened_method].append(handler)
+			else:
+				self._listeners_list[listened_method].insert(order, handler)
 		except KeyError:
 			self._listeners_list[listened_method] = [handler]
+
+	def add_listener_to(self, factory_name, listener_method, handler, order=None):
+		if factory_name == self.factory.get_name():
+			self.add_listener(listener_method, handler, order)
+		controller = self.factory.get_main_factory().get_factory(factory_name)
+		controller = controller.get_controller()
+		controller.add_listener(listener_method, handler, order)
 
 	def get_event_id(self):
 		return self._event_id
