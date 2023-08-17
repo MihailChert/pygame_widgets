@@ -24,12 +24,6 @@ class DrawingController(AbstractController):
 				break
 		return cls.create_from_source(source)
 
-	def create_event(self, method, event_attrs):
-		event = pygame.event.Event(self._event_id)
-		event.__dict__['method'] = method
-		event.__dict__.update(event_attrs)
-		return event
-
 	def find_object(self, needle_object):
 		if needle_object == 'root':
 			return self._root_node
@@ -47,6 +41,6 @@ class DrawingController(AbstractController):
 
 	def _listen(self):
 		super()._listen()
-		self.get_root_node()._draw_node(self.factory, self)
+		self.get_root_node()._draw(self.factory, self)
 		pygame.display.update(self._update_zone)
 		self._update_zone = pygame.Rect(0, 0, 0, 0)

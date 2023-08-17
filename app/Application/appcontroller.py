@@ -76,9 +76,9 @@ class AppController(AbstractController):
 			pass
 		for factory in self.factory.factories.values():
 			try:
-				return getattr(factory.get_conteroller(), source.get_loader_method())
+				return getattr(factory.get_controller(), source.get_loader_method())
 			except AttributeError:
-				self.logger.warning(f'Cant find {source.get_loder_method()} in {factory.get_name()} factory')
+				self.logger.warning(f'Cant find {source.get_loader_method()} in {factory.get_name()} factory')
 				continue
 		self.logger.error(f'Cant find loader with type {source.get_type()}. Please check method with name {source.get_loader_method()}')
 		raise TypeError(f'Cant find loader with type {source.get_type()}. Please check method with name {source.get_loader_method()}')

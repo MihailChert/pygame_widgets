@@ -58,17 +58,17 @@ class Node(AbstractNode):
 		rect = pygame.Rect((0, 0), controller.factory.get_surface().get_size())
 		controller.calc_update_zone(self.convert_rect_to_global(rect))
 
-	def _draw_node(self, factory, controller):
+	def _draw(self, factory, controller):
 		if self._parent is None:
 			factory.draw_simple_figure().draw_background(self.background_color)
 		else:
-			rect = self.convert_rect_to_global(self._rect)
+			rect = self.get_global_rect()
 			factory.draw_simple_figure().rect(self.background_color, rect)
 		self.draw(factory)
 		for child in self._children:
 			if isinstance(child, pygame.Surface):  # TODO: draw image or text
 				pass
-			child._draw_node(factory, controller)
+			child._draw(factory, controller)
 		self._has_change = False
 
 	def draw(self, factory):
