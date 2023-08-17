@@ -3,13 +3,17 @@
     {
       "name": "Node",
       "ref": "app.Drawing.node"
+    },
+    {
+      "name": "SimpleText",
+      "ref": "app.Drawing.TextDrawing.simpletext"
     }
   ],
   "node": [
     {
       "name": "main",
       "ref": "Node",
-      "dependence": ["Node", "rect"],
+      "dependence": ["Node", "rect", "rect2"],
       "meta": {
         "background": [255, 255, 255],
         "listeners": {
@@ -22,18 +26,55 @@
     {
       "name": "rect",
       "ref": "Node",
-      "dependence": ["Node"],
+      "dependence": ["Node", "test_text"],
       "meta": {
         "background": [255, 0, 0],
         "pos": [50, 50],
-        "size": [50, 50],
+        "size": [100, 100],
         "listeners": {
           "drawing": {
             "update": "update"
           }
         }
       }
-
+    },
+    {
+      "name": "rect2",
+      "ref": "Node",
+      "dependence": ["Node", "test_text2"],
+      "meta": {
+        "background": "green",
+        "pos": [150, 50],
+        "size": [100, 100],
+        "listeners": {
+          "drawing": {
+            "update": "update"
+          }
+        }
+      }
+    }
+  ],
+  "text": [
+    {
+      "name": "test_text",
+      "ref": "SimpleText",
+      "dependence": ["SimpleText"],
+      "meta": {
+        "text": "Some simple text",
+        "color": "green"
+      }
+    },
+    {
+      "name": "test_text2",
+      "ref": "SimpleText",
+      "dependence": ["SimpleText"],
+      "meta": {
+        "text": "Other text for test",
+        "color": "red",
+        "font_size": 20,
+        "bold": true,
+        "strikethrough": true
+      }
     }
   ]
 }

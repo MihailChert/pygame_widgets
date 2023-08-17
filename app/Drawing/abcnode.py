@@ -34,6 +34,12 @@ class AbstractNode(ABC):
 	def get_rect(self):
 		return self._rect
 
+	def get_global_rect(self):
+		if self._parent is not None:
+			return self._parent.convert_rect_to_global(self._rect)
+		else:
+			return self._rect
+
 	def get_name(self):
 		return self._name
 
