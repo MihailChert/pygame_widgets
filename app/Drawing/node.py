@@ -61,9 +61,6 @@ class Node(AbstractNode):
 	def _draw(self, factory, controller):
 		if self._parent is None:
 			factory.draw_simple_figure().draw_background(self.background_color)
-		else:
-			rect = self.get_global_rect()
-			factory.draw_simple_figure().rect(self.background_color, rect)
 		self.draw(factory)
 		for child in self._children:
 			if isinstance(child, pygame.Surface):  # TODO: draw image or text
