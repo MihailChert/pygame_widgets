@@ -17,9 +17,8 @@ class AbstractFactory(ABC):
 
 	@classmethod
 	@abstractmethod
-	def get_factory_loader(cls, source):
-		factory = cls(source.get_name(), None, source.meta)
-		return factory
+	def get_settings_loader(cls, source):
+		pass
 
 	@abstractmethod
 	def after_pygame_init(self):
@@ -29,6 +28,15 @@ class AbstractFactory(ABC):
 	@abstractmethod
 	def get_default_config():
 		pass
+
+	@staticmethod
+	def check_parameter(parameters_dict, parameter_name, require=False, default=None):
+		try:
+			return parameters_dict[parameter_name]
+		except KeyError:
+			if require:
+				raise NameError(f'The required parameter named {parameter_name} is missing from the configuration.')
+			return default
 
 	def get_name(self):
 		return self._name

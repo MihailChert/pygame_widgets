@@ -9,8 +9,24 @@ class SourceType(Enum):
 	text = 'text'
 	settings = 'config'
 	code = 'class'
-	factory = 'factory'
 	save = 'save'
+	file = 'file'
+
+	config_image = {'unique': True, 'recursive': False}
+	config_sound = {'unique': True, 'recursive': False}
+	config_node = {'unique': False, 'recursive': False}
+	config_text = {'unique': True, 'recursive': False}
+	config_settings = {'unique': True, 'recursive': False}
+	config_code = {'unique': True, 'recursive': False}
+	config_factory = {'unique': True, 'recursive': False}
+	config_save = {'unique': False, 'recursive': False}
+	config_file = {'unique': False, 'recursive': True}
+
+	def config(self):
+		return getattr(self.__class__, 'config_' + self.name)
+
+	def is_unique(self):
+		return getattr(self.__class__, 'config_' + self.name)['unique']
 
 
 class Source:

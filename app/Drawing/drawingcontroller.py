@@ -47,6 +47,7 @@ class DrawingController(AbstractController):
 
 	def _listen(self):
 		super()._listen()
+		self.factory.get_surface().fill(self.factory.background_color)
 		self.get_root_node()._draw_node(self.factory, self)
 		pygame.display.update(self._update_zone)
 		self._update_zone = pygame.Rect(0, 0, 0, 0)
