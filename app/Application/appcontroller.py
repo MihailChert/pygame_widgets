@@ -1,14 +1,18 @@
 from .abstractcontroller import AbstractController
 import pygame
 import sys
+import pdb
 
 
 class AppController(AbstractController):
 
 	def __init__(self, factory):
 		super().__init__(factory)
-		self._event_ids = factory.get_system_event()
+		self._system_ids = factory.get_system_event()
+		self._motion_ids = factory.get_motion_event()
 		self._selected_event = None
+		self._aliases_names = {}
+		self._aliases_keys = {}
 		self.add_listener(pygame.QUIT, self.destroy)
 		self.factory.get_logger('controller').info('create_logger')
 
@@ -26,11 +30,34 @@ class AppController(AbstractController):
 		self.logger.info(f'create event {self._selected_event}')
 		pygame.event.post(event)
 
-	def create_event_id(self):
-		return self._event_ids
+	def add_alias_keys(self, alias, keys):
+		for key in keys:
+			if isinstance(key, str):
+				key = pygame.key.key_code(key)
+			elif isinstance(key, int):
+				pass
+			else:
+				raise TypeError(f'Key mast be int or str not {type(key)}')
+			if alias in self._aliases_names.keys():
+				self._aliases_keys[key] = self._aliases_names[alias]
+			else:
+				handlers = []
+				self._aliases_names[alias] = handlers
+				self._aliases_keys[key] = handlers
+		self.logger.info(self._aliases_keys)
+		self.logger.info(self._aliases_names)
 
-	def get_event_id(self):
-		return self._selected_event
+	def get_event_id(self, event_id_name):
+		if isinstance(event_id_name, int):
+			try:
+				return self._system_ids(event_id_name)
+			except ValueError:
+				return self._motion_ids(event_id_name)
+		elif isinstance(event_id_name, str):
+			try:
+				return self._system_ids[event_id_name]
+			except KeyError:
+				return self._motion_ids[event_id_name]
 
 	@staticmethod
 	def set_caption(new_caption):
@@ -43,10 +70,13 @@ class AppController(AbstractController):
 			else:
 				self._listeners_update.insert(order, handler)
 			return
-		if isinstance(listener_method, int):
-			listener_method = self._event_ids(listener_method)
-		elif isinstance(listener_method, str):
-			listener_method = self._event_ids[listener_method]
+		if listener_method in self._aliases_names.keys():
+			if order is None:
+				self._aliases_names[listener_method].append(handler)
+			else:
+				self._aliases_names[listener_method].insert(order, handler)
+			return
+		listener_method = self.get_event_id(listener_method)
 		try:
 			if order is None:
 				self._listeners_list[listener_method.value].append(handler)
@@ -91,10 +121,14 @@ class AppController(AbstractController):
 		sys.exit()
 
 	def _listen(self):
-		for event in pygame.event.get(self._event_ids.values()):
+		for event in pygame.event.get(self._system_ids.values()):
 			listeners = self._listeners_list.get(event.type, list())
 			for listener in listeners:
 				listener(event)
+		for event in pygame.event.get(self._motion_ids.values()):
+			key = event.__dict__.get('key', event.__dict__.get('button', 0))
+			for handler in self._aliases_keys.get(key, []):
+				handler(event)
 		for update_method in self._listeners_update:
 			update_method(self)
 

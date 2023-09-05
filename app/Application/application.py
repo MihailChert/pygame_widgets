@@ -1,7 +1,9 @@
 import importlib
+import importlib.util
 from .appfactory import AppFactory
 from .builder import Builder
 from .source import SourceType
+import pdb
 '''
 All action before create window and start controllers listeners
 Import controllers and factories from config
@@ -25,7 +27,12 @@ class Application:
 
 	@staticmethod
 	def get_code_loader(source):
-		module = importlib.import_module(source.get_source())
+		try:
+			module = importlib.import_module(source.get_source())
+		except ModuleNotFoundError:
+			file_spec = importlib.util.spec_from_file_location(source.get_source().split('.')[-1], source.get_source().replace('.', '/')+'.py')
+			module = importlib.util.module_from_spec(file_spec)
+			file_spec.loader.exec_module(module)
 		return getattr(module, source.get_name())
 
 	@staticmethod

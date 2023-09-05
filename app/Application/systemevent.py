@@ -1,10 +1,26 @@
 from enum import Enum
 import pygame
+import pdb
 
 
-class SystemEvent(Enum):
+class EnginEnum(Enum):
+
+	# @classmethod
+	# def union(cls, other):
+	# 	for
+
+	@classmethod
+	def values(cls):
+		ret = []
+		for event in cls:
+			ret.append(event.value)
+		return ret
+
+class SystemEvent(EnginEnum):
 
 	quit = pygame.QUIT
+	resize = pygame.VIDEORESIZE
+	expose = pygame.VIDEOEXPOSE
 	window_shown = pygame.WINDOWSHOWN
 	window_hidden = pygame.WINDOWHIDDEN
 	window_exposed = pygame.WINDOWEXPOSED
@@ -24,9 +40,19 @@ class SystemEvent(Enum):
 	window_icc_prof_changed = pygame.WINDOWICCPROFCHANGED  # Window ICC profile changed(SDL backend >= 2.0.18)
 	window_display_change = pygame.WINDOWDISPLAYCHANGED
 
-	@classmethod
-	def values(cls):
-		ret = []
-		for event in cls:
-			ret.append(event.value)
-		return ret
+
+class MotionEvent(EnginEnum):
+
+	key_down = pygame.KEYDOWN
+	key_up = pygame.KEYUP
+	mouse_move = pygame.MOUSEMOTION
+	mouse_key_down = pygame.MOUSEBUTTONDOWN
+	mouse_key_up = pygame.MOUSEBUTTONUP
+	joy_axis_move = pygame.JOYAXISMOTION
+	joy_boll_move = pygame.JOYBALLMOTION
+	joy_hat_move = pygame.JOYHATMOTION
+	joy_key_down = pygame.JOYBUTTONDOWN
+	joy_key_up = pygame.JOYBUTTONUP
+
+if __name__ == '__main__':
+	pdb.set_trace()

@@ -22,7 +22,10 @@ class DrawingController(AbstractController):
 			if dependence.get_name() == source.get_source():
 				cls = dependence.get_content()
 				break
-		return cls.create_from_source(source)
+		try:
+			return cls.create_from_source(source)
+		except AttributeError:
+			raise RuntimeError('Проверить ресурс и загружаемый класс') #TODO: change to normal error
 
 	def find_object(self, needle_object):
 		if needle_object == 'root':

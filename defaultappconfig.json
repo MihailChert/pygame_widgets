@@ -9,6 +9,10 @@
           "drawing",
           "text"
         ],
+        "key_aliases": {
+          "key_up": ["W", "UP"],
+          "key_down": ["S", "DOWN"]
+        },
         "caption": "Default game",
         "fps": 60,
         "display_mod": [

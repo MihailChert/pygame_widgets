@@ -4,7 +4,7 @@ import os
 import pygame
 from .abstractfactory import AbstractFactory
 from .appcontroller import AppController
-from .systemevent import SystemEvent
+from .systemevent import SystemEvent, MotionEvent
 from .builder import Builder
 
 
@@ -37,6 +37,9 @@ class AppFactory:
 					factories[factory_name] = dependence.get_content()
 					app.update_includes(factory_name, dependence.get_content())
 		factory = cls(source.get_name(), source.meta['application'], factories, config)
+		controller = factory.get_controller()
+		for alias, keys in source.meta.get('key_aliases', []).items():
+			controller.add_alias_keys(alias, keys)
 		app.update_includes('main', factory)
 		app.set_fps(source.meta.get('fps', 0))
 		return factory
@@ -82,6 +85,10 @@ class AppFactory:
 		return SystemEvent
 
 	@staticmethod
+	def get_motion_event():
+		return MotionEvent
+
+	@staticmethod
 	def get_builder(content):
 		return Builder.build_from(content)
 
@@ -92,6 +99,8 @@ class AppFactory:
 		raise ValueError('Factory mast implement AbstractFactory')
 
 	def get_factory(self, factory_name):
+		if factory_name == self._name:
+			return self
 		return self.factories[factory_name]
 
 	def init(self):
