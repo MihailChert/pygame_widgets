@@ -7,6 +7,7 @@ class TextFactory(AbstractFactory):
 
 	def __init__(self, name, main_factory, config):
 		super().__init__(name, main_factory, config)
+		self._fonts = config['loaded_fonts']
 		self._controller = None
 
 	def init(self, name, main_factory):
@@ -15,8 +16,11 @@ class TextFactory(AbstractFactory):
 		self.logger.info('init text factory')
 
 	@classmethod
-	def get_factory_loader(cls, source):
-		factory = super(TextFactory, cls).get_factory_loader(source)
+	def get_settings_loader(cls, source):
+		config = {
+			'loaded_fonts': cls.check_parameter(source.meta, 'fonts', default=[])
+		}
+		factory = cls(source.get_name(), source.depended, config)
 		return factory
 
 	@staticmethod

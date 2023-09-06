@@ -1,3 +1,4 @@
+import pygame
 from ..Application import AbstractFactory
 from .drawingcontroller import DrawingController
 from .simplefigure import SimpleFigure
@@ -15,15 +16,20 @@ class DrawingFactory(AbstractFactory):
 		config.update(factory_config)
 		self.scenes = factory_config['scenes']
 		self.main_scene = factory_config['main_scene']
-		self.config = config
+		self.background_color = factory_config['background']
 
 	def init(self, name, main_factory):
 		super().init(name, main_factory)
 		self.logger.info('init drawing factory')
 
 	@classmethod
-	def get_factory_loader(cls, source):
-		factory = super(DrawingFactory, cls).get_factory_loader(source)
+	def get_settings_loader(cls, source):
+		config = {
+			'scenes': cls.check_parameter(source.meta, 'scenes', True),
+			'main_scene': cls.check_parameter(source.meta, 'main_scene', True),
+			'background': cls.check_parameter(source.meta, 'background_color', default=pygame.Color('black'))
+		}
+		factory = cls(source.get_name(), source.depended, config)
 		return factory
 
 	def after_pygame_init(self):

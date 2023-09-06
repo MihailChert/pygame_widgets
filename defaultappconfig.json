@@ -1,5 +1,5 @@
 {
-  "factory": [
+  "config": [
     {
       "name": "main",
       "ref": "AppFactory",

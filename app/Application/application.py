@@ -48,7 +48,7 @@ class Application:
 	def find_loader(self, source):
 		if source.get_type() == SourceType.code:
 			return getattr(self, source.get_loader_method())
-		elif source.get_type() == SourceType.factory:
+		elif source.get_type() == SourceType.settings:
 			source.meta['application'] = self
 			for factory_class in source.get_dependencies():
 				if factory_class.get_type() == SourceType.code:
