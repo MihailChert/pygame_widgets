@@ -1,0 +1,89 @@
+{
+  "class": [
+    {
+      "name": "Node",
+      "ref": "app.Drawing.node"
+    },
+    {
+      "name": "SimpleText",
+      "ref": "app.Drawing.TextDrawing.simpletext"
+    },
+    {
+      "name": "NodeForTest",
+      "ref": "code.nodefortest"
+    }
+  ],
+  "node": [
+    {
+      "name": "main",
+      "ref": "Node",
+      "dependence": ["Node", "rect", "rect2"],
+      "meta": {
+        "background": [0, 0, 0],
+        "listeners": {
+          "drawing": {
+            "update": "update"
+          }
+        }
+      }
+    },
+    {
+      "name": "rect",
+      "ref": "NodeForTest",
+      "dependence": ["NodeForTest", "test_text"],
+      "meta": {
+        "background": [255, 0, 0],
+        "pos": [50, 50],
+        "size": [100, 100],
+        "listeners": {
+          "drawing": {
+            "update": "update"
+          },
+          "main": {
+            "key_up": "test"
+          }
+        }
+      }
+    },
+    {
+      "name": "rect2",
+      "ref": "Node",
+      "dependence": ["Node", "test_text2"],
+      "meta": {
+        "background": "green",
+        "pos": [150, 50],
+        "size": [100, 100],
+        "listeners": {
+          "drawing": {
+            "update": "update"
+          }
+        }
+      }
+    }
+  ],
+  "text": [
+    {
+      "name": "test_text",
+      "ref": "SimpleText",
+      "dependence": ["SimpleText"],
+      "meta": {
+        "text": "Some simple text",
+        "color": "green",
+        "antialias": true
+      }
+    },
+    {
+      "name": "test_text2",
+      "ref": "SimpleText",
+      "dependence": ["SimpleText"],
+      "meta": {
+        "text": "Other text for test",
+        "color": "red",
+        "font_size": 40,
+        "bold": true,
+        "strikethrough": true,
+        "antialias": true
+      }
+    }
+  ]
+}

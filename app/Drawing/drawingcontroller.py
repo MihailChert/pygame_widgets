@@ -22,7 +22,10 @@ class DrawingController(AbstractController):
 			if dependence.get_name() == source.get_source():
 				cls = dependence.get_content()
 				break
-		return cls.create_from_source(source)
+		try:
+			return cls.create_from_source(source)
+		except AttributeError:
+			raise RuntimeError('Проверить ресурс и загружаемый класс') #TODO: change to normal error
 
 	def create_event(self, method, event_attrs):
 		event = pygame.event.Event(self._event_id)
