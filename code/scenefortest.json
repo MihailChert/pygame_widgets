@@ -9,17 +9,21 @@
       "ref": "app.Drawing.TextDrawing.simpletext"
     },
     {
-      "name": "NodeForTest",
-      "ref": "code.nodefortest"
+      "name": "NodeMainBar",
+      "ref": "code.mainbar"
+    },
+    {
+      "name": "NodeAxis",
+      "ref": "code.axis"
     }
   ],
   "node": [
     {
       "name": "main",
       "ref": "Node",
-      "dependence": ["Node", "rect", "rect2"],
+      "dependence": ["Node", "mainBar", "axis1", "axis2", "axis3"],
       "meta": {
-        "background": [0, 0, 0],
+        "background": [0, 0, 0, 0],
         "listeners": {
           "drawing": {
             "update": "update"
@@ -28,60 +32,110 @@
       }
     },
     {
-      "name": "rect",
-      "ref": "NodeForTest",
-      "dependence": ["NodeForTest", "test_text"],
+      "name": "mainBar",
+      "ref": "NodeMainBar",
+      "dependence": ["NodeMainBar", "nodeAxisText1", "nodeAxisText2", "nodeAxisText3"],
       "meta": {
-        "background": [255, 0, 0],
-        "pos": [50, 50],
-        "size": [100, 100],
-        "listeners": {
-          "drawing": {
-            "update": "update"
-          },
-          "main": {
-            "key_up": "test"
-          }
-        }
+        "background": "white",
+        "pos": [0, 450],
+        "size": [540, 40]
       }
     },
     {
-      "name": "rect2",
+      "name": "nodeAxisText1",
       "ref": "Node",
-      "dependence": ["Node", "test_text2"],
+      "dependence": ["Node", "axisText1"],
+      "meta": {
+        "background": [0, 0, 0, 0],
+        "pos": [138, 10],
+        "size": [50, 50]
+      }
+    },
+    {
+      "name": "nodeAxisText2",
+      "ref": "Node",
+      "dependence": ["Node", "axisText2"],
+      "meta": {
+        "background": [0, 0, 0, 0],
+        "pos": [271, 10],
+        "size": [50, 50]
+      }
+    },
+    {
+      "name": "nodeAxisText3",
+      "ref": "Node",
+      "dependence": ["Node", "axisText3"],
+      "meta": {
+        "background": [0, 0, 0, 0],
+        "pos": [404, 10],
+        "size": [50, 50]
+      }
+    },
+    {
+      "name": "axis1",
+      "ref": "NodeAxis",
+      "dependence": ["NodeAxis"],
       "meta": {
         "background": "green",
-        "pos": [150, 50],
-        "size": [100, 100],
-        "listeners": {
-          "drawing": {
-            "update": "update"
-          }
-        }
+        "pos": [133, 200],
+        "size": [30, 250]
+      }
+    },
+    {
+      "name": "axis2",
+      "ref": "NodeAxis",
+      "dependence": ["NodeAxis"],
+      "meta": {
+        "background": "green",
+        "pos": [266, 200],
+        "size": [30, 250]
+      }
+    },
+    {
+      "name": "axis3",
+      "ref": "NodeAxis",
+      "dependence": ["NodeAxis"],
+      "meta": {
+        "background": [200, 255, 0, 255],
+        "pos": [399, 200],
+        "size": [30, 250]
       }
     }
   ],
   "text": [
     {
-      "name": "test_text",
+      "name": "axisText1",
       "ref": "SimpleText",
       "dependence": ["SimpleText"],
       "meta": {
-        "text": "Some simple text",
+        "text": "1",
         "color": "green",
+        "font_size": 30,
+        "antialias": true,
+        "bold": true
+      }
+    },
+    {
+      "name": "axisText2",
+      "ref": "SimpleText",
+      "dependence": ["SimpleText"],
+      "meta": {
+        "text": "2",
+        "color": "green",
+        "font_size": 30,
+        "bold": true,
         "antialias": true
       }
     },
     {
-      "name": "test_text2",
+      "name": "axisText3",
       "ref": "SimpleText",
       "dependence": ["SimpleText"],
       "meta": {
-        "text": "Other text for test",
-        "color": "red",
-        "font_size": 40,
+        "text": "3",
+        "color": [200, 255, 0, 255],
+        "font_size": 30,
         "bold": true,
-        "strikethrough": true,
         "antialias": true
       }
     }

@@ -59,8 +59,6 @@ class Node(AbstractNode):
 		controller.calc_update_zone(self.convert_rect_to_global(rect))
 
 	def _draw(self, factory, controller):
-		if self._parent is None:
-			factory.draw_simple_figure().draw_background(self.background_color)
 		self.draw(factory)
 		for child in self._children:
 			if isinstance(child, pygame.Surface):  # TODO: draw image or text
