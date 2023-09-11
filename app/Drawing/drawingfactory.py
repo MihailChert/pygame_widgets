@@ -25,9 +25,9 @@ class DrawingFactory(AbstractFactory):
 	@classmethod
 	def get_settings_loader(cls, source):
 		config = {
-			'scenes': cls.check_parameter(source.meta, 'scenes', True),
-			'main_scene': cls.check_parameter(source.meta, 'main_scene', True),
-			'background': cls.check_parameter(source.meta, 'background_color', default=pygame.Color('black'))
+			'scenes': source.check_meta('scenes', True),
+			'main_scene': source.check_meta('main_scene', True),
+			'background': source.check_meta('background_color', default=pygame.Color('black'))
 		}
 		factory = cls(source.get_name(), source.depended, config)
 		return factory

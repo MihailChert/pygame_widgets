@@ -91,6 +91,15 @@ class Source:
 		else:
 			self._dependence = dependence
 
+	def check_meta(self, parameter_name, require=False, default=None):
+		try:
+			return self.meta[parameter_name]
+		except KeyError:
+			if require:
+				raise NameError(f'The required parameter named {parameter_name} is missing from the configuration.')
+			else:
+				return default
+
 	def is_load(self):
 		return self._content is not None
 

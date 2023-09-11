@@ -12,13 +12,13 @@ class Node(AbstractNode):
 
 	@classmethod
 	def create_from_source(cls, source):
-		node = cls(source.get_name(), source.meta['pos'], source.meta['size'], None, source.meta['background'])
+		node = cls(source.get_name(), source.check_meta('pos', True), source.check_meta('size', True), None, source.check_meta('background', default=pygame.Color(0, 0, 0, 0)))
 		for dependence in source.get_dependencies():
 			if dependence.get_type() != source.TYPE.code:
 				dependence.get_content()._parent = node
 				node.add_child(dependence.get_content())
 		controller = source.meta['controller']
-		for controller_name, listeners in source.meta.get('listeners', {}).items():
+		for controller_name, listeners in source.check_meta('listeners', default={}).items():
 			for listener_method, listener_handler in listeners.items():
 				controller.add_listener_to(controller_name, listener_method, getattr(node, listener_handler))
 		return node

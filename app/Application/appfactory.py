@@ -24,21 +24,21 @@ class AppFactory:
 	@classmethod
 	def get_settings_loader(cls, source):
 		config = {
-			'caption': cls.check_parameter(source.meta, 'caption', default='Game'),
-			'display_mod': cls.check_parameter(source.meta, 'display_mod', True),
-			'flags': cls.check_parameter(source.meta, 'flags', default=0),
-			'logger': cls.check_parameter(source.meta, 'logger', default=cls.default_logging())
+			'caption': source.check_meta('caption', default='Game'),
+			'display_mod': source.check_meta('display_mod', True),
+			'flags': source.check_meta('flags', default=0),
+			'logger': source.check_meta('logger', default=cls.default_logging())
 		}
 		app = source.meta['application']
 		factories = {}
-		for factory_name in cls.check_parameter(source.meta, 'factories', True):
+		for factory_name in source.check_meta('factories', True):
 			for dependence in source.get_dependencies():
 				if dependence.get_name() == factory_name:
 					factories[factory_name] = dependence.get_content()
 					app.update_includes(factory_name, dependence.get_content())
-		factory = cls(source.get_name(), source.meta['application'], factories, config)
+		factory = cls(source.get_name(), app, factories, config)
 		app.update_includes('main', factory)
-		app.set_fps(cls.check_parameter(source.meta, 'fps', default=60))
+		app.set_fps(source.check_meta('fps', default=60))
 		return factory
 
 	@staticmethod
@@ -84,15 +84,6 @@ class AppFactory:
 	@staticmethod
 	def get_builder(content):
 		return Builder.build_from(content)
-
-	@staticmethod
-	def check_parameter(parameters_dict, parameter_name, require=False, default=None):
-		try:
-			return parameters_dict[parameter_name]
-		except KeyError:
-			if require:
-				raise NameError(f'The required parameter named {parameter_name} is missing from the configuration.')
-			return default
 
 	def update_factory(self, factory_name, factory):
 		if isinstance(factory, AbstractFactory):
