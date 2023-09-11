@@ -29,15 +29,6 @@ class AbstractFactory(ABC):
 	def get_default_config():
 		pass
 
-	@staticmethod
-	def check_parameter(parameters_dict, parameter_name, require=False, default=None):
-		try:
-			return parameters_dict[parameter_name]
-		except KeyError:
-			if require:
-				raise NameError(f'The required parameter named {parameter_name} is missing from the configuration.')
-			return default
-
 	def get_name(self):
 		return self._name
 
@@ -49,7 +40,6 @@ class AbstractFactory(ABC):
 
 	def update_single_object(self, single_name, single_object=None):
 		self._single_existing[single_name] = single_object
-
 
 	def get_logger(self, sub_name):
 		return self.logger.getChild(sub_name)

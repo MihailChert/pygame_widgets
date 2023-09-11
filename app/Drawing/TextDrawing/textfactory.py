@@ -18,7 +18,7 @@ class TextFactory(AbstractFactory):
 	@classmethod
 	def get_settings_loader(cls, source):
 		config = {
-			'loaded_fonts': cls.check_parameter(source.meta, 'fonts', default=[])
+			'loaded_fonts': source.check_meta('fonts', default=[])
 		}
 		factory = cls(source.get_name(), source.depended, config)
 		return factory
