@@ -3,7 +3,8 @@ import pygame
 
 class SimpleText:
 
-	def __init__(self, font, text, antialias, color, parent, bg_color=None):
+	def __init__(self, name, font, text, antialias, color, parent, bg_color=None):
+		self._name = name
 		self.font = font
 		self._text = text
 		self.color = color
@@ -22,6 +23,7 @@ class SimpleText:
 		cls.set_font_attrs_from_dict(font, source.meta)
 		bg_c = None if source.meta.get('bg_color', True) else pygame.Color(source.meta['bg_color'])
 		return cls(
+			source.get_name(),
 			font,
 			source.meta['text'],
 			bool(source.meta.get('antialias', False)),
@@ -54,6 +56,9 @@ class SimpleText:
 			getattr(font, 'set_' + font_attr)(font_dict.get(font_attr, default).lower != str(default).lower())
 		except AttributeError:
 			getattr(font, 'set_' + font_attr)(font_dict.get(font_attr, default) != default)
+
+	def get_name(self):
+		return self._name
 
 	def get_rect(self):
 		return pygame.Rect(0, 0, 0, 0)

@@ -4,34 +4,35 @@ import pygame
 
 class Node(AbstractNode):
 
-	def __init__(self, name, pos, size, parent, bg_color=(0, 0, 0)):
+	def __init__(self, name, pos, size, parent, controller, bg_color):
 		super().__init__(name, pos, size, parent)
 		self._children = []
 		self.background_color = pygame.Color(bg_color)
 		self._has_change = True
+		self._controller = controller
 
 	@classmethod
 	def create_from_source(cls, source):
-		node = cls(source.get_name(), source.check_meta('pos', True), source.check_meta('size', True), None, source.check_meta('background', default=pygame.Color(0, 0, 0, 0)))
+		controller = source.meta['controller']
+		node = cls(source.get_name(), source.check_meta('pos', True), source.check_meta('size', True), None, controller, source.check_meta('background', default=pygame.Color(0, 0, 0, 0)))
 		for dependence in source.get_dependencies():
 			if dependence.get_type() != source.TYPE.code:
 				dependence.get_content()._parent = node
 				node.add_child(dependence.get_content())
-		controller = source.meta['controller']
 		for controller_name, listeners in source.check_meta('listeners', default={}).items():
 			for listener_method, listener_handler in listeners.items():
-				controller.add_listener_to(controller_name, listener_method, getattr(node, listener_handler))
+				node.handle_by_controller(controller_name, listener_method, getattr(node, listener_handler), source)
 		return node
+
+	def handle_by_controller(self, controller_name, listener_method, listener_handler, source):
+		self._controller.add_listener_to(controller_name, listener_method, listener_handler)
 
 	def add_child(self, new_node):
 		self._children.append(new_node)
-		self.union_rect(new_node.get_rect())
+		new_node._parent = self
 
-	def union_rect(self, union_rect):
-		union_rect = self.convert_rect_to_global(union_rect)
-		self._rect = self._rect.union(union_rect)
-		if self._parent is not None:
-			self._parent.union_rect(self._rect)
+	def get_controller(self):
+		return self._controller
 
 	def add_to_children(self, new_node, needle_node):
 		if self._name == needle_node:
@@ -53,10 +54,10 @@ class Node(AbstractNode):
 				continue
 		raise StopIteration('Don\'t find object')
 
-	def update(self, controller):  # TODO: try make like decorator
+	def update(self, event):
 		self._has_change = True
-		rect = pygame.Rect((0, 0), controller.factory.get_surface().get_size())
-		controller.calc_update_zone(self.convert_rect_to_global(rect))
+		rect = pygame.Rect((0, 0), self._controller.factory.get_surface().get_size())
+		self._controller.calc_update_zone(self.convert_rect_to_global(rect))
 
 	def _draw(self, factory, controller):
 		self.draw(factory)

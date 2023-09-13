@@ -4,7 +4,7 @@ import os
 import pygame
 from .abstractfactory import AbstractFactory
 from .appcontroller import AppController
-from .systemevent import SystemEvent
+from .systemevent import SystemEvent, MotionEvent
 from .builder import Builder
 
 
@@ -85,6 +85,10 @@ class AppFactory:
 		return SystemEvent
 
 	@staticmethod
+	def get_motion_event():
+		return MotionEvent
+
+	@staticmethod
 	def get_builder(content):
 		return Builder.build_from(content)
 
@@ -95,6 +99,8 @@ class AppFactory:
 		raise ValueError('Factory mast implement AbstractFactory')
 
 	def get_factory(self, factory_name):
+		if factory_name == self._name:
+			return self
 		return self.factories[factory_name]
 
 	def init(self):

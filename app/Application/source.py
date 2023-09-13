@@ -1,4 +1,5 @@
 from enum import Enum
+import warnings
 
 
 class SourceType(Enum):
@@ -119,3 +120,6 @@ class Source:
 		content = controller.find_loader(self)(self)
 		if content is not None and not isinstance(content, (int, str, tuple, bool)):
 			self._content = content
+		else:
+			controller.logger.warning(f'Invalid content type:{type(content)}')
+			warnings.warn(f'Invalid content type:{type(content)}')

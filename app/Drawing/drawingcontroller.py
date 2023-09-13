@@ -1,3 +1,5 @@
+import traceback
+
 import pygame
 from ..Application import AbstractController
 
@@ -7,8 +9,9 @@ class DrawingController(AbstractController):
 	def __init__(self, factory):
 		super().__init__(factory)
 		self._root_node = None
-		self._update_zone = pygame.Rect(0, 0, 0, 0)
+		self._update_zone = None
 		self._event_id = self.create_event_id()
+		self._current_scene = None
 
 	def get_node_loader(self, source):
 		source.meta['controller'] = self
@@ -24,14 +27,10 @@ class DrawingController(AbstractController):
 				break
 		try:
 			return cls.create_from_source(source)
-		except AttributeError:
-			raise RuntimeError('Проверить ресурс и загружаемый класс') #TODO: change to normal error
-
-	def create_event(self, method, event_attrs):
-		event = pygame.event.Event(self._event_id)
-		event.__dict__['method'] = method
-		event.__dict__.update(event_attrs)
-		return event
+		except AttributeError as er:
+			self.logger.info(traceback.format_exc())
+			self.logger.error(er)
+			raise RuntimeError(f'Проверить ресурс и загружаемый класс, {cls.__name__}, {er}') #TODO: change to normal error
 
 	def find_object(self, needle_object):
 		if needle_object == 'root':
@@ -42,15 +41,20 @@ class DrawingController(AbstractController):
 		for scene in self.factory.scenes.values():
 			scene.destroy()
 
-	def get_root_node(self):
-		return self.factory.scenes[self.factory.main_scene]
-
 	def calc_update_zone(self, rect):
+		if self._update_zone is None:
+			self._update_zone = rect
+			return
 		self._update_zone = self._update_zone.union(rect)
+
+	def update_current_scene(self, new_scene):
+		self._current_scene = new_scene
+		self.create_event('show_scene')
 
 	def _listen(self):
 		super()._listen()
-		self.factory.get_surface().fill(self.factory.background_color)
-		self.get_root_node()._draw(self.factory, self)
-		pygame.display.update(self._update_zone)
-		self._update_zone = pygame.Rect(0, 0, 0, 0)
+		if self._update_zone is not None:
+			self.factory.get_surface().fill(self.factory.background_color)
+			self._current_scene._draw(self.factory, self)
+			pygame.display.update(self._update_zone)
+			self._update_zone = None

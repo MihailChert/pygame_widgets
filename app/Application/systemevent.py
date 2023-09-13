@@ -1,13 +1,8 @@
 from enum import Enum
 import pygame
-import pdb
 
 
 class EnginEnum(Enum):
-
-	# @classmethod
-	# def union(cls, other):
-	# 	for
 
 	@classmethod
 	def values(cls):
@@ -53,6 +48,3 @@ class MotionEvent(EnginEnum):
 	joy_hat_move = pygame.JOYHATMOTION
 	joy_key_down = pygame.JOYBUTTONDOWN
 	joy_key_up = pygame.JOYBUTTONUP
-
-if __name__ == '__main__':
-	pdb.set_trace()

@@ -1,7 +1,6 @@
 from .abstractcontroller import AbstractController
 import pygame
 import sys
-import pdb
 
 
 class AppController(AbstractController):

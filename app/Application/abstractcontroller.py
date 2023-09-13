@@ -11,20 +11,23 @@ class AbstractController(ABC):
 		self._listeners_list = {}
 		self._listeners_update = []
 		self.factory = factory
-		self.event = None
 
 	@staticmethod
 	def create_event_id():
 		return pygame.event.custom_type()
 
-	def create_event(self, method, event_attrs):
+	def create_event(self, method, **event_attrs):
 		if method not in self._listeners_list.keys():
 			self.logger.warn('Event method has no listeners')
-		event = pygame.event.Event(self._event_id, method=method, **event_attrs)
-		self.event = event
+		if not event_attrs:
+			event = pygame.event.Event(self._event_id, method=method)
+		else:
+			event_attrs['method'] = method
+			event = pygame.event.Event(self._event_id, event_attrs)
+		pygame.event.post(event)
 
 	def crate_default_event(self):
-		self.event = pygame.event.Event(self._event_id, method='empty_method', attrs={})
+		pygame.event.post(pygame.event.Event(self._event_id, method='empty_method', attrs={}))
 
 	def post(self):
 		if isinstance(self.event, pygame.event.Event):
@@ -73,6 +76,7 @@ class AbstractController(ABC):
 	def add_listener_to(self, factory_name, listener_method, handler, order=None):
 		if factory_name == self.factory.get_name():
 			self.add_listener(listener_method, handler, order)
+			return
 		controller = self.factory.get_main_factory().get_factory(factory_name)
 		controller = controller.get_controller()
 		controller.add_listener(listener_method, handler, order)

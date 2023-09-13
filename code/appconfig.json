@@ -9,16 +9,17 @@
           "drawing",
           "text"
         ],
-        "key_aliases": {
-          "key_up": ["W", "UP"],
-          "key_down": ["S", "DOWN"]
-        },
-        "caption": "Default game",
+        "caption": "Pyramid game",
         "fps": 60,
         "display_mod": [
-          540,
+          640,
           500
         ],
+        "key_aliases": {
+          "move_right": ["D", "RIGHT"],
+          "move_left": ["A", "LEFT"],
+          "select": ["space", "enter", "f"]
+        },
         "flags": 0,
         "logger": {
           "version": 1,

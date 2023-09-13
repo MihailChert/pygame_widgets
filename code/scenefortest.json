@@ -9,36 +9,63 @@
       "ref": "app.Drawing.TextDrawing.simpletext"
     },
     {
-      "name": "NodeMainBar",
-      "ref": "code.mainbar"
-    },
-    {
       "name": "NodeAxis",
       "ref": "code.axis"
+    },
+    {
+      "name": "NodeSimpleFigure",
+      "ref": "code.simplefigure"
+    },
+    {
+      "name": "NodeAxisContainer",
+      "ref": "code.axiscontainer"
     }
   ],
   "node": [
     {
       "name": "main",
       "ref": "Node",
-      "dependence": ["Node", "mainBar", "axis1", "axis2", "axis3"],
+      "dependence": ["Node", "mainBar", "axisContainer"],
       "meta": {
         "background": [0, 0, 0, 0],
         "listeners": {
           "drawing": {
-            "update": "update"
+            "show_scene": "update"
+          }
+        }
+      }
+    },
+    {
+      "name": "axisContainer",
+      "ref": "NodeAxisContainer",
+      "dependence": ["NodeAxisContainer", "axis1", "axis2", "axis3"],
+      "meta": {
+        "pos": [0, 200],
+        "size": [0, 0],
+        "listeners": {
+          "main": {
+            "move_left": "move_left",
+            "move_right": "move_right",
+            "select": "select"
+          }
+        },
+        "listeners_order": {
+          "main": {
+            "select": 0,
+            "move_left": 0,
+            "move_right": 0
           }
         }
       }
     },
     {
       "name": "mainBar",
-      "ref": "NodeMainBar",
-      "dependence": ["NodeMainBar", "nodeAxisText1", "nodeAxisText2", "nodeAxisText3"],
+      "ref": "NodeSimpleFigure",
+      "dependence": ["NodeSimpleFigure", "nodeAxisText1", "nodeAxisText2", "nodeAxisText3"],
       "meta": {
         "background": "white",
         "pos": [0, 450],
-        "size": [540, 40]
+        "size": [640, 40]
       }
     },
     {
@@ -46,8 +73,7 @@
       "ref": "Node",
       "dependence": ["Node", "axisText1"],
       "meta": {
-        "background": [0, 0, 0, 0],
-        "pos": [138, 10],
+        "pos": [116, 10],
         "size": [50, 50]
       }
     },
@@ -56,8 +82,7 @@
       "ref": "Node",
       "dependence": ["Node", "axisText2"],
       "meta": {
-        "background": [0, 0, 0, 0],
-        "pos": [271, 10],
+        "pos": [288, 10],
         "size": [50, 50]
       }
     },
@@ -66,38 +91,86 @@
       "ref": "Node",
       "dependence": ["Node", "axisText3"],
       "meta": {
-        "background": [0, 0, 0, 0],
-        "pos": [404, 10],
+        "pos": [470, 10],
         "size": [50, 50]
       }
     },
     {
       "name": "axis1",
       "ref": "NodeAxis",
-      "dependence": ["NodeAxis"],
+      "dependence": ["NodeAxis", "axisColumn1"],
+      "meta": {
+        "pos": [50, 0],
+        "size": [182, 250],
+        "listeners": {
+          "drawing": {
+            "move_left": "move_left",
+            "move_right": "move_right",
+            "select": "select"
+          }
+        }
+      }
+    },
+    {
+      "name": "axisColumn1",
+      "ref": "NodeSimpleFigure",
+      "dependence": ["NodeSimpleFigure"],
       "meta": {
         "background": "green",
-        "pos": [133, 200],
+        "pos": [66, 0],
         "size": [30, 250]
       }
     },
     {
       "name": "axis2",
       "ref": "NodeAxis",
-      "dependence": ["NodeAxis"],
+      "dependence": ["NodeAxis", "axisColumn2"],
+      "meta": {
+        "pos": [232, 0],
+        "size": [182, 250],
+        "listeners": {
+          "drawing": {
+            "move_left": "move_left",
+            "move_right": "move_right",
+            "select": "select"
+          }
+        }
+      }
+    },
+    {
+      "name": "axisColumn2",
+      "ref": "NodeSimpleFigure",
+      "dependence": ["NodeSimpleFigure"],
       "meta": {
         "background": "green",
-        "pos": [266, 200],
+        "pos": [66, 0],
         "size": [30, 250]
       }
     },
     {
       "name": "axis3",
       "ref": "NodeAxis",
-      "dependence": ["NodeAxis"],
+      "dependence": ["NodeAxis", "axisColumn3"],
+      "meta": {
+        "pos": [414, 0],
+        "size": [182, 250],
+        "listeners": {
+          "drawing": {
+            "show_scene": "start_game",
+            "move_left": "move_left",
+            "move_right": "move_right",
+            "select": "select"
+          }
+        }
+      }
+    },
+    {
+      "name": "axisColumn3",
+      "ref": "NodeSimpleFigure",
+      "dependence": ["NodeSimpleFigure"],
       "meta": {
         "background": [200, 255, 0, 255],
-        "pos": [399, 200],
+        "pos": [66, 0],
         "size": [30, 250]
       }
     }

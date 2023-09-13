@@ -37,6 +37,7 @@ class DrawingFactory(AbstractFactory):
 		for scene_name in self.scenes.keys():
 			builder = self._main_factory.get_builder(self.scenes[scene_name])
 			self.scenes[scene_name] = builder.build_sources(self.get_controller())
+		self.get_controller().update_current_scene(self.scenes[self.main_scene])
 
 	@staticmethod
 	def get_default_config():
