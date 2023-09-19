@@ -2,8 +2,8 @@
   "config": [
     {
       "name": "main",
-      "ref": "AppFactory",
-      "dependence": ["AppFactory" ,"drawing", "text"],
+      "ref": "AppController",
+      "dependence": ["AppController" ,"drawing", "text"],
       "meta": {
         "factories": [
           "drawing",
@@ -30,7 +30,7 @@
             }
           },
           "loggers": {
-            "main": {
+            "application": {
               "handlers": ["main_handler"],
               "level": "DEBUG"
             }
@@ -46,8 +46,8 @@
     },
     {
       "name": "drawing",
-      "ref": "DrawingFactory",
-      "dependence": ["DrawingFactory"],
+      "ref": "DrawingController",
+      "dependence": ["DrawingController"],
       "meta": {
         "main_scene": "main",
         "scenes": {
@@ -57,27 +57,23 @@
     },
     {
       "name": "text",
-      "ref": "TextFactory",
-      "dependence": ["TextFactory"],
+      "ref": "TextController",
+      "dependence": ["TextController"],
       "meta": {}
     }
   ],
   "class": [
     {
-      "name": "AppFactory",
-      "ref": "app.Application.appfactory"
+      "name": "AppController",
+      "ref": "app.Application.appcontroller"
     },
     {
-      "name": "DrawingFactory",
-      "ref": "app.Drawing.drawingfactory"
+      "name": "DrawingController",
+      "ref": "app.Drawing.drawingcontroller"
     },
     {
-      "name": "TextFactory",
-      "ref": "app.Drawing.TextDrawing.textfactory"
-    },
-    {
-      "name": "Node",
-      "ref": "app.Drawing.node"
+      "name": "TextController",
+      "ref": "app.Drawing.TextDrawing.textcontroller"
     }
   ]
 }

@@ -78,7 +78,7 @@ class AbstractNode(ABC):
 		pass
 
 	@abstractmethod
-	def draw(self, surface):
+	def draw(self):
 		pass
 
 	@abstractmethod

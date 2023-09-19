@@ -70,6 +70,7 @@ class SimpleText:
 		text = self._text if text is None else text
 		self.font = font
 		self._text = text
+		del self._rendered_text
 		self._rendered_text = None
 		self.render()
 
@@ -78,9 +79,12 @@ class SimpleText:
 			size = self._parent.get_rect().size
 			self._rendered_text = self.font.render(self._text, self.antialias, self.color, self.bg_color, size[0])
 
-	def _draw(self, factory, controller):
+	def _draw(self, controller):
 		self.render()
-		factory.get_surface().blit(self._rendered_text, self._parent.get_global_rect())
+		controller._app.get_screen().blit(self._rendered_text, self._parent.get_global_rect())
 
 	def destroy(self):
-		del self._rendered_text
+		try:
+			del self._rendered_text
+		except AttributeError:
+			pass

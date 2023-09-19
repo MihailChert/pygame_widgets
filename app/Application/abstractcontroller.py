@@ -5,16 +5,50 @@ import pygame
 class AbstractController(ABC):
 
 	@abstractmethod
-	def __init__(self, factory):
-		self.logger = factory.get_logger('Controller')
+	def __init__(self, name, app):
+		self._name = name
+		self._app = app
+		self.logger = app.get_logger().getChild(name)
 		self.logger.info('init controller')
 		self._listeners_list = {}
 		self._listeners_update = []
-		self.factory = factory
+
+	def __str__(self):
+		return f'<Controller {self._name}>'
+
+	@classmethod
+	@abstractmethod
+	def get_settings_loader(cls, source):
+		app = source.meta['application']
+		controller = cls(source.get_name(), app)
+		app.update_controller(source.get_name(), controller)
+		return controller
+	@abstractmethod
+	def init(self, app):
+		self._app = app
+
+	@abstractmethod
+	def after_init(self):
+		pass
+
+	@abstractmethod
+	def has_event_type(self, event_type):
+		pass
 
 	@staticmethod
 	def create_event_id():
 		return pygame.event.custom_type()
+
+	@staticmethod
+	def get_default_config():
+		return {}
+
+	def get_name(self):
+		return self._name
+
+	def get_app(self):
+		return self._app
+
 
 	def create_event(self, method, **event_attrs):
 		if method not in self._listeners_list.keys():
@@ -41,15 +75,11 @@ class AbstractController(ABC):
 	def empty_method(self, attrs):
 		self.logger.info('Call empty method')
 
-	@abstractmethod
-	def find_object(self, needle_object):
-		pass
-
 	def find_loader(self, source):
 		try:
 			return getattr(self, source.get_loader_method())
 		except AttributeError:
-			return self.factory.get_main_factory().get_controller().find_loader(source)
+			return self._app.find_loader(source)
 
 	@abstractmethod
 	def destroy(self, event):
@@ -73,12 +103,11 @@ class AbstractController(ABC):
 		except KeyError:
 			self._listeners_list[listened_method] = [handler]
 
-	def add_listener_to(self, factory_name, listener_method, handler, order=None):
-		if factory_name == self.factory.get_name():
+	def add_listener_to(self, controller_name, listener_method, handler, order=None):
+		if controller_name == self._name:
 			self.add_listener(listener_method, handler, order)
 			return
-		controller = self.factory.get_main_factory().get_factory(factory_name)
-		controller = controller.get_controller()
+		controller = self._app.get_controller(controller_name)
 		controller.add_listener(listener_method, handler, order)
 
 	def get_event_id(self):
@@ -86,7 +115,7 @@ class AbstractController(ABC):
 
 	def _listen(self):
 		for event in pygame.event.get(self.get_event_id()):
-			listeners = self._listeners_list.get(event.method)
+			listeners = self._listeners_list.get(event.method, [])
 			for handler in listeners:
 				handler(event)
 		for update_method in self._listeners_update:

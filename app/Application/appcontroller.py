@@ -1,31 +1,59 @@
-from .abstractcontroller import AbstractController
 import pygame
 import sys
+from .abstractcontroller import AbstractController
+from .systemevent import SystemEvent, MotionEvent
 
 
 class AppController(AbstractController):
 
-	def __init__(self, factory):
-		super().__init__(factory)
-		self._system_ids = factory.get_system_event()
-		self._motion_ids = factory.get_motion_event()
-		self._selected_event = None
+	def __init__(self, name, app):
+		super().__init__(name, app)
 		self._aliases_names = {}
 		self._aliases_keys = {}
 		self.add_listener(pygame.QUIT, self.destroy)
-		self.factory.get_logger('controller').info('create_logger')
+		self._app.get_logger(name).info('create controller')
 
-	def create_event(self, event_type, event_attrs):
-		if self._selected_event is None:
-			self.logger.error('event type dont set')
-			raise ValueError('Set event type before create')
+	@classmethod
+	def get_settings_loader(cls, source):
+		config = {
+			'caption': source.check_meta('caption', default='Game'),
+			'display_mod': source.check_meta('display_mod', True),
+			'flags': source.check_meta('flags', default=0),
+			'fps': source.check_meta('fps', default=60)
+		}
+		app = source.meta['application']
+		app.update_options(config)
+		app.set_logger_config(source.check_meta('logger'))
+		controller = super(cls, AppController).get_settings_loader(source)
+		for alias, keys in source.check_meta('key_aliases', default={}).items():
+			controller.add_alias_keys(alias, keys)
+		return controller
+
+	def init(self, app):
+		if pygame.get_init():
+			return
+		self.logger.info('start init pygame')
+		self._app = app
+
+	def after_init(self):
+		if pygame.get_init():
+			return
+		log = self.logger.getChild('after_init')
+		pygame.init()
+		log.info('finish init pygame')
+		screen = pygame.display.set_mode(self._app.get_option('display_mod'), self._app.get_option('flags'))
+		self._app.update_option('screen', screen)
+		try:
+			self.set_caption()
+		except KeyError:
+			log.debug('Set default pygame caption.')
+
+	def create_event(self, event_type, **event_attrs):
+		event_type = self.get_event_id(event_type)
 		if event_type is not None:
 			self.set_event(event_type)
 		if type(event_attrs) is dict:
 			event = pygame.event.Event(self._selected_event.value, **event_attrs)
-		if type(event_attrs) is list:
-			event = pygame.event.Event(self._selected_event.value, *event_attrs)
-		self._selected_event = None
 		self.logger.info(f'create event {self._selected_event}')
 		pygame.event.post(event)
 
@@ -49,17 +77,25 @@ class AppController(AbstractController):
 	def get_event_id(self, event_id_name):
 		if isinstance(event_id_name, int):
 			try:
-				return self._system_ids(event_id_name)
+				return SystemEvent(event_id_name)
 			except ValueError:
-				return self._motion_ids(event_id_name)
+				return MotionEvent(event_id_name)
 		elif isinstance(event_id_name, str):
 			try:
-				return self._system_ids[event_id_name]
+				return SystemEvent[event_id_name]
 			except KeyError:
-				return self._motion_ids[event_id_name]
+				return MotionEvent[event_id_name]
 
-	@staticmethod
-	def set_caption(new_caption):
+	def has_event_type(self, event_type):
+		try:
+			return self.get_event_id(event_type) and True
+		except (ValueError, KeyError):
+			return False
+
+	def set_caption(self, new_caption=None):
+		if new_caption is None:
+			pygame.display.set_caption(self._app.get_option('caption'))
+			return
 		pygame.display.set_caption(new_caption)
 
 	def add_listener(self, listener_method, handler, order=None):
@@ -88,10 +124,10 @@ class AppController(AbstractController):
 			raise TypeError('Unsupported name type of event. Support string(event type by name) or int (event type).')
 
 	def add_listener_to(self, controller_name, listener_method, handler, order=None):
-		if controller_name == self.factory.get_name():
+		if controller_name == self.get_name():
 			self.add_listener(listener_method, handler, order)
 			return
-		controller = self.factory.get_factory(controller_name).get_controller()
+		controller = self._app.get_controller(controller_name)
 		controller.add_listener(listener_method, handler, order)
 
 	def find_loader(self, source):
@@ -100,45 +136,27 @@ class AppController(AbstractController):
 		except AttributeError:
 			pass
 		try:
-			return self.factory.get_app().find_loader(source)
+			return self._app().find_loader(source)
 		except TypeError:
 			pass
-		for factory in self.factory.factories.values():
-			try:
-				return getattr(factory.get_controller(), source.get_loader_method())
-			except AttributeError:
-				self.logger.warning(f'Cant find {source.get_loader_method()} in {factory.get_name()} factory')
-				continue
-		self.logger.error(f'Cant find loader with type {source.get_type()}. Please check method with name {source.get_loader_method()}')
-		raise TypeError(f'Cant find loader with type {source.get_type()}. Please check method with name {source.get_loader_method()}')
+		return self._app.find_loader()
 
 	def destroy(self, event):
-		for controller in self.factory.get_all_controllers():
-			if controller is not self:
-				controller.destroy(event)
+		if self._app.is_option_exist('game_destroy'):
+			return
+		self._app.update_option('game_destroy', True)
+		self._app.destroy(event)
 		pygame.quit()
 		sys.exit()
 
 	def _listen(self):
-		for event in pygame.event.get(self._system_ids.values()):
+		for event in pygame.event.get(SystemEvent.values()):
 			listeners = self._listeners_list.get(event.type, list())
 			for listener in listeners:
 				listener(event)
-		for event in pygame.event.get(self._motion_ids.values()):
+		for event in pygame.event.get(MotionEvent.values()):
 			key = event.__dict__.get('key', event.__dict__.get('button', 0))
 			for handler in self._aliases_keys.get(key, []):
 				handler(event)
 		for update_method in self._listeners_update:
 			update_method(self)
-
-	def set_event(self, event_name_or_id):
-		self.logger.info(f'try set event {event_name_or_id}')
-		if isinstance(event_name_or_id, int):
-			event_name_or_id = self._event_ids(event_name_or_id)
-		elif isinstance(event_name_or_id, str):
-			event_name_or_id = self._event_ids[event_name_or_id]
-		if event_name_or_id in self._event_ids:
-			self._selected_event = event_name_or_id
-
-	def find_object(self, needle_object):
-		pass

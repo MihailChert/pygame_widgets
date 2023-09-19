@@ -56,20 +56,25 @@ class Node(AbstractNode):
 
 	def update(self, event):
 		self._has_change = True
-		rect = pygame.Rect((0, 0), self._controller.factory.get_surface().get_size())
+		rect = pygame.Rect((0, 0), self._controller._app.get_screen().get_size())
 		self._controller.calc_update_zone(self.convert_rect_to_global(rect))
 
-	def _draw(self, factory, controller):
-		self.draw(factory)
+	def _draw(self, controller):
+		self.draw()
 		for child in self._children:
 			if isinstance(child, pygame.Surface):  # TODO: draw image or text
 				pass
-			child._draw(factory, controller)
+			child._draw(controller)
 		self._has_change = False
 
-	def draw(self, factory):
+	def draw(self):
 		pass
 
+	def __str__(self):
+		return self._name
+
 	def destroy(self):
+		# self._controller.logger.info('destroy ' + self._name)
+		# self._controller.logger.info(f'destroy chidren {self._children}')
 		for child in self._children:
 			child.destroy()
