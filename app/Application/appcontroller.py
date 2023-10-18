@@ -157,6 +157,9 @@ class AppController(AbstractController):
 		for event in pygame.event.get(MotionEvent.values()):
 			key = event.__dict__.get('key', event.__dict__.get('button', 0))
 			for handler in self._aliases_keys.get(key, []):
-				handler(event)
+				if self._app.is_option_exist('current_scene') and handler.__self__.on_scene(
+						self._app.get_option('current_scene')
+				):
+					handler(event)
 		for update_method in self._listeners_update:
 			update_method(self)

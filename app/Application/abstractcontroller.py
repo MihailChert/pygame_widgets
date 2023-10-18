@@ -23,6 +23,7 @@ class AbstractController(ABC):
 		controller = cls(source.get_name(), app)
 		app.update_controller(source.get_name(), controller)
 		return controller
+
 	@abstractmethod
 	def init(self, app):
 		self._app = app
@@ -48,7 +49,6 @@ class AbstractController(ABC):
 
 	def get_app(self):
 		return self._app
-
 
 	def create_event(self, method, **event_attrs):
 		if method not in self._listeners_list.keys():
@@ -117,6 +117,8 @@ class AbstractController(ABC):
 		for event in pygame.event.get(self.get_event_id()):
 			listeners = self._listeners_list.get(event.method, [])
 			for handler in listeners:
-				handler(event)
+				if self._app.is_option_exist('current_scene') and handler.__self__.on_scene(self._app.get_option('current_scene')):
+					handler(event)
 		for update_method in self._listeners_update:
-			update_method(self)
+			if self._app.is_option_exist('current_scene') and update_method.__self__.on_scene(self._app.get_option('current_scene')):
+				update_method(self)

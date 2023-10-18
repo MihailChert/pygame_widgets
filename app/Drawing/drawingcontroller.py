@@ -1,5 +1,4 @@
 import traceback
-
 import pygame
 from ..Application import AbstractController
 from ..Application.builder import Builder
@@ -64,6 +63,9 @@ class DrawingController(AbstractController):
 			self.logger.error(er)
 			raise RuntimeError(f'Проверить ресурс и загружаемый класс, {cls.__name__}, {er}') #TODO: change to normal error
 
+	def get_simple_figure(self):
+		return self._simple_figure
+
 	def find_object(self, needle_object):
 		if needle_object == 'root':
 			return self._current_scene
@@ -89,6 +91,6 @@ class DrawingController(AbstractController):
 		super()._listen()
 		if self._update_zone is not None:
 			self._app.get_screen().fill(self.background)
-			self._current_scene._draw(self)
+			self._current_scene._draw()
 			pygame.display.update(self._update_zone)
 			self._update_zone = None

@@ -4,8 +4,8 @@ from app import Node
 
 class NodeAxisContainer(Node):
 
-	def __init__(self, name, pos, size, parent, controller, bg_color):
-		super().__init__(name, pos, size, parent, controller, bg_color)
+	def __init__(self, name, pos, size, scene, parent, controller, bg_color):
+		super().__init__(name, pos, size, scene, parent, controller, bg_color)
 		self.current_selected = 1
 		self.selected = None
 

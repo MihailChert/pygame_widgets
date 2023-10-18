@@ -1,17 +1,21 @@
 import pygame
+from ..abcnode import AbstractNode
 
 
-class SimpleText:
+class SimpleText(AbstractNode):
 
-	def __init__(self, name, font, text, antialias, color, parent, bg_color=None):
-		self._name = name
+	def __init__(self, name, pos, size, scene, parent, controller, font, text, antialias, color, bg_color=None):
+		super().__init__(name, pos, size, scene, parent)
 		self.font = font
+		self._controller = controller
 		self._text = text
 		self.color = color
 		self.antialias = antialias
 		self.bg_color = bg_color
 		self._parent = parent
 		self._rendered_text = None
+		self.render()
+		self._rect.size = self._rendered_text.get_size()
 
 	@classmethod
 	def create_from_source(cls, source):
@@ -24,11 +28,15 @@ class SimpleText:
 		bg_c = None if source.meta.get('bg_color', True) else pygame.Color(source.meta['bg_color'])
 		return cls(
 			source.get_name(),
+			source.check_meta('pos', True),
+			source.check_meta('size', default=(0, 0)),
+			source.get_root().get_name(),
+			None,
+			source.meta['controller'],
 			font,
-			source.meta['text'],
-			bool(source.meta.get('antialias', False)),
-			source.meta['color'],
-			source.depended,
+			source.check_meta('text', True),
+			bool(source.check_meta('antialias', default=False)),
+			source.check_meta('color', True),
 			bg_c
 		)
 
@@ -76,12 +84,15 @@ class SimpleText:
 
 	def render(self):
 		if self._rendered_text is None:
-			size = self._parent.get_rect().size
-			self._rendered_text = self.font.render(self._text, self.antialias, self.color, self.bg_color, size[0])
+			if self._parent is not None:
+				size = self._rect.size.w if not self._rect.size.w else self._parent.get_rect().size.w
+			else:
+				size = 0
+			self._rendered_text = self.font.render(self._text, self.antialias, self.color, self.bg_color, size)
 
-	def _draw(self, controller):
+	def _draw(self):
 		self.render()
-		controller._app.get_screen().blit(self._rendered_text, self._parent.get_global_rect())
+		self._controller.get_app().get_screen().blit(self._rendered_text, self.get_global_rect())
 
 	def destroy(self):
 		try:
