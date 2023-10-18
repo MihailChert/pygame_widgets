@@ -11,4 +11,4 @@ class NodeSimpleFigure(Node):
 		return node
 
 	def draw(self):
-		getattr(self._controller._simple_figure, self.figure)(self.background_color, self.get_global_rect())
+		getattr(self._controller.get_simple_figure(), self.figure)(self.background_color, self.get_global_rect())

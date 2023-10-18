@@ -1,5 +1,4 @@
 import traceback
-
 import pygame
 from ..Application import AbstractController
 from ..Application.builder import Builder
@@ -39,6 +38,8 @@ class DrawingController(AbstractController):
 		for scene_name, scene_ref in self._scenes.items():
 			builder = Builder.build_from(scene_ref)
 			self._scenes[scene_name] = builder.build_sources(self)
+			if self._scenes[scene_name].get_name() != scene_name:
+				raise RuntimeError('Invalid root node name. Root node name must be equal scene name.')
 		self.update_current_scene(self._current_scene)
 		self._simple_figure = SimpleFigure(self._app.get_screen())
 
@@ -63,6 +64,9 @@ class DrawingController(AbstractController):
 			self.logger.info(traceback.format_exc())
 			self.logger.error(er)
 			raise RuntimeError(f'Проверить ресурс и загружаемый класс, {cls.__name__}, {er}') #TODO: change to normal error
+
+	def get_simple_figure(self):
+		return self._simple_figure
 
 	def find_object(self, needle_object):
 		if needle_object == 'root':
@@ -89,6 +93,6 @@ class DrawingController(AbstractController):
 		super()._listen()
 		if self._update_zone is not None:
 			self._app.get_screen().fill(self.background)
-			self._current_scene._draw(self)
+			self._current_scene._draw()
 			pygame.display.update(self._update_zone)
 			self._update_zone = None

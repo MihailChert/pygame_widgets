@@ -181,6 +181,7 @@
       "ref": "SimpleText",
       "dependence": ["SimpleText"],
       "meta": {
+        "pos": [0, 0],
         "text": "1",
         "color": "green",
         "font_size": 30,
@@ -193,6 +194,7 @@
       "ref": "SimpleText",
       "dependence": ["SimpleText"],
       "meta": {
+        "pos": [0, 0],
         "text": "2",
         "color": "green",
         "font_size": 30,
@@ -205,6 +207,7 @@
       "ref": "SimpleText",
       "dependence": ["SimpleText"],
       "meta": {
+        "pos": [0, 0],
         "text": "3",
         "color": [200, 255, 0, 255],
         "font_size": 30,

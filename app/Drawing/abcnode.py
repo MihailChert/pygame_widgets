@@ -4,9 +4,10 @@ from abc import ABC, abstractmethod
 
 class AbstractNode(ABC):
 
-	def __init__(self, name, pos, size, parent):
+	def __init__(self, name, pos, size, scene, parent):
 		self._rect = pygame.Rect(pos, size)
 		self._parent = parent
+		self._scene = scene
 		if name is None:
 			self._name = 'Node' + id(self)
 		else:
@@ -46,6 +47,9 @@ class AbstractNode(ABC):
 	def get_parent(self):
 		return self._parent
 
+	def get_scene(self):
+		return self._scene
+
 	def convert_point_to_global(self, point):
 		if self._parent is not None:
 			return self._parent.convert_point_to_global(
@@ -73,14 +77,13 @@ class AbstractNode(ABC):
 			return self._parent.convert_points_to_global(ret_list)
 		return ret_list
 
+	def on_scene(self, scene_name):
+		return self._scene == scene_name
+
 	@abstractmethod
 	def destroy(self):
 		pass
 
 	@abstractmethod
-	def draw(self):
-		pass
-
-	@abstractmethod
-	def find(self, needle):
+	def _draw(self):
 		pass

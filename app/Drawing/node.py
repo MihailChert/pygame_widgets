@@ -1,11 +1,12 @@
 from .abcnode import AbstractNode
 import pygame
+import pdb
 
 
 class Node(AbstractNode):
 
-	def __init__(self, name, pos, size, parent, controller, bg_color):
-		super().__init__(name, pos, size, parent)
+	def __init__(self, name, pos, size, scene, parent, controller, bg_color):
+		super().__init__(name, pos, size, scene, parent)
 		self._children = []
 		self.background_color = pygame.Color(bg_color)
 		self._has_change = True
@@ -14,7 +15,19 @@ class Node(AbstractNode):
 	@classmethod
 	def create_from_source(cls, source):
 		controller = source.meta['controller']
-		node = cls(source.get_name(), source.check_meta('pos', True), source.check_meta('size', True), None, controller, source.check_meta('background', default=pygame.Color(0, 0, 0, 0)))
+		try:
+			scene = source.get_dependencies(0).get_content().get_scene()
+		except (AttributeError, TypeError):
+			scene = source.get_root().get_name()
+		node = cls(
+			source.get_name(),
+			source.check_meta('pos', True),
+			source.check_meta('size', True),
+			scene,
+			None,
+			controller,
+			source.check_meta('background', default=pygame.Color(0, 0, 0, 0))
+		)
 		for dependence in source.get_dependencies():
 			if dependence.get_type() != source.TYPE.code:
 				dependence.get_content()._parent = node
@@ -59,12 +72,12 @@ class Node(AbstractNode):
 		rect = pygame.Rect((0, 0), self._controller._app.get_screen().get_size())
 		self._controller.calc_update_zone(self.convert_rect_to_global(rect))
 
-	def _draw(self, controller):
+	def _draw(self):
 		self.draw()
 		for child in self._children:
 			if isinstance(child, pygame.Surface):  # TODO: draw image or text
 				pass
-			child._draw(controller)
+			child._draw()
 		self._has_change = False
 
 	def draw(self):
@@ -74,7 +87,5 @@ class Node(AbstractNode):
 		return self._name
 
 	def destroy(self):
-		# self._controller.logger.info('destroy ' + self._name)
-		# self._controller.logger.info(f'destroy chidren {self._children}')
 		for child in self._children:
 			child.destroy()

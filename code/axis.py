@@ -5,8 +5,8 @@ from code.simplefigure import NodeSimpleFigure
 
 class NodeAxis(Node):
 
-	def __init__(self, name, pos, size, parent, controller, bg_color=(0, 0, 0)):
-		super().__init__(name, pos, size, parent, controller, bg_color)
+	def __init__(self, name, pos, size, scene, parent, controller, bg_color=(0, 0, 0)):
+		super().__init__(name, pos, size, scene, parent, controller, bg_color)
 		self._max_width = 66
 		self._min_width = 10
 		self.selected = False
@@ -21,6 +21,7 @@ class NodeAxis(Node):
 				f'segment{node_width}',
 				(self._max_width - node_width*width_step - 10, start_pos),
 				(node_width*width_step*2 + 50, height),
+				self._scene,
 				self,
 				self.get_controller(),
 				pygame.Color(node_width*30, 30, 30, 0)
@@ -65,6 +66,18 @@ class NodeAxis(Node):
 		self.get_controller().calc_update_zone(min_segment_from.get_global_rect())
 		select_to.add_segment(min_segment_from)
 		self._children.remove(min_segment_from)
+		if select_to.is_win() and select_to.get_name() == 'axis1':
+			self.get_controller().update_current_scene('settings')
+
+	def is_win(self):
+		i = 1
+		while i < 6:
+			try:
+				segment = self.find(f'segment{i}')
+				i += 1
+			except StopIteration:
+				return False
+		return True
 
 	def add_segment(self, segment):
 		min_segment = self.get_min_segment()
@@ -104,6 +117,7 @@ class NodeAxis(Node):
 			if event.selected is self and not self.selected:
 				column.background_color = pygame.Color(255, 0, 0, 255)
 				self.get_controller().calc_update_zone(column.get_global_rect())
+				return
 			if event.leave is self and not self.selected:
 				column = self.find('axisColumn' + self.get_name()[-1])
 				column.background_color = pygame.Color(0, 255, 0, 255)

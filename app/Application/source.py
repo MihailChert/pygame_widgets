@@ -81,8 +81,23 @@ class Source:
 	def has_dependence(self):
 		return self._dependence is not None and 0 != len(self._dependence)
 
-	def get_dependencies(self):
+	def get_dependencies(self, name=None, class_allow=False):
+		if isinstance(name, int):
+			# while self._dependence[name].get_type() == SourceType.code and not class_allow:
+			# 	name += 1
+			return self._dependence[name]
+		if isinstance(name, str):
+			for dependence in self._dependence:
+				if dependence.get_name() == name:
+					return dependence
+			raise NameError('Unexpected name of sources.')
 		return self._dependence
+
+	def get_root(self):
+		depended = self
+		while depended.depended is not None:
+			depended = depended.depended
+		return depended
 
 	def update_dependencies(self, dependence, d_index=-1):
 		if not isinstance(dependence, Source):
