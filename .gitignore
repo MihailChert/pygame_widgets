@@ -6,6 +6,7 @@ widget_venv
 *.jpeg
 *.png
 test_*
+*log
 .idea
 tokens
 .idea/workspace.xml
