@@ -38,6 +38,8 @@ class DrawingController(AbstractController):
 		for scene_name, scene_ref in self._scenes.items():
 			builder = Builder.build_from(scene_ref)
 			self._scenes[scene_name] = builder.build_sources(self)
+			if self._scenes[scene_name].get_name() != scene_name:
+				raise RuntimeError('Invalid root node name. Root node name must be equal scene name.')
 		self.update_current_scene(self._current_scene)
 		self._simple_figure = SimpleFigure(self._app.get_screen())
 

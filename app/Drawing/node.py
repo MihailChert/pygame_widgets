@@ -87,7 +87,5 @@ class Node(AbstractNode):
 		return self._name
 
 	def destroy(self):
-		# self._controller.logger.info('destroy ' + self._name)
-		# self._controller.logger.info(f'destroy chidren {self._children}')
 		for child in self._children:
 			child.destroy()

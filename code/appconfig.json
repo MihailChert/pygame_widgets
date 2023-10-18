@@ -52,7 +52,8 @@
       "meta": {
         "main_scene": "main",
         "scenes": {
-          "main": "code/scenefortest.json"
+          "main": "code/scenefortest.json",
+          "settings": "code/scenesettings.json"
         }
       }
     },

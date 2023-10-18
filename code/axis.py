@@ -66,6 +66,18 @@ class NodeAxis(Node):
 		self.get_controller().calc_update_zone(min_segment_from.get_global_rect())
 		select_to.add_segment(min_segment_from)
 		self._children.remove(min_segment_from)
+		if select_to.is_win() and select_to.get_name() == 'axis1':
+			self.get_controller().update_current_scene('settings')
+
+	def is_win(self):
+		i = 1
+		while i < 6:
+			try:
+				segment = self.find(f'segment{i}')
+				i += 1
+			except StopIteration:
+				return False
+		return True
 
 	def add_segment(self, segment):
 		min_segment = self.get_min_segment()
