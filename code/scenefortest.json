@@ -2,19 +2,19 @@
   "class": [
     {
       "name": "Node",
-      "ref": "app.Drawing.node"
+      "ref": "app.Drawing"
     },
     {
       "name": "SimpleText",
-      "ref": "app.Drawing.TextDrawing.simpletext"
+      "ref": "app.Drawing.TextDrawing"
     },
     {
       "name": "NodeAxis",
       "ref": "code.axis"
     },
     {
-      "name": "NodeSimpleFigure",
-      "ref": "code.simplefigure"
+      "name": "Rect",
+      "ref": "app.Drawing"
     },
     {
       "name": "NodeAxisContainer",
@@ -25,7 +25,7 @@
     {
       "name": "main",
       "ref": "Node",
-      "dependence": ["Node", "mainBar", "axisContainer"],
+      "dependence": ["Node", "mainBar", "axisContainer", "nodeAxisText1", "nodeAxisText2", "nodeAxisText3"],
       "meta": {
         "background": [0, 0, 0, 0],
         "listeners": {
@@ -60,8 +60,8 @@
     },
     {
       "name": "mainBar",
-      "ref": "NodeSimpleFigure",
-      "dependence": ["NodeSimpleFigure", "nodeAxisText1", "nodeAxisText2", "nodeAxisText3"],
+      "ref": "Rect",
+      "dependence": ["Rect"],
       "meta": {
         "background": "white",
         "pos": [0, 450],
@@ -113,8 +113,8 @@
     },
     {
       "name": "axisColumn1",
-      "ref": "NodeSimpleFigure",
-      "dependence": ["NodeSimpleFigure"],
+      "ref": "Node",
+      "dependence": ["Node"],
       "meta": {
         "background": "green",
         "pos": [66, 0],
@@ -139,8 +139,8 @@
     },
     {
       "name": "axisColumn2",
-      "ref": "NodeSimpleFigure",
-      "dependence": ["NodeSimpleFigure"],
+      "ref": "Node",
+      "dependence": ["Node"],
       "meta": {
         "background": "green",
         "pos": [66, 0],
@@ -166,8 +166,8 @@
     },
     {
       "name": "axisColumn3",
-      "ref": "NodeSimpleFigure",
-      "dependence": ["NodeSimpleFigure"],
+      "ref": "Node",
+      "dependence": ["Node"],
       "meta": {
         "background": [200, 255, 0, 255],
         "pos": [66, 0],

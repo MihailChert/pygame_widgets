@@ -67,15 +67,15 @@
   "class": [
     {
       "name": "AppController",
-      "ref": "app.Application.appcontroller"
+      "ref": "app.Application"
     },
     {
       "name": "DrawingController",
-      "ref": "app.Drawing.drawingcontroller"
+      "ref": "app.Drawing"
     },
     {
       "name": "TextController",
-      "ref": "app.Drawing.TextDrawing.textcontroller"
+      "ref": "app.Drawing.TextDrawing"
     }
   ]
 }
