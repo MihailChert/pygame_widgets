@@ -63,7 +63,7 @@
       "ref": "Rect",
       "dependence": ["Rect"],
       "meta": {
-        "background": "white",
+        "color": "white",
         "pos": [0, 450],
         "size": [640, 40]
       }
@@ -73,7 +73,7 @@
       "ref": "Node",
       "dependence": ["Node", "axisText1"],
       "meta": {
-        "pos": [116, 10],
+        "pos": [116, 455],
         "size": [50, 50]
       }
     },
@@ -82,7 +82,7 @@
       "ref": "Node",
       "dependence": ["Node", "axisText2"],
       "meta": {
-        "pos": [288, 10],
+        "pos": [288, 455],
         "size": [50, 50]
       }
     },
@@ -91,7 +91,7 @@
       "ref": "Node",
       "dependence": ["Node", "axisText3"],
       "meta": {
-        "pos": [470, 10],
+        "pos": [470, 455],
         "size": [50, 50]
       }
     },
@@ -113,10 +113,10 @@
     },
     {
       "name": "axisColumn1",
-      "ref": "Node",
-      "dependence": ["Node"],
+      "ref": "Rect",
+      "dependence": ["Rect"],
       "meta": {
-        "background": "green",
+        "color": "green",
         "pos": [66, 0],
         "size": [30, 250]
       }
@@ -139,10 +139,10 @@
     },
     {
       "name": "axisColumn2",
-      "ref": "Node",
-      "dependence": ["Node"],
+      "ref": "Rect",
+      "dependence": ["Rect"],
       "meta": {
-        "background": "green",
+        "color": "green",
         "pos": [66, 0],
         "size": [30, 250]
       }
@@ -166,10 +166,10 @@
     },
     {
       "name": "axisColumn3",
-      "ref": "Node",
-      "dependence": ["Node"],
+      "ref": "Rect",
+      "dependence": ["Rect"],
       "meta": {
-        "background": [200, 255, 0, 255],
+        "color": [200, 255, 0, 255],
         "pos": [66, 0],
         "size": [30, 250]
       }

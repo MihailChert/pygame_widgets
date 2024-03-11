@@ -71,8 +71,6 @@ class AppController(AbstractController):
 				handlers = []
 				self._aliases_names[alias] = handlers
 				self._aliases_keys[key] = handlers
-		self.logger.info(self._aliases_keys)
-		self.logger.info(self._aliases_names)
 
 	def get_event_id(self, event_id_name):
 		if isinstance(event_id_name, int):
@@ -146,6 +144,7 @@ class AppController(AbstractController):
 			return
 		self._app.update_option('game_destroy', True)
 		self._app.destroy(event)
+		self.logger.info('destroy controller')
 		pygame.quit()
 		sys.exit()
 

@@ -1,81 +1,79 @@
 {
-  "config": [
-    {
-      "name": "main",
-      "ref": "AppController",
-      "dependence": ["AppController" ,"drawing", "text"],
-      "meta": {
-        "factories": [
-          "drawing",
-          "text"
-        ],
-        "caption": "Pyramid game",
-        "fps": 60,
-        "display_mod": [
-          640,
-          500
-        ],
-        "key_aliases": {
-          "move_right": ["D", "RIGHT"],
-          "move_left": ["A", "LEFT"],
-          "select": ["space", "enter", "f"]
-        },
-        "flags": 0,
-        "logger": {
-          "version": 1,
-          "handlers": {
-            "main_handler": {
-              "class": "logging.FileHandler",
-              "formatter": "standard_format",
-              "filename": "app_config.log"
-            }
-          },
-          "loggers": {
-            "application": {
-              "handlers": ["main_handler"],
-              "level": "DEBUG"
-            }
-          },
-          "formatters": {
-            "standard_format": {
-              "format": "%(levelname)-8s\t%(asctime)s\t%(name)s %(filename)s LINE %(lineno)d\t%(message)s",
-              "datefmt": "%H:%M:%S"
-            }
-          }
-        }
-      }
-    },
-    {
-      "name": "drawing",
-      "ref": "DrawingController",
-      "dependence": ["DrawingController"],
-      "meta": {
-        "main_scene": "main",
-        "scenes": {
-          "main": "code/scenefortest.json",
-          "settings": "code/scenesettings.json"
-        }
-      }
-    },
-    {
-      "name": "text",
-      "ref": "TextController",
-      "dependence": ["TextController"],
-      "meta": {}
-    }
-  ],
-  "class": [
-    {
-      "name": "AppController",
-      "ref": "app.Application"
-    },
-    {
-      "name": "DrawingController",
-      "ref": "app.Drawing"
-    },
-    {
-      "name": "TextController",
-      "ref": "app.Drawing.TextDrawing"
-    }
-  ]
+	"config": [
+		{
+			"name": "main",
+			"ref": "AppController",
+			"dependence": ["AppController" ,"drawing", "text"],
+			"meta": {
+				"factories": [
+					"drawing",
+					"text"
+				],
+				"caption": "Pyramid game",
+				"fps": 60,
+				"display_mod": [640, 500],
+				"key_aliases": {
+					"move_right": ["D", "RIGHT"],
+					"move_left": ["A", "LEFT"],
+					"select": ["space", "enter", "f"]
+				},
+				"flags": 0,
+				"logger": {
+					"version": 1,
+					"handlers": {
+						"main_handler": {
+							"class": "logging.FileHandler",
+							"formatter": "standard_format",
+							"filename": "app_config.log"
+						}
+					},
+					"loggers": {
+						"application": {
+							"handlers": ["main_handler"],
+							"level": "DEBUG"
+						}
+					},
+					"formatters": {
+						"standard_format": {
+							"format": "%(levelname)-8s\t%(asctime)s\t%(name)s %(filename)s LINE %(lineno)d\t%(message)s",
+							"datefmt": "%H:%M:%S"
+						}
+					}
+				}
+			}
+		},
+		{
+			"name": "drawing",
+			"ref": "DrawingController",
+			"dependence": ["DrawingController"],
+			"meta": {
+				"main_scene": "main",
+				"scenes": {
+					"test_scene": "code/rect.json",
+					"main": "code/scenefortest.json",
+					"settings": "code/scenesettings.json"
+				}
+			}
+		},
+		{
+			"name": "text",
+			"ref": "TextController",
+			"dependence": ["TextController"],
+			"meta": {}
+		}
+	],
+	"class": [
+		{
+		"name": "AppController",
+		"ref": "app.Application"
+		},
+		{
+		"name": "DrawingController",
+		"ref": "app.Drawing"
+		},
+		{
+		"name": "TextController",
+		"ref": "app.Drawing.TextDrawing"
+		}
+	]
 }

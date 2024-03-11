@@ -37,6 +37,7 @@ class DrawingController(AbstractController):
 	def after_init(self):
 		for scene_name, scene_ref in self._scenes.items():
 			builder = Builder.build_from(scene_ref)
+			self.logger.info('create scene ' + scene_name)
 			self._scenes[scene_name] = builder.build_sources(self)
 			if self._scenes[scene_name].get_name() != scene_name:
 				raise RuntimeError('Invalid root node name. Root node name must be equal scene name.')
