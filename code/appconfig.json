@@ -3,7 +3,7 @@
     {
       "name": "main",
       "ref": "AppController",
-      "dependence": ["AppController" ,"drawing", "text"],
+      "dependence": ["AppController" ,"drawing", "text", "trigger"],
       "meta": {
         "factories": [
           "drawing",
@@ -15,11 +15,6 @@
           640,
           500
         ],
-        "key_aliases": {
-          "move_right": ["D", "RIGHT"],
-          "move_left": ["A", "LEFT"],
-          "select": ["space", "enter", "f"]
-        },
         "flags": 0,
         "logger": {
           "version": 1,
@@ -58,6 +53,18 @@
       }
     },
     {
+      "name": "trigger",
+      "ref": "TriggerController",
+      "dependence": ["TriggerController"],
+      "meta":{
+        "key_aliases": {
+          "move_right": [{"mode": "key_down", "name": "D"}, {"mode": "key_down", "name": "RIGHT"}],
+          "move_left": [{"mode": "key_down", "name": "A"}, {"mode": "key_down", "name": "LEFT"}],
+          "select": [{"mode": "key_down", "name": "space"}, {"mode": "key_down", "name": "enter"}, {"mode": "key_down", "name": "f"}]
+        }
+      }
+    },
+    {
       "name": "text",
       "ref": "TextController",
       "dependence": ["TextController"],
@@ -76,6 +83,10 @@
     {
       "name": "TextController",
       "ref": "app.Drawing.TextDrawing.textcontroller"
+    },
+    {
+      "name": "TriggerController",
+      "ref": "app.TriggerBox.triggercontroller"
     }
   ]
 }

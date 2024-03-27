@@ -8,6 +8,7 @@ class SourceType(Enum):
 	sound = 'sound'
 	node = 'node'
 	text = 'text'
+	trigger = 'trigger'
 	settings = 'config'
 	code = 'class'
 	save = 'save'

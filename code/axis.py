@@ -13,10 +13,10 @@ class NodeAxis(Node):
 		self.hover = False
 
 	def start_game(self, event):
-		width_step = (self._max_width - self._min_width) // 5
-		start_pos = 5
-		height = (self.get_rect().h - 5) // 5
-		for node_width in range(1, 6):
+		width_step = (self._max_width - self._min_width) // 10
+		start_pos = 10
+		height = (self.get_rect().h - 5) // 10
+		for node_width in range(1, 11):
 			segment = NodeSimpleFigure(
 				f'segment{node_width}',
 				(self._max_width - node_width*width_step - 10, start_pos),
@@ -24,7 +24,7 @@ class NodeAxis(Node):
 				self._scene,
 				self,
 				self.get_controller(),
-				pygame.Color(node_width*30, 30, 30, 0)
+				pygame.Color(node_width*5, 30, 30, 0)
 			)
 			segment.figure = 'rect'
 			self.add_child(segment)
