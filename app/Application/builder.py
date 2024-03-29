@@ -19,6 +19,7 @@ class Builder:
 			return cls(source)
 		if isinstance(build_content, str) and path.isfile(build_content) and build_content[-4:] == 'json':
 			return cls.build_from_json(build_content)
+		raise ValueError('The content is not dict, list, or json file to build the sources. Please check the content: \n%s' % build_content)
 
 	@classmethod
 	def build_from_json(cls, content):
