@@ -1,0 +1,79 @@
+{
+  "config": [
+    {
+      "name": "main",
+      "ref": "AppController",
+      "dependence": ["AppController" ,"drawing", "text"],
+      "meta": {
+        "factories": [
+          "drawing",
+          "text"
+        ],
+        "key_aliases": {
+          "key_up": ["W", "UP"],
+          "key_down": ["S", "DOWN"]
+        },
+        "caption": "Default game",
+        "fps": 60,
+        "display_mod": [
+          500,
+          500
+        ],
+        "flags": 0,
+        "logger": {
+          "version": 1,
+          "handlers": {
+            "main_handler": {
+              "class": "logging.FileHandler",
+              "formatter": "standard_format",
+              "filename": "app_config.log"
+            }
+          },
+          "loggers": {
+            "application": {
+              "handlers": ["main_handler"],
+              "level": "DEBUG"
+            }
+          },
+          "formatters": {
+            "standard_format": {
+              "format": "%(levelname)-8s\t%(asctime)s\t%(name)s %(filename)s LINE %(lineno)d\t%(message)s",
+              "datefmt": "%H:%M:%S"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "drawing",
+      "ref": "DrawingController",
+      "dependence": ["DrawingController"],
+      "meta": {
+        "main_scene": "main",
+        "scenes": {
+          "main": "defaultappscene.json"
+        }
+      }
+    },
+    {
+      "name": "text",
+      "ref": "TextController",
+      "dependence": ["TextController"],
+      "meta": {}
+    }
+  ],
+  "class": [
+    {
+      "name": "AppController",
+      "ref": "app.Application.appcontroller"
+    },
+    {
+      "name": "DrawingController",
+      "ref": "app.Drawing.drawingcontroller"
+    },
+    {
+      "name": "TextController",
+      "ref": "app.Drawing.TextDrawing.textcontroller"
+    }
+  ]
+}

@@ -1,0 +1,219 @@
+{
+  "class": [
+    {
+      "name": "Node",
+      "ref": "app.Drawing.node"
+    },
+    {
+      "name": "SimpleText",
+      "ref": "app.Drawing.TextDrawing.simpletext"
+    },
+    {
+      "name": "NodeAxis",
+      "ref": "code.axis"
+    },
+    {
+      "name": "NodeSimpleFigure",
+      "ref": "code.simplefigure"
+    },
+    {
+      "name": "NodeAxisContainer",
+      "ref": "code.axiscontainer"
+    }
+  ],
+  "node": [
+    {
+      "name": "main",
+      "ref": "Node",
+      "dependence": ["Node", "mainBar", "axisContainer"],
+      "meta": {
+        "background": [0, 0, 0, 0],
+        "listeners": {
+          "drawing": {
+            "show_scene": "update"
+          }
+        }
+      }
+    },
+    {
+      "name": "axisContainer",
+      "ref": "NodeAxisContainer",
+      "dependence": ["NodeAxisContainer", "axis1", "axis2", "axis3"],
+      "meta": {
+        "pos": [0, 200],
+        "size": [0, 0],
+        "listeners": {
+          "main": {
+            "move_left": "move_left",
+            "move_right": "move_right",
+            "select": "select"
+          }
+        },
+        "listeners_order": {
+          "main": {
+            "select": 0,
+            "move_left": 0,
+            "move_right": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "mainBar",
+      "ref": "NodeSimpleFigure",
+      "dependence": ["NodeSimpleFigure", "nodeAxisText1", "nodeAxisText2", "nodeAxisText3"],
+      "meta": {
+        "background": "white",
+        "pos": [0, 450],
+        "size": [640, 40]
+      }
+    },
+    {
+      "name": "nodeAxisText1",
+      "ref": "Node",
+      "dependence": ["Node", "axisText1"],
+      "meta": {
+        "pos": [116, 10],
+        "size": [50, 50]
+      }
+    },
+    {
+      "name": "nodeAxisText2",
+      "ref": "Node",
+      "dependence": ["Node", "axisText2"],
+      "meta": {
+        "pos": [288, 10],
+        "size": [50, 50]
+      }
+    },
+    {
+      "name": "nodeAxisText3",
+      "ref": "Node",
+      "dependence": ["Node", "axisText3"],
+      "meta": {
+        "pos": [470, 10],
+        "size": [50, 50]
+      }
+    },
+    {
+      "name": "axis1",
+      "ref": "NodeAxis",
+      "dependence": ["NodeAxis", "axisColumn1"],
+      "meta": {
+        "pos": [50, 0],
+        "size": [182, 250],
+        "listeners": {
+          "drawing": {
+            "move_left": "move_left",
+            "move_right": "move_right",
+            "select": "select"
+          }
+        }
+      }
+    },
+    {
+      "name": "axisColumn1",
+      "ref": "NodeSimpleFigure",
+      "dependence": ["NodeSimpleFigure"],
+      "meta": {
+        "background": "green",
+        "pos": [66, 0],
+        "size": [30, 250]
+      }
+    },
+    {
+      "name": "axis2",
+      "ref": "NodeAxis",
+      "dependence": ["NodeAxis", "axisColumn2"],
+      "meta": {
+        "pos": [232, 0],
+        "size": [182, 250],
+        "listeners": {
+          "drawing": {
+            "move_left": "move_left",
+            "move_right": "move_right",
+            "select": "select"
+          }
+        }
+      }
+    },
+    {
+      "name": "axisColumn2",
+      "ref": "NodeSimpleFigure",
+      "dependence": ["NodeSimpleFigure"],
+      "meta": {
+        "background": "green",
+        "pos": [66, 0],
+        "size": [30, 250]
+      }
+    },
+    {
+      "name": "axis3",
+      "ref": "NodeAxis",
+      "dependence": ["NodeAxis", "axisColumn3"],
+      "meta": {
+        "pos": [414, 0],
+        "size": [182, 250],
+        "listeners": {
+          "drawing": {
+            "show_scene": "start_game",
+            "move_left": "move_left",
+            "move_right": "move_right",
+            "select": "select"
+          }
+        }
+      }
+    },
+    {
+      "name": "axisColumn3",
+      "ref": "NodeSimpleFigure",
+      "dependence": ["NodeSimpleFigure"],
+      "meta": {
+        "background": [200, 255, 0, 255],
+        "pos": [66, 0],
+        "size": [30, 250]
+      }
+    }
+  ],
+  "text": [
+    {
+      "name": "axisText1",
+      "ref": "SimpleText",
+      "dependence": ["SimpleText"],
+      "meta": {
+        "pos": [0, 0],
+        "text": "1",
+        "color": "green",
+        "font_size": 30,
+        "antialias": true,
+        "bold": true
+      }
+    },
+    {
+      "name": "axisText2",
+      "ref": "SimpleText",
+      "dependence": ["SimpleText"],
+      "meta": {
+        "pos": [0, 0],
+        "text": "2",
+        "color": "green",
+        "font_size": 30,
+        "bold": true,
+        "antialias": true
+      }
+    },
+    {
+      "name": "axisText3",
+      "ref": "SimpleText",
+      "dependence": ["SimpleText"],
+      "meta": {
+        "pos": [0, 0],
+        "text": "3",
+        "color": [200, 255, 0, 255],
+        "font_size": 30,
+        "bold": true,
+        "antialias": true
+      }
+    }
+  ]
+}
