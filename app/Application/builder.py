@@ -107,6 +107,8 @@ class Builder:
 				source.propagate_depend()
 		root = self._sources[0]
 		while bool(root.depended):
+			if id(root) == id(root.depended):
+				raise RuntimeError(f'Two or more node have same name: {root.get_name()}.')  # TODO: change error type
 			root = root.depended
 		self._sources = [root]
 

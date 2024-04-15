@@ -2,19 +2,19 @@
   "class": [
     {
       "name": "Node",
-      "ref": "app.Drawing.node"
+      "ref": "app.Drawing"
     },
     {
       "name": "SimpleText",
-      "ref": "app.Drawing.TextDrawing.simpletext"
+      "ref": "app.Drawing.TextDrawing"
     },
     {
       "name": "NodeAxis",
       "ref": "code.axis"
     },
     {
-      "name": "NodeSimpleFigure",
-      "ref": "code.simplefigure"
+      "name": "Rect",
+      "ref": "app.Drawing"
     },
     {
       "name": "NodeAxisContainer",
@@ -25,7 +25,7 @@
     {
       "name": "main",
       "ref": "Node",
-      "dependence": ["Node", "mainBar", "axisContainer"],
+      "dependence": ["Node", "mainBar", "axisContainer", "nodeAxisText1", "nodeAxisText2", "nodeAxisText3"],
       "meta": {
         "background": [0, 0, 0, 0],
         "listeners": {
@@ -60,10 +60,10 @@
     },
     {
       "name": "mainBar",
-      "ref": "NodeSimpleFigure",
-      "dependence": ["NodeSimpleFigure", "nodeAxisText1", "nodeAxisText2", "nodeAxisText3"],
+      "ref": "Rect",
+      "dependence": ["Rect"],
       "meta": {
-        "background": "white",
+        "color": "white",
         "pos": [0, 450],
         "size": [640, 40]
       }
@@ -73,7 +73,7 @@
       "ref": "Node",
       "dependence": ["Node", "axisText1"],
       "meta": {
-        "pos": [116, 10],
+        "pos": [116, 455],
         "size": [50, 50]
       }
     },
@@ -82,7 +82,7 @@
       "ref": "Node",
       "dependence": ["Node", "axisText2"],
       "meta": {
-        "pos": [288, 10],
+        "pos": [288, 455],
         "size": [50, 50]
       }
     },
@@ -91,7 +91,7 @@
       "ref": "Node",
       "dependence": ["Node", "axisText3"],
       "meta": {
-        "pos": [470, 10],
+        "pos": [470, 455],
         "size": [50, 50]
       }
     },
@@ -113,10 +113,10 @@
     },
     {
       "name": "axisColumn1",
-      "ref": "NodeSimpleFigure",
-      "dependence": ["NodeSimpleFigure"],
+      "ref": "Rect",
+      "dependence": ["Rect"],
       "meta": {
-        "background": "green",
+        "color": "green",
         "pos": [66, 0],
         "size": [30, 250]
       }
@@ -139,10 +139,10 @@
     },
     {
       "name": "axisColumn2",
-      "ref": "NodeSimpleFigure",
-      "dependence": ["NodeSimpleFigure"],
+      "ref": "Rect",
+      "dependence": ["Rect"],
       "meta": {
-        "background": "green",
+        "color": "green",
         "pos": [66, 0],
         "size": [30, 250]
       }
@@ -166,10 +166,10 @@
     },
     {
       "name": "axisColumn3",
-      "ref": "NodeSimpleFigure",
-      "dependence": ["NodeSimpleFigure"],
+      "ref": "Rect",
+      "dependence": ["Rect"],
       "meta": {
-        "background": [200, 255, 0, 255],
+        "color": [200, 255, 0, 255],
         "pos": [66, 0],
         "size": [30, 250]
       }
