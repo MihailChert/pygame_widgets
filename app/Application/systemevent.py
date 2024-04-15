@@ -21,7 +21,6 @@ class EnginEnumUnion(type):
 	def __getattr__(cls, name):
 		for enum in cls.__enums__:
 			try:
-				pdb.set_trace()
 				return enum[name]
 			except KeyError:
 				continue

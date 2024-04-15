@@ -1,3 +1,4 @@
+import traceback
 import pygame
 from ..Application import AbstractController
 from .motioneventenum import KeyEvent, MouseEvent, JoyEvent
@@ -54,8 +55,12 @@ class TriggerController(AbstractController):
 			key['mode'] = motion_event(key['mode'])
 			key = key['mode'].validate_key(key)
 			key['mode'] = key['mode'].value
-			if key['mode'] not in self._aliases_keys.keys() and key.get('name', False):
-				self._aliases_keys[key['mode']] = dict()
+			try:
+				if not self._aliases_keys.get(key['mode'], False) and key['name']:
+					self._aliases_keys[key['mode']] = dict()
+			except KeyError:
+				pass
+
 			try:
 				if key.get('name', False):
 					self._aliases_keys[key['mode']][key['name']] = self._aliases_names[alias]
@@ -63,6 +68,7 @@ class TriggerController(AbstractController):
 					self._aliases_keys[key['mode']] = self._aliases_names[alias]
 			except KeyError:
 				if key.get('name', False):
+					print(alias, key)
 					self._aliases_names[alias] = self._aliases_keys[key['mode']][key['name']] = list()
 				else:
 					self._aliases_names[alias] = self._aliases_keys[key['mode']] = list()
@@ -108,7 +114,10 @@ class TriggerController(AbstractController):
 	def get_trigger_loader(self, source):
 		source.meta['controller'] = self
 		cls = None
+		# pdb.set_trace()
 		source.meta['pos'] = source.meta.get('pos', (0, 0))
+		if not len(source.meta['pos']):
+			source.meta['pos'] = (0, 0)
 		for dependence in source.get_dependencies():
 			if dependence.get_name() == source.get_source():
 				cls = dependence.get_content()
@@ -128,6 +137,7 @@ class TriggerController(AbstractController):
 				self._listners_update.insert(order, handler)
 			return
 		if listener_method in self._aliases_names.keys():
+			print(listener_method, handler)
 			if order is None:
 				self._aliases_names[listener_method].append(handler)
 			else:
@@ -175,7 +185,7 @@ class TriggerController(AbstractController):
 								_listeners = _listenres + self._aliases_keys[event.type][button]
 					_listeners = self._aliases_keys[event.type][e_dict.get('key', e_dict.get('button', False))]
 				except (KeyError, IndexError) as er:
-					self.logger.warn(er.message)
+					self.logger.warn(er)
 					if isinstance(self._aliases_keys[event.type], dict):
 						raise RuntimeError('Invalid key event alias %s, %s' % (pygame.event.event_name(event.type), str(event.__dict__)))
 					

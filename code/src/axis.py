@@ -1,6 +1,6 @@
 import pygame
 from app import Node
-from code.simplefigure import NodeSimpleFigure
+from code.src.simplefigure import NodeSimpleFigure
 
 
 class NodeAxis(Node):

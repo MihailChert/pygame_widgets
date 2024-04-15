@@ -50,6 +50,8 @@ class DrawingController(AbstractController):
 		source.meta['controller'] = self
 		cls = None
 		source.meta['pos'] = source.meta.get('pos', (0, 0))
+		if not len(source.meta['pos']):
+			source.meta['pos'] = (0, 0)
 		if source.depended is None:
 			source.meta['size'] = source.meta.get('size', self._app.get_screen().get_size())
 		else:

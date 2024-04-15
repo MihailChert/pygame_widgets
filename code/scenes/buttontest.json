@@ -1,0 +1,57 @@
+{
+  "class": [
+    {
+      "name": "Node",
+      "ref": "app.Drawing.node"
+    },
+    {
+      "name": "RectTriggerBox",
+      "ref": "app.TriggerBox.recttriggerbox"
+    },
+    {
+      "name": "NodeSimpleFigure",
+      "ref": "code.src.simplefigure"
+    }
+  ],
+  "node":[
+    {
+      "name": "test_button",
+      "ref": "Node",
+      "dependence": ["Node", "button_rect", "button_trigger"],
+      "meta": {
+        "background": [0, 0, 0, 0],
+        "listeners": {
+          "drawing": {
+            "show_scene": "update"
+          }
+        }
+      }
+    },
+    {
+      "name": "button_rect",
+      "ref": "NodeSimpleFigure",
+      "dependence": ["NodeSimpleFigure"],
+      "meta": {
+        "background": "white",
+        "pos": [100, 100],
+        "size": [100, 100]
+      }
+    }
+  ],
+  "trigger": [
+    {
+      "name": "button_trigger",
+      "ref": "RectTriggerBox",
+      "dependence": ["RectTriggerBox"],
+      "meta": {
+        "size": [100, 100],
+        "pos": [100, 100],
+        "listeners": {
+          "trigger": {
+            "lclick": "excecute" 
+          }
+        }
+      }
+    }
+  ]
+}

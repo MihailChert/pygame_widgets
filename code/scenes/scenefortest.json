@@ -10,15 +10,15 @@
     },
     {
       "name": "NodeAxis",
-      "ref": "code.axis"
+      "ref": "code.src.axis"
     },
     {
       "name": "NodeSimpleFigure",
-      "ref": "code.simplefigure"
+      "ref": "code.src.simplefigure"
     },
     {
       "name": "NodeAxisContainer",
-      "ref": "code.axiscontainer"
+      "ref": "code.src.axiscontainer"
     }
   ],
   "node": [
