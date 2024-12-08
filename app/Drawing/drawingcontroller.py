@@ -30,11 +30,11 @@ class DrawingController(AbstractController):
 		app.update_controller(source.get_name(), controller)
 		return controller
 
-	def init(self, app):
+	def before_init(self, app):
 		self._app = app
 		self.logger.info('init drawing controller')
 
-	def after_init(self):
+	def init(self):
 		for scene_name, scene_ref in self._scenes.items():
 			builder = Builder.build_from(scene_ref)
 			self._scenes[scene_name] = builder.build_sources(self)
@@ -42,9 +42,6 @@ class DrawingController(AbstractController):
 				raise RuntimeError('Invalid root node name. Root node name must be equal scene name.')
 		self.update_current_scene(self._current_scene)
 		self._simple_figure = SimpleFigure(self._app.get_screen())
-
-	def has_event_type(self, event_type):
-		return event_type == self._event_id or event_type == self._name
 
 	def get_node_loader(self, source):
 		source.meta['controller'] = self

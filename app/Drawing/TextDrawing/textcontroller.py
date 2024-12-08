@@ -14,16 +14,13 @@ class TextController(AbstractController):
         app.update_option('custom_fonts', source.check_meta('fonts', default={}))
         return super(cls, TextController).get_settings_loader(source)
 
-    def init(self, app):
+    def before_init(self, app):
         self._app = app
         pygame.font.init()
         self.logger.info('init text')
 
-    def after_init(self):
+    def init(self):
         pass
-
-    def has_event_type(self, event_type):
-        return event_type == self._event_id or event_type == self._name
 
     def get_font(self, font_name=None, font_size=16):
         if self._app.is_option_exist('custom_font') and font_name in self._app.get_option('custom_fonts').keys():

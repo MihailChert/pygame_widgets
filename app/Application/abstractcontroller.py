@@ -25,16 +25,15 @@ class AbstractController(ABC):
 		return controller
 
 	@abstractmethod
-	def init(self, app):
+	def init(self):
+		pass
+
+	@abstractmethod
+	def before_init(self, app):
 		self._app = app
 
-	@abstractmethod
-	def after_init(self):
-		pass
-
-	@abstractmethod
 	def has_event_type(self, event_type):
-		pass
+		return event_type == self._event_id or event_type == self._name
 
 	@staticmethod
 	def create_event_id():

@@ -29,16 +29,16 @@ class AppController(AbstractController):
 			controller.add_alias_keys(alias, keys)
 		return controller
 
-	def init(self, app):
+	def before_init(self, app):
 		if pygame.get_init():
 			return
-		self.logger.info('start init pygame')
+		self.logger.info('start before init pygame')
 		self._app = app
 
-	def after_init(self):
+	def init(self):
 		if pygame.get_init():
 			return
-		log = self.logger.getChild('after_init')
+		log = self.logger.getChild('init')
 		pygame.init()
 		log.info('finish init pygame')
 		screen = pygame.display.set_mode(self._app.get_option('display_mod'), self._app.get_option('flags'))

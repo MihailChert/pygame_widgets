@@ -6,7 +6,6 @@ import logging.config
 import pygame
 from .abstractcontroller import AbstractController
 from .source import SourceType
-import pdb
 '''
 All action before create window and start controllers listeners
 Import controllers and factories from config
@@ -157,10 +156,10 @@ class Application:
 
 	def run(self):
 		for controller in self._controllers.values():
-			controller.init(self)
-		self._controllers['main'].after_init()
+			controller.before_init(self)
+		self._controllers['main'].init()
 		for controller in self._controllers.values():
-			controller.after_init()
+			controller.init()
 
 		while True:
 			self._clock.tick(self._fps)
