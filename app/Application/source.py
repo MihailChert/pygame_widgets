@@ -8,6 +8,7 @@ class SourceType(Enum):
 	sound = 'sound'
 	node = 'node'
 	text = 'text'
+	trigger = 'trigger'
 	settings = 'config'
 	code = 'class'
 	save = 'save'
@@ -99,7 +100,7 @@ class Source:
 			depended = depended.depended
 		return depended
 
-	def update_dependencies(self, dependence, d_index=-1):
+	def update_dependencies(self, dependence, d_index=-1): # TODO: rewrite
 		if not isinstance(dependence, Source):
 			raise TypeError('Dependence can be update only to Source type object.')
 		if d_index != -1 and isinstance(self._dependence, list):
@@ -119,7 +120,7 @@ class Source:
 	def is_load(self):
 		return self._content is not None
 
-	def set_content(self, content):
+	def set_content(self, content):  #TODO: may remove
 		self._content = content
 
 	def get_loader_method(self):

@@ -75,9 +75,8 @@ class Node(AbstractNode):
 	def _draw(self):
 		self.draw()
 		for child in self._children:
-			if isinstance(child, pygame.Surface):  # TODO: draw image or text
-				pass
-			child._draw()
+			if hasattr(child, '_draw'):  # TODO: draw image or text
+				child._draw()
 		self._has_change = False
 
 	def draw(self):
