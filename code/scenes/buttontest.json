@@ -11,6 +11,10 @@
     {
       "name": "NodeSimpleFigure",
       "ref": "code.src.simplefigure"
+    },
+    {
+      "name": "SimpleText",
+      "ref": "app.Drawing.TextDrawing.simpletext"
     }
   ],
   "node":[
@@ -30,11 +34,24 @@
     {
       "name": "button_rect",
       "ref": "NodeSimpleFigure",
-      "dependence": ["NodeSimpleFigure"],
+      "dependence": ["NodeSimpleFigure", "button_text"],
       "meta": {
         "background": "white",
         "pos": [100, 100],
         "size": [100, 100]
+      }
+    },
+    {
+      "name": "button_text",
+      "ref": "SimpleText",
+      "dependence": ["SimpleText"],
+      "meta": {
+        "pos": [20, 20],
+        "size": [100, 80],
+        "text": "Press the button",
+        "color": [0, 123, 0, 0],
+        "font_size": 30,
+        "antialias": true
       }
     }
   ],

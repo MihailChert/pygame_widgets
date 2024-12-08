@@ -48,7 +48,7 @@ class AppController(AbstractController):
 		except KeyError:
 			log.debug('Set default pygame caption.')
 
-	def create_event(self, event_type, **event_attrs):
+	def create_event(self, event_type, **event_attrs): # revrite used attributes in SourceType
 		event_type = self.get_event_id(event_type)
 		if event_type is not None:
 			self.set_event(event_type)

@@ -10,3 +10,4 @@ test_*
 .idea
 tokens
 .idea/workspace.xml
+*.~

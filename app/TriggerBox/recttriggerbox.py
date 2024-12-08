@@ -36,7 +36,7 @@ class RectTriggerBox(AbstractTriggerBox):
 		return self._rect
 
 	def destroy(self):
-		del self._rect
+		pass
 
 	def _collide_rule_object(self, trigger):
 		return self._rect.colliderect(trigger.get_rect())
@@ -49,6 +49,3 @@ class RectTriggerBox(AbstractTriggerBox):
 
 	def excecute(self, event):
 		print('test', event)
-
-	def destroy(self):
-		del self
