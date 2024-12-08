@@ -25,11 +25,11 @@ class TriggerController(AbstractController):
 			controller.add_alias_keys(alias, key)
 		return controller
 
-	def init(self, app):
+	def before_init(self, app):
 		self._app = app
 		self.logger.info('init trigger controller')
 
-	def after_init(self):
+	def init(self):
 		return
 
 	def create_event(self, event_type, **event_attrs):
