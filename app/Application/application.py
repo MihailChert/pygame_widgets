@@ -99,7 +99,8 @@ class Application:
 		if not isinstance(controller, AbstractController):
 			raise TypeError('Incorrect controller type. Controller must be the heir AbstractController')
 		self._controllers[controller_name] = controller
-		controller.init(self)
+		# controller.before_init(self)
+		# controller.init()
 
 	def get_current_scene(self):
 		try:

@@ -1,6 +1,5 @@
 from enum import Enum, EnumType, EnumMeta
 import pygame
-import pdb
 
 
 class EnginEnumUnion(type):

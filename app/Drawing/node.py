@@ -1,16 +1,13 @@
-from .abcnode import AbstractNode
+from ..Application import AbstractPhysicalNode
 import pygame
-import pdb
 
 
-class Node(AbstractNode):
+class Node(AbstractPhysicalNode):
 
 	def __init__(self, name, pos, size, scene, parent, controller, bg_color):
-		super().__init__(name, pos, size, scene, parent)
-		self._children = []
+		super().__init__(name, pos, size, scene, parent, controller)
 		self.background_color = pygame.Color(bg_color)
 		self._has_change = True
-		self._controller = controller
 
 	@classmethod
 	def create_from_source(cls, source):
@@ -37,41 +34,10 @@ class Node(AbstractNode):
 				node.handle_by_controller(controller_name, listener_method, getattr(node, listener_handler), source)
 		return node
 
-	def handle_by_controller(self, controller_name, listener_method, listener_handler, source):
-		self._controller.add_listener_to(controller_name, listener_method, listener_handler)
-
-	def add_child(self, new_node):
-		self._children.append(new_node)
-		new_node._parent = self
-
-	def get_controller(self):
-		return self._controller
-
-	def add_to_children(self, new_node, needle_node):
-		if self._name == needle_node:
-			self._children.append(new_node)
-			self.union_rect(new_node.get_rect())
-			return True
-		for child in self._children:
-			if child.add_to_chldren(new_node, needle_node):
-				return True
-		return False
-
-	def find(self, needle):
-		for child in self._children:
-			if child.get_name() == needle:
-				return child
-			try:
-				return child.find(needle)
-			except (AttributeError, StopIteration):
-				continue
-		raise StopIteration('Don\'t find object')
-
 	def update(self, event):
 		self._has_change = True
 		rect = pygame.Rect((0, 0), self._controller._app.get_screen().get_size())
-		self._controller.calc_update_zone(self.convert_rect_to_global(rect))
-
+		self._controller.calc_update_zone(self.get_global_rect())
 	def _draw(self):
 		self.draw()
 		for child in self._children:
@@ -81,10 +47,3 @@ class Node(AbstractNode):
 
 	def draw(self):
 		pass
-
-	def __str__(self):
-		return self._name
-
-	def destroy(self):
-		for child in self._children:
-			child.destroy()

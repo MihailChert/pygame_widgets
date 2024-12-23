@@ -3,7 +3,6 @@ import pygame
 from ..Application import AbstractController
 from .motioneventenum import KeyEvent, MouseEvent, JoyEvent
 from .abctriggerbox import AbstractTriggerBox
-import pdb
 
 
 class TriggerController(AbstractController):
@@ -68,7 +67,6 @@ class TriggerController(AbstractController):
 					self._aliases_keys[key['mode']] = self._aliases_names[alias]
 			except KeyError:
 				if key.get('name', False):
-					print(alias, key)
 					self._aliases_names[alias] = self._aliases_keys[key['mode']][key['name']] = list()
 				else:
 					self._aliases_names[alias] = self._aliases_keys[key['mode']] = list()
@@ -114,7 +112,6 @@ class TriggerController(AbstractController):
 	def get_trigger_loader(self, source):
 		source.meta['controller'] = self
 		cls = None
-		# pdb.set_trace()
 		source.meta['pos'] = source.meta.get('pos', (0, 0))
 		if not len(source.meta['pos']):
 			source.meta['pos'] = (0, 0)
@@ -137,7 +134,6 @@ class TriggerController(AbstractController):
 				self._listners_update.insert(order, handler)
 			return
 		if listener_method in self._aliases_names.keys():
-			print(listener_method, handler)
 			if order is None:
 				self._aliases_names[listener_method].append(handler)
 			else:
@@ -183,7 +179,10 @@ class TriggerController(AbstractController):
 						for button in e_dict['buttons']:
 							if button in self._aliases_keys[event.type]:
 								_listeners = _listenres + self._aliases_keys[event.type][button]
-					_listeners = self._aliases_keys[event.type][e_dict.get('key', e_dict.get('button', False))]
+					try:
+						_listeners += self._aliases_keys[event.type][e_dict.get('key', e_dict.get('button', False))]
+					except KeyError:
+						pass
 				except (KeyError, IndexError) as er:
 					self.logger.warn(er)
 					if isinstance(self._aliases_keys[event.type], dict):

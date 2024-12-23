@@ -1,13 +1,8 @@
 import pygame
 from .abctriggerbox import AbstractTriggerBox
-import pdb
 
 
 class RectTriggerBox(AbstractTriggerBox):
-
-	def __init__(self, name, scene, parent, controller, pos, size):
-		self._rect = pygame.Rect(pos, size)
-		super().__init__(name, scene, parent, controller)
 
 	@classmethod
 	def create_from_source(cls, source):
@@ -18,11 +13,11 @@ class RectTriggerBox(AbstractTriggerBox):
 			scene = source.get_root().get_name()
 		node = cls(
 			source.get_name(),
+			source.check_meta('pos', True),
+			source.check_meta('size', True),
 			scene,
 			None,
-			controller,
-			source.check_meta('pos', True),
-			source.check_meta('size', True)
+			controller
 		)
 		if source.check_meta('is_button', default=True):
 			controller.add_button_boxes(node)
@@ -39,13 +34,14 @@ class RectTriggerBox(AbstractTriggerBox):
 		pass
 
 	def _collide_rule_object(self, trigger):
-		return self._rect.colliderect(trigger.get_rect())
+		return self.get_global_rect().colliderect(trigger.get_rect())
 
 	def _collide_rule_point(self, point):
-		return self._rect.collidepoint(point)
+		return self.get_global_rect().collidepoint(point)
 
 	def _contain_rule_object(self, trigger):
-		return self._rect.contains(trigger.get_point())
+		return self.get_global_rect().contains(trigger.get_point())
 
 	def excecute(self, event):
-		print('test', event)
+		if self._collide_rule_point(event.pos):
+			print('test', event)

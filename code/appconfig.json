@@ -47,8 +47,6 @@
       "meta": {
         "main_scene": "test_button",
         "scenes": {
-          "main": "code/scenes/scenefortest.json",
-          "settings": "code/scenes/scenesettings.json",
           "test_button": "code/scenes/buttontest.json"
         }
       }

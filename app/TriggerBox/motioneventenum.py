@@ -1,7 +1,6 @@
 import pygame
 from enum import EnumMeta
 from ..Application.systemevent import EnginEnum
-import pdb
 
 
 class KeyEvent(EnginEnum):
