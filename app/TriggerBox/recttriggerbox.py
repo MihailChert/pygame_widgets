@@ -26,21 +26,17 @@ class RectTriggerBox(AbstractTriggerBox):
 		node._set_listeners_from_source(source)
 		return node
 
-
-	def get_rect(self):
-		return self._rect
-
 	def destroy(self):
 		pass
 
 	def _collide_rule_object(self, trigger):
-		return self.get_global_rect().colliderect(trigger.get_rect())
+		return self.get_global_rect().colliderect(trigger.get_global_rect())
 
 	def _collide_rule_point(self, point):
 		return self.get_global_rect().collidepoint(point)
 
 	def _contain_rule_object(self, trigger):
-		return self.get_global_rect().contains(trigger.get_point())
+		return self.get_global_rect().contains(trigger.get_global_point())
 
 	def excecute(self, event):
 		if self._collide_rule_point(event.pos):

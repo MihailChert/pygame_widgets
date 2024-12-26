@@ -21,7 +21,7 @@
     {
       "name": "test_button",
       "ref": "Node",
-      "dependence": ["Node", "button_rect", "button_trigger"],
+      "dependence": ["Node", "button_rect", "button_trigger", "test_rect2", "button_trugger2"],
       "meta": {
         "background": [0, 0, 0, 0],
         "listeners": {
@@ -42,12 +42,35 @@
       }
     },
     {
+      "name": "test_rect2",
+      "ref": "NodeSimpleFigure",
+      "dependence": ["NodeSimpleFigure", "button_text2"],
+      "meta":{
+        "background": "white",
+        "pos": [0, 0],
+        "size": [100, 100]
+      }
+    },
+    {
       "name": "button_text",
       "ref": "SimpleText",
       "dependence": ["SimpleText"],
       "meta": {
         "pos": [20, 20],
-        "size": [100, 80],
+        "size": [80, 80],
+        "text": "Press the button",
+        "color": [0, 123, 0, 0],
+        "font_size": 30,
+        "antialias": true
+      }
+    },
+    {
+      "name": "button_text2",
+      "ref": "SimpleText",
+      "dependence": ["SimpleText"],
+      "meta": {
+        "pos": [20, 20],
+        "size": [80, 80],
         "text": "Press the button",
         "color": [0, 123, 0, 0],
         "font_size": 30,
@@ -66,6 +89,20 @@
         "listeners": {
           "trigger": {
             "lclick": "excecute" 
+          }
+        }
+      }
+    },
+    {
+      "name": "button_trugger2",
+      "ref": "RectTriggerBox",
+      "dependence": ["RectTriggerBox"],
+      "meta": {
+        "pos": [0, 0],
+        "size": [100, 100],
+        "listeners": {
+          "trigger": {
+            "lclick": "excecute"
           }
         }
       }

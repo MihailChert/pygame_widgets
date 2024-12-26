@@ -27,6 +27,7 @@ class AbstractPhysicalNode(AbstractNode, ABC):
 
 	def add_child(self, new_child):
 		self._children.append(new_child)
+		new_child._parent = self
 		self.union_rect(new_child.get_local_rect())
 
 	def reset_global_rect(self):
@@ -43,6 +44,10 @@ class AbstractPhysicalNode(AbstractNode, ABC):
 		if not self._global_rect or self._update_global_rect:
 			self._global_rect = self._convert_to_global(self._rect)
 		return self._global_rect
+
+	def remove_child(self, child_to_delete, recursive=False):
+		super().remove_chidl(chidl_to_delete, recursive)
+		self._update_global_rect = True
 
 	def convert_point_to_global(self, point):
 		if self._parent is not None:

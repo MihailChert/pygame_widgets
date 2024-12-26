@@ -38,9 +38,6 @@ class SimpleText(AbstractPhysicalNode):
 	def get_name(self):
 		return self._name
 
-	def get_rect(self):
-		return pygame.Rect(0, 0, 0, 0)
-
 	def update(self, font=None, font_dict=None, text=None):
 		font = self.font if font is None else font
 		if font_dict is not None:
@@ -55,9 +52,9 @@ class SimpleText(AbstractPhysicalNode):
 	def render(self):
 		if self._rendered_text is None:
 			if self._parent is not None:
-				size = self._rect if not self._rect else self._parent.get_rect()
+				size = self._rect if not self._rect else self._parent.get_local_rect()
 			else:
-				size = self.get_rect()
+				size = self.get_local_rect()
 			self._rendered_text = self.font.render(self._text, self.color, self.bg_color, size)
 
 	def _draw(self):
