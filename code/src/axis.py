@@ -1,6 +1,6 @@
 import pygame
 from app import Node
-from code.simplefigure import NodeSimpleFigure
+from code.src.simplefigure import NodeSimpleFigure
 
 
 class NodeAxis(Node):
@@ -13,10 +13,10 @@ class NodeAxis(Node):
 		self.hover = False
 
 	def start_game(self, event):
-		width_step = (self._max_width - self._min_width) // 5
-		start_pos = 5
-		height = (self.get_rect().h - 5) // 5
-		for node_width in range(1, 6):
+		width_step = (self._max_width - self._min_width) // 10
+		start_pos = 10
+		height = (self.get_local_rect().h - 5) // 10
+		for node_width in range(1, 11):
 			segment = NodeSimpleFigure(
 				f'segment{node_width}',
 				(self._max_width - node_width*width_step - 10, start_pos),
@@ -24,7 +24,7 @@ class NodeAxis(Node):
 				self._scene,
 				self,
 				self.get_controller(),
-				pygame.Color(node_width*30, 30, 30, 0)
+				pygame.Color(node_width*5, 30, 30, 0)
 			)
 			segment.figure = 'rect'
 			self.add_child(segment)
@@ -81,10 +81,10 @@ class NodeAxis(Node):
 
 	def add_segment(self, segment):
 		min_segment = self.get_min_segment()
-		start_y = self.get_rect().height
+		start_y = self.get_local_rect().height
 		if min_segment is not None:
-			start_y = min_segment.get_rect().y
-		segment_rect = segment.get_rect()
+			start_y = min_segment.get_local_rect().y
+		segment_rect = segment.get_local_rect()
 		segment_rect.y = start_y - segment_rect.h
 		self.add_child(segment)
 		self.get_controller().calc_update_zone(segment.get_global_rect())

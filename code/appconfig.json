@@ -56,6 +56,20 @@
 			}
 		},
 		{
+			"name": "trigger",
+			"ref": "TriggerController",
+			"dependence": ["TriggerController"],
+			"meta":{
+				"key_aliases": {
+					"move_right": [{"mode": "key_down", "name": "D"}, {"mode": "key_down", "name": "RIGHT"}],
+					"move_left": [{"mode": "key_down", "name": "A"}, {"mode": "key_down", "name": "LEFT"}],
+					"select": [{"mode": "key_down", "name": "space"}, {"mode": "key_down", "name": "enter"}, {"mode": "key_down", "name": "f"}],
+					"lclick": [{"mode": "mouse_key_down", "name": 1}],
+					"rclick": [{"mode": "mouse_key_down", "name": 3}]
+				}
+			}
+		},
+		{
 			"name": "text",
 			"ref": "TextController",
 			"dependence": ["TextController"],
@@ -64,16 +78,20 @@
 	],
 	"class": [
 		{
-		"name": "AppController",
-		"ref": "app.Application"
+			"name": "AppController",
+			"ref": "app.Application"
 		},
 		{
-		"name": "DrawingController",
-		"ref": "app.Drawing"
+			"name": "DrawingController",
+			"ref": "app.Drawing"
 		},
 		{
-		"name": "TextController",
-		"ref": "app.Drawing.TextDrawing"
+			"name": "TextController",
+			"ref": "app.Drawing.TextDrawing"
+		},
+		{
+			"name": "TriggerController",
+			"ref": "app.TriggerBox.TriggerController"
 		}
 	]
 }

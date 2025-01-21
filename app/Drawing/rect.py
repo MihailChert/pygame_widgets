@@ -1,14 +1,64 @@
 import numpy
 import pygame
+from ..Aplication import AbstractPhysicalNode
 from .abcfigure import AbstractFigure
 
 
-class Rect(AbstractFigure):
+class Rect(AbstractPhysicalNode):
 
-	def __init__(self, name, parent, controller, scene, color, width, antialias, rect, align):
-		super().__init__(name, parent, controller, scene, color, width, antialias)
-		self._rect = rect
+	def __init__(self, name, pos, size, scene, parent, controller, color, bg_color, width, antialias, align):
+		super().__init__(name, pos, size, scene, parent, controller, bg_color)
+		self._drawing_rect = pygame.Rect(pos, size)
+		self._color = color
+		self._width = width
+		self._antialias = antialias
 		self._align = align
+		self._update_draw = True
+		self._bg_color = bg_color
+		self._recalculate_local_rect()
+
+	def get_color(self):
+		return self._color
+
+	def set_color(self, new_color):
+		self._color = new_color
+		self._update_draw = True
+
+	def get_width(self):
+		return self._width
+
+	def set_width(self, new_width):
+		self._width = new_width
+		self._update_draw = True
+
+	def get_align(self):
+		return self._align
+
+	def set_align(self, new_align):
+		self._align = new_align
+		self._update_draw = True
+
+	def get_antialias(self):
+		return self._antialias
+
+	def set_antialias(self, new_antialias):
+		self._antialias = new_antialias
+		self._update_draw = True
+
+	def get_bg_color(self):
+		return self._bg_color
+
+	def set_bg_color(self, new_bg_color):
+		self._bg_color = new_bg_color
+		self._update_draw = True
+
+
+	color = property(fget = get_color, fset = set_color)
+	width = property(fget = get_width, fset = set_width)
+	antialias = property(fget = get_antialias, fset = set_antialias)
+	bg_color = property(fget = get_bg_color, fset = set_bg_color)
+	align = property(fget = get_align, fset = set_align)
+
 
 	@classmethod
 	def create_from_source(cls, source):
@@ -35,35 +85,18 @@ class Rect(AbstractFigure):
 			scene = source.get_root().get_name()
 		res = cls(
 			source.get_name(),
+			rect.pos,
+			rect.size,
+			scene,
 			None,
 			source.meta['controller'],
-			scene,
 			source.check_meta('color', default=[0, 0, 0]),
 			source.check_meta('line_width', default=0),
 			source.check_meta('antialias', default=False),
-			rect,
 			source.check_meta('align', default=0)
 		)
 		res.connect_events_from_source(source)
 		return res
-
-	def get_rect(self):
-		if self._align:
-			points = self.get_points()
-			width = numpy.max(points[:, 0]) - numpy.min(points[:, 0])
-			height = numpy.max(points[:, 1]) - numpy.min(points[:, 1])
-			return pygame.Rect(
-				(
-					points[:, 0].min(),
-					points[:, 1].min()
-				),
-				(width, height)
-			)
-		else:
-			return self._rect
-
-	def get_align(self):
-		return self._align
 
 	def get_points(self):
 		rect = self._rect
@@ -85,6 +118,22 @@ class Rect(AbstractFigure):
 		).transpose()
 		return points
 
+	def _recalculate_local_rect(self):
+		points = numpy.array([
+				self._drawing_rect.topleft,
+				self._drawing_rect.topright,
+				self._drawing_rect.bottomright,
+				self._drawing_rect.bottomleft
+			], numpy.int32)
+		points = numpy.array(
+			[
+				((points[:, 0] - self._drawing_rect.centerx) * numpy.cos(self._align) - (points[:, 1] - self._drawing_rect.centery)*numpy.sin(self._align)) + self._drawing_rect.centerx,
+				((points[:, 0] - self._drawing_rect.centerx) * numpy.sin(self._align) + (points[:, 1] - self._drawing_rect.centery)*numpy.cos(self._align)) + self._drawing_rect.centery
+			]
+			)
+		width = points
+		self._rect = pygame.Rect(numpy.)
+
 	def _get_global_points(self):
 		parent = self._parent
 		rect = self.get_rect()
@@ -96,9 +145,12 @@ class Rect(AbstractFigure):
 		return self.get_points() + numpy.array([delta_pos], numpy.int32)
 
 	def move(self, delta_x=0, delta_y=0):
-		self._controller.calc_update_zone(self.get_global_rect())
-		self._rect.move_ip(delta_x, delta_y)
-		self._controller.calc_update_zone(self.get_global_rect())
+		super().move(delta_x, delta_y)
+		self._update_draw = True
+
+	def move_to(self, new_pos_x, new_pos_y):
+		super().move_to(new_pos_x, new_pos_y)
+		self._update_draw = True
 
 
 	def resize(self, delta_width=0, delta_height=0):
@@ -111,15 +163,15 @@ class Rect(AbstractFigure):
 			self._rect.width += delta_width
 		if delta_height < 0:
 			self._rect.height += delta_height
-
-	def update_pos(self, x=None, y=None):
-		self.move(x-self._rect.x, y-self._rect.y)
+		self._update_global_rect = True
+		self._update_draw = True
 
 	def rotate(self, align, radians=False):
 		self._controller.calc_update_zone(self.get_global_rect())
 		if not radians:
 			align = self.deg2rad(align)
 		self._align = (self._align+align) % (numpy.pi / 2)
+
 		self._controller.calc_update_zone(self.get_global_rect())
 
 	def reset_align(self):

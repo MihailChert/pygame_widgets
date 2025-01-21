@@ -3,7 +3,7 @@ import numpy
 from abc import ABC, abstractmethod
 
 
-class AbstractFigure(ABC):
+class AbstractFigure(A):
 
 	@abstractmethod
 	def __init__(self, name, parent, controller, scene, color, width, antialias):
