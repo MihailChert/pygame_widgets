@@ -8,11 +8,11 @@ class Rect(AbstractPhysicalNode):
 
 	def __init__(self, name, pos, size, scene, parent, controller, color, bg_color, width, antialias, align):
 		super().__init__(name, pos, size, scene, parent, controller, bg_color)
-		self._drawing_rect = pygame.Rect(pos, size)
+		self._align = align
+		self._drawing_points = None
 		self._color = color
 		self._width = width
 		self._antialias = antialias
-		self._align = align
 		self._update_draw = True
 		self._bg_color = bg_color
 		self._recalculate_local_rect()
@@ -98,8 +98,8 @@ class Rect(AbstractPhysicalNode):
 		res.connect_events_from_source(source)
 		return res
 
-	def get_points(self):
-		rect = self._rect
+	def _update_drawing_points(self):
+		rect = rect = self._rect
 		points = numpy.array(
 			[
 				rect.topleft,
@@ -109,30 +109,22 @@ class Rect(AbstractPhysicalNode):
 			],
 			numpy.int32
 			)
-		points = numpy.array(
+		self._drawing_points = numpy.array(
 			[
 				((points[:, 0] - rect.centerx) * numpy.cos(self._align) - (points[:, 1] - rect.centery) * numpy.sin(self._align)) + rect.centerx,
 				((points[:, 0] - rect.centerx) * numpy.sin(self._align) + (points[:, 1] - rect.centery) * numpy.cos(self._align)) + rect.centery
 			],
 			numpy.int32
 		).transpose()
-		return points
 
-	def _recalculate_local_rect(self):
-		points = numpy.array([
-				self._drawing_rect.topleft,
-				self._drawing_rect.topright,
-				self._drawing_rect.bottomright,
-				self._drawing_rect.bottomleft
-			], numpy.int32)
-		points = numpy.array(
-			[
-				((points[:, 0] - self._drawing_rect.centerx) * numpy.cos(self._align) - (points[:, 1] - self._drawing_rect.centery)*numpy.sin(self._align)) + self._drawing_rect.centerx,
-				((points[:, 0] - self._drawing_rect.centerx) * numpy.sin(self._align) + (points[:, 1] - self._drawing_rect.centery)*numpy.cos(self._align)) + self._drawing_rect.centery
-			]
-			)
-		width = points
-		self._rect = pygame.Rect(numpy.)
+	def get_local_rect(self):
+		x = numpy.min(self._drawing_points[:, 0])
+		y = numpy.min(self._drawing_points[:, 1])
+		self._rect = pygame.Rect(
+			(x, y),
+			(numpy.max(self._drawing_points[:, 0]) - x,
+			numpy.max(self._drawing_points[:, 1]) - y)
+		)
 
 	def _get_global_points(self):
 		parent = self._parent
@@ -179,6 +171,7 @@ class Rect(AbstractPhysicalNode):
 
 	def _draw(self):
 		if self._align:
+			self._update_drawing_points()
 			pygame.draw.polygon(
 				self._controller.get_app().get_screen(),
 				self.color,
