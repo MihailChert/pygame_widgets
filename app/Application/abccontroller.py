@@ -25,16 +25,15 @@ class AbstractController(ABC):
 		return controller
 
 	@abstractmethod
-	def init(self, app):
+	def init(self):
+		pass
+
+	@abstractmethod
+	def before_init(self, app):
 		self._app = app
 
-	@abstractmethod
-	def after_init(self):
-		pass
-
-	@abstractmethod
 	def has_event_type(self, event_type):
-		pass
+		return event_type == self._event_id or event_type == self._name
 
 	@staticmethod
 	def create_event_id():
@@ -53,6 +52,7 @@ class AbstractController(ABC):
 	def create_event(self, method, **event_attrs):
 		if method not in self._listeners_list.keys():
 			self.logger.warn('Event method has no listeners')
+			return
 		if not event_attrs:
 			event = pygame.event.Event(self._event_id, method=method)
 		else:
@@ -117,8 +117,14 @@ class AbstractController(ABC):
 		for event in pygame.event.get(self.get_event_id()):
 			listeners = self._listeners_list.get(event.method, [])
 			for handler in listeners:
-				if self._app.is_option_exist('current_scene') and handler.__self__.on_scene(self._app.get_option('current_scene')):
+				if self._app.is_option_exist('current_scene') \
+					and handler.__self__.on_scene(
+						self._app.get_option('current_scene')
+					):
 					handler(event)
 		for update_method in self._listeners_update:
-			if self._app.is_option_exist('current_scene') and update_method.__self__.on_scene(self._app.get_option('current_scene')):
+			if self._app.is_option_exist('current_scene') \
+				and update_method.__self__.on_scene(
+					self._app.get_option('current_scene')
+				):
 				update_method(self)

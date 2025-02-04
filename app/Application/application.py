@@ -4,9 +4,8 @@ import os
 import logging
 import logging.config
 import pygame
-from .abstractcontroller import AbstractController
+from .abccontroller import AbstractController
 from .source import SourceType
-import pdb
 '''
 All action before create window and start controllers listeners
 Import controllers and factories from config
@@ -100,7 +99,8 @@ class Application:
 		if not isinstance(controller, AbstractController):
 			raise TypeError('Incorrect controller type. Controller must be the heir AbstractController')
 		self._controllers[controller_name] = controller
-		controller.init(self)
+		# controller.before_init(self)
+		# controller.init()
 
 	def get_current_scene(self):
 		try:
@@ -157,10 +157,10 @@ class Application:
 
 	def run(self):
 		for controller in self._controllers.values():
-			controller.init(self)
-		self._controllers['main'].after_init()
+			controller.before_init(self)
+		self._controllers['main'].init()
 		for controller in self._controllers.values():
-			controller.after_init()
+			controller.init()
 
 		while True:
 			self._clock.tick(self._fps)

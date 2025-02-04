@@ -1,7 +1,7 @@
 import pygame
 import sys
-from .abstractcontroller import AbstractController
-from .systemevent import SystemEvent, MotionEvent
+from .abccontroller import AbstractController
+from .systemevent import SystemEvent
 
 
 class AppController(AbstractController):
@@ -29,16 +29,16 @@ class AppController(AbstractController):
 			controller.add_alias_keys(alias, keys)
 		return controller
 
-	def init(self, app):
+	def before_init(self, app):
 		if pygame.get_init():
 			return
-		self.logger.info('start init pygame')
+		self.logger.info('start before init pygame')
 		self._app = app
 
-	def after_init(self):
+	def init(self):
 		if pygame.get_init():
 			return
-		log = self.logger.getChild('after_init')
+		log = self.logger.getChild('init')
 		pygame.init()
 		log.info('finish init pygame')
 		screen = pygame.display.set_mode(self._app.get_option('display_mod'), self._app.get_option('flags'))
@@ -48,7 +48,7 @@ class AppController(AbstractController):
 		except KeyError:
 			log.debug('Set default pygame caption.')
 
-	def create_event(self, event_type, **event_attrs):
+	def create_event(self, event_type, **event_attrs): # revrite used attributes in SourceType
 		event_type = self.get_event_id(event_type)
 		if event_type is not None:
 			self.set_event(event_type)
@@ -79,13 +79,13 @@ class AppController(AbstractController):
 			try:
 				return SystemEvent(event_id_name)
 			except ValueError:
-				return MotionEvent(event_id_name)
+				self.logger.error('Ivalid event type given: ' + event_id_name)
 		elif isinstance(event_id_name, str):
 			try:
 				return SystemEvent[event_id_name]
 			except KeyError:
-				return MotionEvent[event_id_name]
-
+				self.logger.error('Invalid event name given: ' + event_id_name)
+				
 	def has_event_type(self, event_type):
 		try:
 			return self.get_event_id(event_type) and True
@@ -111,8 +111,8 @@ class AppController(AbstractController):
 			else:
 				self._aliases_names[listener_method].insert(order, handler)
 			return
-		listener_method = self.get_event_id(listener_method)
 		try:
+			listener_method = self.get_event_id(listener_method)
 			if order is None:
 				self._listeners_list[listener_method.value].append(handler)
 			else:
@@ -154,12 +154,9 @@ class AppController(AbstractController):
 			listeners = self._listeners_list.get(event.type, list())
 			for listener in listeners:
 				listener(event)
-		for event in pygame.event.get(MotionEvent.values()):
-			key = event.__dict__.get('key', event.__dict__.get('button', 0))
-			for handler in self._aliases_keys.get(key, []):
-				if self._app.is_option_exist('current_scene') and handler.__self__.on_scene(
-						self._app.get_option('current_scene')
-				):
-					handler(event)
 		for update_method in self._listeners_update:
-			update_method(self)
+			if self._app.is_option_exist('current_scene')\
+				and update_handler.__self__.on_scene(
+					self._app.get_option('current_scene')
+				):
+				update_method(self)
