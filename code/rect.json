@@ -1,0 +1,58 @@
+{
+	"class": [
+		{
+			"name": "Node",
+			"ref": "app.Drawing"
+		},
+		{
+			"name": "RotRect",
+			"ref": "code.rot_rect_actions"
+		},
+		{
+			"name": "Circle",
+			"ref": "app.Drawing.circle"
+		}
+	],
+	"node": [
+		{
+			"name": "test_scene",
+			"ref": "Node",
+			"dependence": ["Node", "rect", "circle"],
+			"meta": {
+				"background": "black",
+				"listeners": {
+					"drawing": {
+						"show_scene": "update"
+					}
+				}
+			}
+		},
+		{
+			"name": "rect",
+			"ref": "RotRect",
+			"dependence": ["RotRect"],
+			"meta": {
+				"pos": [40, 40],
+				"size": [50, 50],
+				"color": "white",
+				"listeners": {
+					"main":{
+						"move_left": "left_rot",
+						"move_right": "right_rot"
+					}
+				}
+			}
+		},
+		{
+			"name": "circle",
+			"ref": "Circle",
+			"dependence": ["Circle"],
+			"meta": {
+				"color": "green",
+				"line_width": 5,
+				"pos": [100, 100],
+				"radius": 40
+			}
+		}
+	]
+}

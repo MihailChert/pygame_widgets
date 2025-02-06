@@ -28,6 +28,7 @@ class TextController(AbstractController):
         return pygame.font.Font(font_name, font_size)
 
     def destroy(self, event):
+        self.logger.info('destroy controllr')
         pygame.font.quit()
 
     def get_text_loader(self, source):

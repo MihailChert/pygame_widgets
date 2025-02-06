@@ -1,93 +1,97 @@
 {
-  "config": [
-    {
-      "name": "main",
-      "ref": "AppController",
-      "dependence": ["AppController" ,"drawing", "text", "trigger"],
-      "meta": {
-        "factories": [
-          "drawing",
-          "text"
-        ],
-        "caption": "Pyramid game",
-        "fps": 60,
-        "display_mod": [
-          640,
-          500
-        ],
-        "flags": 0,
-        "logger": {
-          "version": 1,
-          "handlers": {
-            "main_handler": {
-              "class": "logging.FileHandler",
-              "formatter": "standard_format",
-              "filename": "app_config.log"
-            }
-          },
-          "loggers": {
-            "application": {
-              "handlers": ["main_handler"],
-              "level": "DEBUG"
-            }
-          },
-          "formatters": {
-            "standard_format": {
-              "format": "%(levelname)-8s\t%(asctime)s\t%(name)s %(filename)s LINE %(lineno)d\t%(message)s",
-              "datefmt": "%H:%M:%S"
-            }
-          }
-        }
-      }
-    },
-    {
-      "name": "drawing",
-      "ref": "DrawingController",
-      "dependence": ["DrawingController"],
-      "meta": {
-        "main_scene": "test_button",
-        "scenes": {
-          "test_button": "code/scenes/buttontest.json"
-        }
-      }
-    },
-    {
-      "name": "trigger",
-      "ref": "TriggerController",
-      "dependence": ["TriggerController"],
-      "meta":{
-        "key_aliases": {
-          "move_right": [{"mode": "key_down", "name": "D"}, {"mode": "key_down", "name": "RIGHT"}],
-          "move_left": [{"mode": "key_down", "name": "A"}, {"mode": "key_down", "name": "LEFT"}],
-          "select": [{"mode": "key_down", "name": "space"}, {"mode": "key_down", "name": "enter"}, {"mode": "key_down", "name": "f"}],
-          "lclick": [{"mode": "mouse_key_down", "name": 1}],
-          "rclick": [{"mode": "mouse_key_down", "name": 3}]
-        }
-      }
-    },
-    {
-      "name": "text",
-      "ref": "TextController",
-      "dependence": ["TextController"],
-      "meta": {}
-    }
-  ],
-  "class": [
-    {
-      "name": "AppController",
-      "ref": "app.Application.appcontroller"
-    },
-    {
-      "name": "DrawingController",
-      "ref": "app.Drawing.drawingcontroller"
-    },
-    {
-      "name": "TextController",
-      "ref": "app.Drawing.TextDrawing.textcontroller"
-    },
-    {
-      "name": "TriggerController",
-      "ref": "app.TriggerBox.triggercontroller"
-    }
-  ]
+	"config": [
+		{
+			"name": "main",
+			"ref": "AppController",
+			"dependence": ["AppController" ,"drawing", "text"],
+			"meta": {
+				"factories": [
+					"drawing",
+					"text"
+				],
+				"caption": "Pyramid game",
+				"fps": 60,
+				"display_mod": [640, 500],
+				"key_aliases": {
+					"move_right": ["D", "RIGHT"],
+					"move_left": ["A", "LEFT"],
+					"select": ["space", "enter", "f"]
+				},
+				"flags": 0,
+				"logger": {
+					"version": 1,
+					"handlers": {
+						"main_handler": {
+							"class": "logging.FileHandler",
+							"formatter": "standard_format",
+							"filename": "app_config.log"
+						}
+					},
+					"loggers": {
+						"application": {
+							"handlers": ["main_handler"],
+							"level": "DEBUG"
+						}
+					},
+					"formatters": {
+						"standard_format": {
+							"format": "%(levelname)-8s\t%(asctime)s\t%(name)s %(filename)s LINE %(lineno)d\t%(message)s",
+							"datefmt": "%H:%M:%S"
+						}
+					}
+				}
+			}
+		},
+		{
+			"name": "drawing",
+			"ref": "DrawingController",
+			"dependence": ["DrawingController"],
+			"meta": {
+				"main_scene": "main",
+				"scenes": {
+					"test_scene": "code/rect.json",
+					"main": "code/scenefortest.json",
+					"settings": "code/scenesettings.json"
+				}
+			}
+		},
+		{
+			"name": "trigger",
+			"ref": "TriggerController",
+			"dependence": ["TriggerController"],
+			"meta":{
+				"key_aliases": {
+					"move_right": [{"mode": "key_down", "name": "D"}, {"mode": "key_down", "name": "RIGHT"}],
+					"move_left": [{"mode": "key_down", "name": "A"}, {"mode": "key_down", "name": "LEFT"}],
+					"select": [{"mode": "key_down", "name": "space"}, {"mode": "key_down", "name": "enter"}, {"mode": "key_down", "name": "f"}],
+					"lclick": [{"mode": "mouse_key_down", "name": 1}],
+					"rclick": [{"mode": "mouse_key_down", "name": 3}]
+				}
+			}
+		},
+		{
+			"name": "text",
+			"ref": "TextController",
+			"dependence": ["TextController"],
+			"meta": {}
+		}
+	],
+	"class": [
+		{
+			"name": "AppController",
+			"ref": "app.Application"
+		},
+		{
+			"name": "DrawingController",
+			"ref": "app.Drawing"
+		},
+		{
+			"name": "TextController",
+			"ref": "app.Drawing.TextDrawing"
+		},
+		{
+			"name": "TriggerController",
+			"ref": "app.TriggerBox.TriggerController"
+		}
+	]
 }
