@@ -11,19 +11,24 @@ class AbstractPhysicalNode(AbstractNode, ABC):
 		self._update_global_rect = True
 		self._global_rect = None
 
+	def _parent_convert_rect(self, rect):
+		return pygame.Rect(
+			(
+				rect.x + self.get_local_rect().x,
+				rect.y + self.get_local_rect().y
+			),
+			rect.size
+		)
+
+	def _propagate_convertion(self):
+		return True
+
 	def _convert_to_global(self, rect):
-		self._update_global_rect = False
-		if self._parent is not None:
-			return self._parent._convert_to_global(
-				pygame.Rect(
-					(
-						rect.x + self._parent._rect.x,
-						rect.y + self._parent._rect.y
-					),
-					rect.size
-				)
-			)
-		return rect.copy()
+		parent = self._parent
+		while parent is not None and parent._propagate_convertion():
+			rect = parent._parent_convert_rect(rect)
+			parent = parent.get_parent()
+		return rect
 
 	def add_child(self, new_child):
 		self._children.append(new_child)

@@ -23,20 +23,5 @@
         }
       }
     }
-  ],
-  "text": [
-    {
-      "name": "textWin",
-      "ref": "SimpleText",
-      "dependence": ["SimpleText"],
-      "meta": {
-        "pos": [20, 20],
-        "text": "Win",
-        "color": "white",
-        "font_size": 40,
-        "bold": true,
-        "antialias": true
-      }
-    }
   ]
 }

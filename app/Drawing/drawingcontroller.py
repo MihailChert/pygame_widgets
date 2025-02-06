@@ -78,10 +78,11 @@ class DrawingController(AbstractController):
 			scene.destroy()
 
 	def calc_update_zone(self, rect):
-		if self._update_zone is None:
-			self._update_zone = rect
-			return
-		self._update_zone = self._update_zone.union(rect)
+		self._update_zone = True
+		# if self._update_zone is None:
+		# 	self._update_zone = rect
+		# 	return
+		# self._update_zone = self._update_zone.union(rect)
 
 	def update_current_scene(self, new_scene):
 		self._current_scene = self._scenes[new_scene]
@@ -93,5 +94,5 @@ class DrawingController(AbstractController):
 		if self._update_zone is not None:
 			self._app.get_screen().fill(self.background)
 			self._current_scene._draw()
-			pygame.display.update(self._update_zone)
+			pygame.display.update()
 			self._update_zone = None

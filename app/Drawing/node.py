@@ -38,12 +38,32 @@ class Node(AbstractPhysicalNode):
 		self._has_change = True
 		rect = pygame.Rect((0, 0), self._controller._app.get_screen().get_size())
 		self._controller.calc_update_zone(self.get_global_rect())
-	def _draw(self):
-		self.draw()
+
+	def _get_surface(self):
+		return None
+
+	def get_surface(self):
+		parent = self._parent
+		surface = None
+		while parent is not None:
+			try:
+				surface = self._get_surface()
+			except AttributeError:
+				continue
+			if surface is not None:
+				return surface
+		return self._controller.get_app().get_screen()
+
+	def _draw(self, surface=None):
+		if surface is None:
+			surface = self.get_surface()
+		self.draw(surface)
 		for child in self._children:
-			if hasattr(child, '_draw'):  # TODO: draw image or text
-				child._draw()
+			try:
+				child._draw(surface) # TODO: draw image or text
+			except AttributeError:
+				continue
 		self._has_change = False
 
-	def draw(self):
+	def draw(self, surface=None):
 		pass

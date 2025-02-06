@@ -57,9 +57,11 @@ class SimpleText(AbstractPhysicalNode):
 				size = self.get_local_rect()
 			self._rendered_text = self.font.render(self._text, self.color, self.bg_color, size)
 
-	def _draw(self):
+	def _draw(self, surface=None):
+		if surface is None:
+			surface = self.get_surface()
 		self.render()
-		self._controller.get_app().get_screen().blit(self._rendered_text, self.get_global_rect())
+		surface.blit(self._rendered_text, self.get_global_rect())
 
 	def destroy(self):
 		try:

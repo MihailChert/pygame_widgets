@@ -10,5 +10,5 @@ class NodeSimpleFigure(Node):
 		node.figure = source.check_meta('figure', default='rect')
 		return node
 
-	def draw(self):
+	def draw(self, surface=None):
 		getattr(self._controller.get_simple_figure(), self.figure)(self.background_color, self.get_global_rect(), 5)
