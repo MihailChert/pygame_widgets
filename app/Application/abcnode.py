@@ -18,6 +18,11 @@ class AbstractNode(ABC):
 	def create_from_source(cls, source):
 		pass
 
+	def connect_events_from_source(self, source):
+		for controller_name, listeners in source.check_meta('listeners', default={}).items():
+			for listener_method, listener_handler in listeners.items():
+				self.handle_by_controller(controller_name, listener_method, getattr(self, listener_handler), source)
+
 	def get_controller(self):
 		return self._controller
 

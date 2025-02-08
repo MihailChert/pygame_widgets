@@ -3,7 +3,7 @@
 		{
 			"name": "main",
 			"ref": "AppController",
-			"dependence": ["AppController" ,"drawing", "text"],
+			"dependence": ["AppController" ,"drawing", "text", "trigger"],
 			"meta": {
 				"factories": [
 					"drawing",
@@ -47,11 +47,11 @@
 			"ref": "DrawingController",
 			"dependence": ["DrawingController"],
 			"meta": {
-				"main_scene": "main",
+				"main_scene": "test_scene",
 				"scenes": {
 					"test_scene": "code/rect.json",
-					"main": "code/scenefortest.json",
-					"settings": "code/scenesettings.json"
+					"main": "code/scenes/scenefortest.json",
+					"settings": "code/scenes/scenesettings.json"
 				}
 			}
 		},
@@ -91,7 +91,7 @@
 		},
 		{
 			"name": "TriggerController",
-			"ref": "app.TriggerBox.TriggerController"
+			"ref": "app.TriggerBox"
 		}
 	]
 }

@@ -10,7 +10,7 @@
     },
     {
       "name": "NodeAxis",
-      "ref": "code.axis"
+      "ref": "code.src.axis"
     },
     {
       "name": "Rect",

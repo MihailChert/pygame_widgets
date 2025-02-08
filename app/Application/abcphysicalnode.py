@@ -1,6 +1,7 @@
 from .abcnode import AbstractNode
 from abc import ABC
 import pygame
+import pdb
 
 
 class AbstractPhysicalNode(AbstractNode, ABC):
@@ -11,11 +12,12 @@ class AbstractPhysicalNode(AbstractNode, ABC):
 		self._update_global_rect = True
 		self._global_rect = None
 
-	def _parent_convert_rect(self, rect):
+	@staticmethod
+	def _parent_convert_rect(rect, parent):
 		return pygame.Rect(
 			(
-				rect.x + self.get_local_rect().x,
-				rect.y + self.get_local_rect().y
+				rect.x + parent.get_local_rect().x,
+				rect.y + parent.get_local_rect().y
 			),
 			rect.size
 		)
@@ -26,13 +28,15 @@ class AbstractPhysicalNode(AbstractNode, ABC):
 	def _convert_to_global(self, rect):
 		parent = self._parent
 		while parent is not None and parent._propagate_convertion():
-			rect = parent._parent_convert_rect(rect)
+			rect = self._parent_convert_rect(rect, parent)
 			parent = parent.get_parent()
 		return rect
 
 	def add_child(self, new_child):
 		self._children.append(new_child)
 		new_child._parent = self
+		if new_child.get_local_rect() is None:
+			pdb.set_trace()
 		self.union_rect(new_child.get_local_rect())
 
 	def reset_global_rect(self):
@@ -47,7 +51,7 @@ class AbstractPhysicalNode(AbstractNode, ABC):
 
 	def get_global_rect(self):
 		if not self._global_rect or self._update_global_rect:
-			self._global_rect = self._convert_to_global(self._rect)
+			self._global_rect = self._convert_to_global(self.get_local_rect())
 		return self._global_rect
 
 	def remove_child(self, child_to_delete, recursive=False):

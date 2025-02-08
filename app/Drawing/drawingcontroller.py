@@ -2,7 +2,6 @@ import traceback
 import pygame
 from ..Application import AbstractController
 from ..Application.builder import Builder
-from .simplefigure import SimpleFigure
 
 
 class DrawingController(AbstractController):
@@ -42,7 +41,6 @@ class DrawingController(AbstractController):
 			if self._scenes[scene_name].get_name() != scene_name:
 				raise RuntimeError('Invalid root node name. Root node name must be equal scene name.')
 		self.update_current_scene(self._current_scene)
-		self._simple_figure = SimpleFigure(self._app.get_screen())
 
 	def get_node_loader(self, source):
 		source.meta['controller'] = self

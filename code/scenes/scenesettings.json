@@ -13,7 +13,7 @@
     {
       "name": "settings",
       "ref": "Node",
-      "dependence": ["Node", "textWin"],
+      "dependence": ["Node"],
       "meta": {
         "background": [0, 0, 0],
         "listeners": {

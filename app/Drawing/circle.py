@@ -1,14 +1,17 @@
 import numpy
 import pygame
-from .abcfigure import AbstractFigure
+from ..Application import AbstractPhysicalNode
 
 
-class Circle(AbstractFigure):
+class Circle(AbstractPhysicalNode):
 
 	def __init__(self, name, parent, controller, scene, color, width, center, radius):
-		super().__init__(name, parent, controller, scene, color, width, False)
+		super().__init__(name, (0,0), (0,0), scene, parent, controller)
 		self._radius = abs(radius)
 		self._rect = pygame.Rect(numpy.array(center, numpy.int32)-radius, [self._radius*2]*2)
+		self.color = color
+		self.width = width
+		print(self._rect, 'circle')
 
 	def get_radius(self):
 		return self._radius
@@ -32,8 +35,6 @@ class Circle(AbstractFigure):
 		res.connect_events_from_source(source)
 		return res
 
-	def get_rect(self):
-		return self._rect
 
 	def move(self, delta_x=0, delta_y=0):
 		self._controller.calc_update_zone(self.__rect)
@@ -56,5 +57,7 @@ class Circle(AbstractFigure):
 	def rotate(self):
 		return
 
-	def _draw(self):
-		pygame.draw.circle(self._controller.get_app().get_screen(), self.color, self.get_global_rect().center, self._radius, self.width)
+	def _draw(self, surface=None):
+		if surface is None:
+			surface = self._controller.get_app().get_screen()
+		pygame.draw.circle(surface, self.color, self.get_global_rect().center, self._radius, self.width)

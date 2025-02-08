@@ -1,5 +1,6 @@
 from ..Application import AbstractPhysicalNode
 import pygame
+import pdb
 
 
 class Node(AbstractPhysicalNode):
@@ -36,7 +37,6 @@ class Node(AbstractPhysicalNode):
 
 	def update(self, event):
 		self._has_change = True
-		rect = pygame.Rect((0, 0), self._controller._app.get_screen().get_size())
 		self._controller.calc_update_zone(self.get_global_rect())
 
 	def _get_surface(self):

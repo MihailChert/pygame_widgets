@@ -9,8 +9,8 @@
       "ref": "app.TriggerBox.recttriggerbox"
     },
     {
-      "name": "NodeSimpleFigure",
-      "ref": "code.src.simplefigure"
+      "name": "Rect",
+      "ref": "app.Drawing.rect"
     },
     {
       "name": "SimpleText",
@@ -33,8 +33,8 @@
     },
     {
       "name": "button_rect",
-      "ref": "NodeSimpleFigure",
-      "dependence": ["NodeSimpleFigure", "button_text"],
+      "ref": "Rect",
+      "dependence": ["Rect", "button_text"],
       "meta": {
         "background": "white",
         "pos": [100, 100],
@@ -43,8 +43,8 @@
     },
     {
       "name": "test_rect2",
-      "ref": "NodeSimpleFigure",
-      "dependence": ["NodeSimpleFigure", "button_text2"],
+      "ref": "Rect",
+      "dependence": ["Rect", "button_text2"],
       "meta":{
         "background": "white",
         "pos": [0, 0],

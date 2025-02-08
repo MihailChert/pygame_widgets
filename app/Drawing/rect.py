@@ -1,13 +1,13 @@
 import numpy
 import pygame
-from ..Aplication import AbstractPhysicalNode
-from .abcfigure import AbstractFigure
+from ..Application import AbstractPhysicalNode
+import pdb
 
 
 class Rect(AbstractPhysicalNode):
 
 	def __init__(self, name, pos, size, scene, parent, controller, color, bg_color, width, antialias, align):
-		super().__init__(name, pos, size, scene, parent, controller, bg_color)
+		super().__init__(name, pos, size, scene, parent, controller)
 		self._align = align
 		self._drawing_points = None
 		self._color = color
@@ -15,7 +15,7 @@ class Rect(AbstractPhysicalNode):
 		self._antialias = antialias
 		self._update_draw = True
 		self._bg_color = bg_color
-		self._recalculate_local_rect()
+		self._update_drawing_points()
 
 	def get_color(self):
 		return self._color
@@ -59,9 +59,13 @@ class Rect(AbstractPhysicalNode):
 	bg_color = property(fget = get_bg_color, fset = set_bg_color)
 	align = property(fget = get_align, fset = set_align)
 
+	def add_child(self, new_child):
+		return
+
 
 	@classmethod
 	def create_from_source(cls, source):
+		rect = None
 		if source.check_meta('rect') is not None:
 			rect = pygame.Rect(*source.check_meta('rect'))
 		elif source.check_meta('pos') is not None and source.check_meta('size') is not None:
@@ -85,12 +89,13 @@ class Rect(AbstractPhysicalNode):
 			scene = source.get_root().get_name()
 		res = cls(
 			source.get_name(),
-			rect.pos,
+			rect.topleft,
 			rect.size,
 			scene,
 			None,
 			source.meta['controller'],
 			source.check_meta('color', default=[0, 0, 0]),
+			source.check_meta('bg_color', default=[0, 0, 0]),
 			source.check_meta('line_width', default=0),
 			source.check_meta('antialias', default=False),
 			source.check_meta('align', default=0)
@@ -125,16 +130,21 @@ class Rect(AbstractPhysicalNode):
 			(numpy.max(self._drawing_points[:, 0]) - x,
 			numpy.max(self._drawing_points[:, 1]) - y)
 		)
+		return self._rect
+
+	@staticmethod
+	def _parent_convert_points(self, rect, parent):
+		rect[:, 0] = rect[:, 0] + parent.get_local_rect().x
+		rect[:, 1] = rect[:, 1] + parent.get_local_rect().y
+		return rect
 
 	def _get_global_points(self):
 		parent = self._parent
-		rect = self.get_rect()
-		while parent is not None:
-			parent_rect = parent.get_rect()
-			rect.move_ip(parent_rect.x, parent_rect.y)
+		rect = self._drawing_points.copy()
+		while parent is not None and parent._propagate_convertion():
+			rect = self._parent_convert_points(rect, parent)
 			parent = parent.get_parent()
-		delta_pos = [rect.x - self.get_rect().x, rect.y - self.get_rect().y]
-		return self.get_points() + numpy.array([delta_pos], numpy.int32)
+		return rect
 
 	def move(self, delta_x=0, delta_y=0):
 		super().move(delta_x, delta_y)
@@ -169,7 +179,9 @@ class Rect(AbstractPhysicalNode):
 	def reset_align(self):
 		self._align = 0
 
-	def _draw(self):
+	def _draw(self, surface=None):
+		if surface is None:
+			surface = self.get_surface()
 		if self._align:
 			self._update_drawing_points()
 			pygame.draw.polygon(
