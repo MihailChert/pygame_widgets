@@ -1,6 +1,7 @@
 import warnings
 import os.path as path
 import json
+from collections import deque
 from .source import Source
 
 
@@ -68,6 +69,23 @@ class Builder:
 			source.load(controller)
 
 	@staticmethod
+	def graph_has_loop(graph):
+		queue = deque(graph)
+		while bool(queue):
+			element = queue.popleft()
+			print(element)
+			if element in queue:
+				return element
+			try:
+				queue.extend(element.get_dependencies())
+			except TypeError:
+				queue.append(element.get_dependencies())
+			except AttributeError:
+				continue
+		return False
+
+
+	@staticmethod
 	def tree_to_queue(tree):
 		queue = tree.copy()
 		result_queue = []
@@ -106,6 +124,9 @@ class Builder:
 				except TypeError:
 					source.update_dependencies(self.find(queue, depends))
 				source.propagate_depend()
+		root = self.graph_has_loop(self._sources)
+		if root:
+			raise RuntimeError(f'Two or more node have same name: {root.get_name()}.')  # TODO: change error typ)
 		root = self._sources[0]
 		while bool(root.depended):
 			if id(root) == id(root.depended):
@@ -124,6 +145,9 @@ class Builder:
 		return res
 
 	def build_sources(self, controller):
+		loop_source = self.graph_has_loop(self._sources)
+		if loop_source:
+			raise RuntimeError(f'Two or more node have same name: {(loop_source.get_name() if hasattr(loop_source, 'get_name') else loop_source)}.')
 		self.link_sources()
 		root = self._sources[0]
 		while root.depended is not None:
