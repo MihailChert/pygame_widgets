@@ -77,6 +77,7 @@ class Builder:
 		while bool(queue):
 			root = queue.popleft()
 			if root in visited:
+				print('upper')
 				return root
 			if root.depended is None:
 				continue
@@ -91,12 +92,15 @@ class Builder:
 		while bool(queue):
 			element = queue.popleft()
 			if element in visited:
+				print('down')
+				pdb.set_trace()
 				return element
+			
 			try:
+				if not element.get_dependencies():
+					continue
 				queue.extend(element.get_dependencies())
-			except TypeError:
-				queue.append(element.get_dependencies())
-			except AttributeError:
+			except (AttributeError, TypeError):
 				continue
 			visited.append(element)
 		return False
