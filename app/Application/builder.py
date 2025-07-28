@@ -3,6 +3,7 @@ import os.path as path
 import json
 from collections import deque
 from .source import Source
+import pdb
 
 
 class Builder:
@@ -69,12 +70,27 @@ class Builder:
 			source.load(controller)
 
 	@staticmethod
-	def graph_has_loop(graph):
-		queue = deque(graph)
+	def graph_has_loop(graph, debug=False):
+		queue = deque([graph[0]])
+		visited = deque()
+		root = None
+		while bool(queue):
+			root = queue.popleft()
+			if root in visited:
+				return root
+			if root.depended is None:
+				continue
+			try:
+				queue.append(root.depended)
+			except AttributeError:
+				continue
+			visited.append(root)
+
+		queue = deque([root])
+		visited = deque()
 		while bool(queue):
 			element = queue.popleft()
-			print(element)
-			if element in queue:
+			if element in visited:
 				return element
 			try:
 				queue.extend(element.get_dependencies())
@@ -82,8 +98,8 @@ class Builder:
 				queue.append(element.get_dependencies())
 			except AttributeError:
 				continue
+			visited.append(element)
 		return False
-
 
 	@staticmethod
 	def tree_to_queue(tree):
@@ -124,12 +140,12 @@ class Builder:
 				except TypeError:
 					source.update_dependencies(self.find(queue, depends))
 				source.propagate_depend()
-		root = self.graph_has_loop(self._sources)
+		root = self.graph_has_loop(self._sources, True)
 		if root:
 			raise RuntimeError(f'Two or more node have same name: {root.get_name()}.')  # TODO: change error typ)
 		root = self._sources[0]
 		while bool(root.depended):
-			if id(root) == id(root.depended):
+			if root.depended == root.get_dependencies():
 				raise RuntimeError(f'Two or more node have same name: {root.get_name()}.')  # TODO: change error type
 			root = root.depended
 		self._sources = [root]

@@ -30,7 +30,7 @@
 		{
 			"name": "rect",
 			"ref": "RotRect",
-			"dependence": ["RotRect", "test_scene"],
+			"dependence": ["RotRect"],
 			"meta": {
 				"pos": [40, 40],
 				"size": [50, 50],
