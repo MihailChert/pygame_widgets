@@ -10,7 +10,7 @@
     },
     {
       "name": "NodeAxis",
-      "ref": "code.src.axis"
+      "ref": "src_test.src.axis"
     },
     {
       "name": "Rect",
@@ -18,11 +18,11 @@
     },
     {
       "name": "NodeSimpleFigure",
-      "ref": "code.src.simplefigure"
+      "ref": "src_test.src.simplefigure"
     },
     {
       "name": "NodeAxisContainer",
-      "ref": "code.src.axiscontainer"
+      "ref": "src_test.src.axiscontainer"
     }
   ],
   "node": [

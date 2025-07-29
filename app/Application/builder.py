@@ -77,11 +77,11 @@ class Builder:
 		while bool(queue):
 			root = queue.popleft()
 			if root in visited:
-				print('upper')
 				return root
-			if root.depended is None:
-				continue
+			
 			try:
+				if root.depended is None:
+					continue
 				queue.append(root.depended)
 			except AttributeError:
 				continue
@@ -92,15 +92,15 @@ class Builder:
 		while bool(queue):
 			element = queue.popleft()
 			if element in visited:
-				print('down')
-				pdb.set_trace()
 				return element
 			
 			try:
-				if not element.get_dependencies():
+				config_type = 'config_' + element.get_type().name
+				if element.__class__.TYPE[config_type].value['terminated']:
 					continue
 				queue.extend(element.get_dependencies())
-			except (AttributeError, TypeError):
+			except (AttributeError, TypeError) as e:
+				pdb.set_trace()
 				continue
 			visited.append(element)
 		return False
@@ -135,6 +135,7 @@ class Builder:
 
 	def link_sources(self):
 		queue = self.tree_to_queue(self._sources)
+
 		for source in queue:
 			if source.has_dependence():
 				depends = source.get_dependencies()
@@ -165,9 +166,6 @@ class Builder:
 		return res
 
 	def build_sources(self, controller):
-		loop_source = self.graph_has_loop(self._sources)
-		if loop_source:
-			raise RuntimeError(f'Two or more node have same name: {(loop_source.get_name() if hasattr(loop_source, 'get_name') else loop_source)}.')
 		self.link_sources()
 		root = self._sources[0]
 		while root.depended is not None:

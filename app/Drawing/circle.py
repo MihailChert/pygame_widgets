@@ -11,7 +11,6 @@ class Circle(AbstractPhysicalNode):
 		self._rect = pygame.Rect(numpy.array(center, numpy.int32)-radius, [self._radius*2]*2)
 		self.color = color
 		self.width = width
-		print(self._rect, 'circle')
 
 	def get_radius(self):
 		return self._radius

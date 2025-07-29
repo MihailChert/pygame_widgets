@@ -14,15 +14,14 @@ class SourceType(Enum):
 	save = 'save'
 	file = 'file'
 
-	config_image = {'unique': True, 'recursive': False}
-	config_sound = {'unique': True, 'recursive': False}
-	config_node = {'unique': False, 'recursive': False}
-	config_text = {'unique': True, 'recursive': False}
-	config_settings = {'unique': True, 'recursive': False}
-	config_code = {'unique': True, 'recursive': False}
-	config_factory = {'unique': True, 'recursive': False}
-	config_save = {'unique': False, 'recursive': False}
-	config_file = {'unique': False, 'recursive': True}
+	config_image = {'unique': True, 'terminated': True}
+	config_sound = {'unique': True, 'terminated': True}
+	config_node = {'unique': False, 'terminated': False}
+	config_text = {'unique': True, 'terminated': False}
+	config_settings = {'unique': True, 'terminated': False}
+	config_code = {'unique': True, 'terminated': True}
+	config_save = {'unique': False, 'terminated': False}
+	config_file = {'unique': False, 'terminated': True}
 
 	def config(self):
 		return getattr(self.__class__, 'config_' + self.name)

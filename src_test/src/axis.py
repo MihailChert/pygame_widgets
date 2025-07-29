@@ -1,6 +1,6 @@
 import pygame
 from app import Node
-from code.src.simplefigure import NodeSimpleFigure
+from src_test.src.simplefigure import NodeSimpleFigure
 
 
 class NodeAxis(Node):
@@ -63,7 +63,6 @@ class NodeAxis(Node):
 		min_segment_to = select_to.get_min_segment()
 		if min_segment_to is not None and min_segment_to.get_name()[-1] < min_segment_from.get_name()[-1]:
 			return
-		self.get_controller().calc_update_zone(min_segment_from.get_global_rect())
 		select_to.add_segment(min_segment_from)
 		self._children.remove(min_segment_from)
 		if select_to.is_win() and select_to.get_name() == 'axis1':
@@ -87,7 +86,6 @@ class NodeAxis(Node):
 		segment_rect = segment.get_local_rect()
 		segment_rect.y = start_y - segment_rect.h
 		self.add_child(segment)
-		self.get_controller().calc_update_zone(segment.get_global_rect())
 
 	def change_color(self):
 		self.selected = not self.selected
@@ -96,18 +94,15 @@ class NodeAxis(Node):
 			column.background_color = pygame.Color(200, 0, 200, 255)
 		else:
 			column.background_color = pygame.Color(0, 255, 0, 255)
-		self.get_controller().calc_update_zone(column.get_global_rect())
 
 	def move_left(self, event):
 		try:
 			column = self.find('axisColumn' + self.get_name()[-1])
 			if event.selected is self and not self.selected:
 				column.background_color = pygame.Color(255, 0, 0, 255)
-				self.get_controller().calc_update_zone(column.get_global_rect())
 				return
 			if event.leave is self and not self.selected:
 				column.background_color = pygame.Color(0, 255, 0, 255)
-			self.get_controller().calc_update_zone(column.get_global_rect())
 		except AttributeError as er:
 			self.get_controller().logger.error(er)
 
@@ -116,11 +111,9 @@ class NodeAxis(Node):
 			column = self.find('axisColumn' + self.get_name()[-1])
 			if event.selected is self and not self.selected:
 				column.background_color = pygame.Color(255, 0, 0, 255)
-				self.get_controller().calc_update_zone(column.get_global_rect())
 				return
 			if event.leave is self and not self.selected:
 				column = self.find('axisColumn' + self.get_name()[-1])
 				column.background_color = pygame.Color(0, 255, 0, 255)
-			self.get_controller().calc_update_zone(column.get_global_rect())
 		except AttributeError as er:
 			self.get_controller().logger.error(er)
