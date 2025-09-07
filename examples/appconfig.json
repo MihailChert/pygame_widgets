@@ -49,9 +49,9 @@
 			"meta": {
 				"main_scene": "test_scene",
 				"scenes": {
-					"test_scene": "code/rect.json",
-					"main": "code/scenes/scenefortest.json",
-					"settings": "code/scenes/scenesettings.json"
+					"test_scene": "examples/rect.json",
+					"main": "examples/scenes/scenefortest.json",
+					"settings": "examples/scenes/scenesettings.json"
 				}
 			}
 		},

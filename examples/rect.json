@@ -6,7 +6,7 @@
 		},
 		{
 			"name": "RotRect",
-			"ref": "code.rot_rect_actions"
+			"ref": "examples.rot_rect_actions"
 		},
 		{
 			"name": "Circle",
