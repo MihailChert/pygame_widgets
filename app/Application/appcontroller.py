@@ -41,8 +41,6 @@ class AppController(AbstractController):
 		log = self.logger.getChild('init')
 		pygame.init()
 		log.info('finish init pygame')
-		screen = pygame.display.set_mode(self._app.get_option('display_mod'), self._app.get_option('flags'))
-		self._app.update_option('screen', screen)
 		try:
 			self.set_caption()
 		except KeyError:

@@ -11,7 +11,6 @@
 				],
 				"caption": "Pyramid game",
 				"fps": 60,
-				"display_mod": [640, 500],
 				"key_aliases": {
 					"move_right": ["D", "RIGHT"],
 					"move_left": ["A", "LEFT"],
@@ -48,6 +47,8 @@
 			"dependence": ["DrawingController"],
 			"meta": {
 				"main_scene": "test_scene",
+				"window_flags": ["NOFRAME", "RESIZABLE"],
+				"window_size": [640, 500],
 				"scenes": {
 					"test_scene": "src_test/rect.json",
 					"main": "src_test/scenes/scenefortest.json",

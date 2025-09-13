@@ -1,14 +1,18 @@
 import traceback
 import pygame
+import warnings
 from ..Application import AbstractController
 from ..Application.builder import Builder
 
 
 class DrawingController(AbstractController):
 
-	def __init__(self, name, app, scenes, current_scene, background):
+	def __init__(self, name, app, scenes, current_scene, window_size, flags, background):
 		super().__init__(name, app)
+		self._screen = None
+		self._size = window_size
 		self._scenes = scenes
+		self.flags = flags
 		self._update_zone = None
 		self._event_id = self.create_event_id()
 		self._current_scene = current_scene
@@ -19,11 +23,19 @@ class DrawingController(AbstractController):
 	def get_settings_loader(cls, source):
 		app = source.meta['application']
 		app.update_option('current_scene', source.check_meta('main_scene', True))
+		flags = 0
+		for flag in source.check_meta('window_flags', default=list()):
+			try:
+				flags |= getattr(pygame, flag)
+			except AttributeError:
+				warnings.warn(f'Unexpected flag: {flag}.')
 		controller = cls(
 			source.get_name(),
 			app,
 			source.check_meta('scenes', True),
 			source.check_meta('main_scene', True),
+			source.check_meta('window_size', True)
+			flags,
 			source.check_meta('background_color', default=pygame.Color('black'))
 		)
 		app.update_controller(source.get_name(), controller)
@@ -32,8 +44,11 @@ class DrawingController(AbstractController):
 	def before_init(self, app):
 		self._app = app
 		self.logger.info('init drawing controller')
+		pygame.display.init()
 
 	def init(self):
+		self._screen = pygame.display.set_mode(self._size, self._flags)
+		self._app.update_option('screen', self._screen)
 		for scene_name, scene_ref in self._scenes.items():
 			builder = Builder.build_from(scene_ref)
 			self.logger.info('create scene ' + scene_name)
