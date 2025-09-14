@@ -2,6 +2,7 @@ import pygame
 import sys
 from .abccontroller import AbstractController
 from .systemevent import SystemEvent
+from .timer import Timer
 
 
 class AppController(AbstractController):
@@ -18,10 +19,10 @@ class AppController(AbstractController):
 		config = {
 			'caption': source.check_meta('caption', default='Game'),
 			'display_mod': source.check_meta('display_mod', True),
-			'flags': source.check_meta('flags', default=0),
-			'fps': source.check_meta('fps', default=60)
+			'flags': source.check_meta('flags', default=0)
 		}
 		app = source.meta['application']
+		Timer(app, source.check_meta('fps', default=30))
 		app.update_options(config)
 		app.set_logger_config(source.check_meta('logger'))
 		controller = super(cls, AppController).get_settings_loader(source)

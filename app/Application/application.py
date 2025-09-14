@@ -19,8 +19,6 @@ class Application:
 		self._controllers = controllers
 		self._single_existing = {}
 		self.set_logger_config(logger_config)
-		self._fps = 0
-		self._clock = pygame.time.Clock()
 
 	@classmethod
 	def create_from_builder(cls, builder):
@@ -69,15 +67,6 @@ class Application:
 				}
 			}
 		}
-
-	def set_fps(self, new_fps):
-		self._fps = new_fps
-
-	def get_fps(self):
-		return self._clock.get_fps()
-
-	def get_clock(self):
-		return self._clock
 
 	def get_screen(self):
 		try:
@@ -163,6 +152,8 @@ class Application:
 			controller.init()
 
 		while True:
-			self._clock.tick(self._fps)
+			timer = self.get_option('timer')
+			timer.get_frame_time()
 			for controller in self._controllers.values():
 				controller._listen()
+			timer.reset_frame_time()
