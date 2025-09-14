@@ -16,24 +16,20 @@ class AppController(AbstractController):
 	@classmethod
 	def get_settings_loader(cls, source):
 		config = {
-			'caption': source.check_meta('caption', default='Game'),
-			'display_mod': source.check_meta('display_mod', True),
-			'flags': source.check_meta('flags', default=0),
+			'caption': source.check_meta('caption', default='pygame game'),
 			'fps': source.check_meta('fps', default=60)
 		}
 		app = source.meta['application']
 		app.update_options(config)
 		app.set_logger_config(source.check_meta('logger'))
 		controller = super(cls, AppController).get_settings_loader(source)
-		for alias, keys in source.check_meta('key_aliases', default={}).items():
-			controller.add_alias_keys(alias, keys)
 		return controller
 
 	def before_init(self, app):
 		if pygame.get_init():
 			return
 		self.logger.info('start before init pygame')
-		self._app = app
+		super().before_init(app)
 
 	def init(self):
 		if pygame.get_init():
@@ -54,21 +50,6 @@ class AppController(AbstractController):
 			event = pygame.event.Event(self._selected_event.value, **event_attrs)
 		self.logger.info(f'create event {self._selected_event}')
 		pygame.event.post(event)
-
-	def add_alias_keys(self, alias, keys):
-		for key in keys:
-			if isinstance(key, str):
-				key = pygame.key.key_code(key)
-			elif isinstance(key, int):
-				pass
-			else:
-				raise TypeError(f'Key mast be int or str not {type(key)}')
-			if alias in self._aliases_names.keys():
-				self._aliases_keys[key] = self._aliases_names[alias]
-			else:
-				handlers = []
-				self._aliases_names[alias] = handlers
-				self._aliases_keys[key] = handlers
 
 	def get_event_id(self, event_id_name):
 		if isinstance(event_id_name, int):
@@ -94,37 +75,38 @@ class AppController(AbstractController):
 			return
 		pygame.display.set_caption(new_caption)
 
-	def add_listener(self, listener_method, handler, order=None):
-		if listener_method == 'update':
+	def add_listener(self, listened_method, handler, order=None):
+		self.logger.debug(f'Add listener method \'{listened_method}\' to controller {self.get_name()}, with order {order}')
+		if listened_method == 'update':
 			if order is None:
 				self._listeners_update.append(handler)
 			else:
 				self._listeners_update.insert(order, handler)
 			return
-		if listener_method in self._aliases_names.keys():
+		if listened_method in self._aliases_names.keys():
 			if order is None:
-				self._aliases_names[listener_method].append(handler)
+				self._aliases_names[listened_method].append(handler)
 			else:
-				self._aliases_names[listener_method].insert(order, handler)
+				self._aliases_names[listened_method].insert(order, handler)
 			return
 		try:
-			listener_method = self.get_event_id(listener_method)
+			listened_method = self.get_event_id(listened_method)
 			if order is None:
-				self._listeners_list[listener_method.value].append(handler)
+				self._listeners_list[listened_method.value].append(handler)
 			else:
-				self._listeners_list[listener_method.value].insert(order, handler)
+				self._listeners_list[listened_method.value].insert(order, handler)
 		except KeyError:
-			self._listeners_list[listener_method.value] = [handler]
+			self._listeners_list[listened_method.value] = [handler]
 		except AttributeError:
-			self.logger.error('Invalid type of event name')
-			raise TypeError('Unsupported name type of event. Support string(event type by name) or int (event type).')
+			self.logger.error(f'Invalid type of event name {listened_method}.')
+			raise TypeError(f'Unsupported name type of event. Support string(event type by name) or int (event type): {listener_method}.')
 
-	def add_listener_to(self, controller_name, listener_method, handler, order=None):
+	def add_listener_to(self, controller_name, listened_method, handler, order=None):
 		if controller_name == self.get_name():
-			self.add_listener(listener_method, handler, order)
+			self.add_listener(listened_method, handler, order)
 			return
-		controller = self._app.get_controller(controller_name)
-		controller.add_listener(listener_method, handler, order)
+		controller = self._app.get_controller(controlled_name)
+		controller.add_listener(listened_method, handler, order)
 
 	def find_loader(self, source):
 		try:
@@ -138,11 +120,11 @@ class AppController(AbstractController):
 		return self._app.find_loader()
 
 	def destroy(self, event):
-		if self._app.is_option_exist('game_destroy'):
+		if self._app.is_option_exist('game_destroied'):
 			return
-		self._app.update_option('game_destroy', True)
+		self._app.update_option('game_destroied', True)
 		self._app.destroy(event)
-		self.logger.info('destroy controller')
+		self.logger.info('destroy controller ' + self.get_name())
 		pygame.quit()
 		sys.exit()
 

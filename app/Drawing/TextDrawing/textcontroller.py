@@ -15,9 +15,8 @@ class TextController(AbstractController):
         return super(cls, TextController).get_settings_loader(source)
 
     def before_init(self, app):
-        self._app = app
         pygame.font.init()
-        self.logger.info('init text')
+        super().before_init(app)
 
     def init(self):
         pass
@@ -28,7 +27,7 @@ class TextController(AbstractController):
         return pygame.font.Font(font_name, font_size)
 
     def destroy(self, event):
-        self.logger.info('destroy controllr')
+        self.logger.info('destroy controllr ' + self.get_name())
         pygame.font.quit()
 
     def get_text_loader(self, source):

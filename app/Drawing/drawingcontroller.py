@@ -12,7 +12,7 @@ class DrawingController(AbstractController):
 		self._screen = None
 		self._size = window_size
 		self._scenes = scenes
-		self.flags = flags
+		self._flags = flags
 		self._update_zone = None
 		self._event_id = self.create_event_id()
 		self._current_scene = current_scene
@@ -34,7 +34,7 @@ class DrawingController(AbstractController):
 			app,
 			source.check_meta('scenes', True),
 			source.check_meta('main_scene', True),
-			source.check_meta('window_size', True)
+			source.check_meta('window_size', True),
 			flags,
 			source.check_meta('background_color', default=pygame.Color('black'))
 		)
@@ -42,12 +42,12 @@ class DrawingController(AbstractController):
 		return controller
 
 	def before_init(self, app):
-		self._app = app
-		self.logger.info('init drawing controller')
 		pygame.display.init()
+		super().before_init(app)
 
 	def init(self):
-		self._screen = pygame.display.set_mode(self._size, self._flags)
+		self._size = self.parse_size(self._size)
+		self._create_dispaly()
 		self._app.update_option('screen', self._screen)
 		for scene_name, scene_ref in self._scenes.items():
 			builder = Builder.build_from(scene_ref)
@@ -56,6 +56,48 @@ class DrawingController(AbstractController):
 			if self._scenes[scene_name].get_name() != scene_name:
 				raise RuntimeError('Invalid root node name. Root node name must be equal scene name.')
 		self.update_current_scene(self._current_scene)
+
+	@staticmethod
+	def get_list_sizes():
+		return pygame.display.list_modes()
+
+	@staticmethod
+	def get_window_size():
+		return pygame.display.get_window_size()
+
+	@staticmethod
+	def parse_size(size):
+		if isinstance(size, str):
+			index = size.split('_')
+			try:
+				index = int(index[1])
+			except ValueError:
+				raise IndexError(f'Cant parse index for list sizes: {index[1]}')
+			return pygame.display.list_modes()[index]
+		if isinstance(size, (list, set)):
+			return size
+
+	def fullscreen(self, fullscreen_flag=None):
+		if fullscreen_flag is None:
+			pygame.display.toggle_fullscreen()
+			return
+		if fullscreen_flag and not self._flags & pygame.FULLSCREEN:
+			self._flags |= pygame.FULLSCREEN
+			pygame.display.toggle_fullscreen()
+			return
+		if not fullscreen_flag and self._flags & pygame.FULLSCREEN:
+			self._flags -= pygame.FULLSCREEN
+			pygame.display.toggle_fullscreen()
+
+	def set_size(self, new_size):
+		self._size = new_size
+		self._create_dispaly()
+
+	def _create_dispaly(self):
+		pygame.display.quit()
+		pygame.display.init()
+		self._screen = pygame.display.set_mode(self._size, self._flags)
+		self._app.update_option('screen', self._screen)
 
 	def get_node_loader(self, source):
 		source.meta['controller'] = self
@@ -87,7 +129,7 @@ class DrawingController(AbstractController):
 		return self._current_scene.find(needle_object)
 
 	def destroy(self, event):
-		self.logger.info('destroy controller')
+		self.logger.info('destroy controller ' + self.get_name())
 		for scene in self._scenes.values():
 			scene.destroy()
 

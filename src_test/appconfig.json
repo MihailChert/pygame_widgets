@@ -11,11 +11,6 @@
 				],
 				"caption": "Pyramid game",
 				"fps": 60,
-				"key_aliases": {
-					"move_right": ["D", "RIGHT"],
-					"move_left": ["A", "LEFT"],
-					"select": ["space", "enter", "f"]
-				},
 				"flags": 0,
 				"logger": {
 					"version": 1,
@@ -47,8 +42,8 @@
 			"dependence": ["DrawingController"],
 			"meta": {
 				"main_scene": "test_scene",
-				"window_flags": ["NOFRAME", "RESIZABLE"],
-				"window_size": [640, 500],
+				"window_flags": ["RESIZABLE"],
+				"window_size": "list_-1",
 				"scenes": {
 					"test_scene": "src_test/rect.json",
 					"main": "src_test/scenes/scenefortest.json",

@@ -9,7 +9,7 @@ class AbstractController(ABC):
 		self._name = name
 		self._app = app
 		self.logger = app.get_logger().getChild(name)
-		self.logger.info('init controller')
+		self.logger.info('init controller ' + name)
 		self._listeners_list = {}
 		self._listeners_update = []
 
@@ -28,9 +28,12 @@ class AbstractController(ABC):
 	def init(self):
 		pass
 
-	@abstractmethod
 	def before_init(self, app):
 		self._app = app
+		try:
+			self.logger.info(f'Controller \'{self.get_name()}\' event id: {self._event_id}')
+		except AttributeError:
+			self.logger.info(f'Controller \'{self.get_name()}\' has not event id.')
 
 	def has_event_type(self, event_type):
 		return event_type == self._event_id or event_type == self._name
@@ -86,8 +89,8 @@ class AbstractController(ABC):
 		pass
 
 	def add_listener(self, listened_method, handler, order=None):
+		self.logger.debug(f'Add listener method \'{listened_method}\' to controller {self.get_name()}, with order {order}')
 		if listened_method == 'empty_method':
-			self.logger.error('add listener to empty method')
 			raise ValueError('\'empty_method\' can\'t have any listeners')
 		if listened_method == 'update':
 			if order is None:
@@ -103,12 +106,12 @@ class AbstractController(ABC):
 		except KeyError:
 			self._listeners_list[listened_method] = [handler]
 
-	def add_listener_to(self, controller_name, listener_method, handler, order=None):
+	def add_listener_to(self, controller_name, listened_method, handler, order=None):
 		if controller_name == self._name:
-			self.add_listener(listener_method, handler, order)
+			self.add_listener(listened_method, handler, order)
 			return
 		controller = self._app.get_controller(controller_name)
-		controller.add_listener(listener_method, handler, order)
+		controller.add_listener(listened_method, handler, order)
 
 	def get_event_id(self):
 		return self._event_id

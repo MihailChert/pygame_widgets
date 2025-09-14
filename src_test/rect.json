@@ -36,7 +36,7 @@
 				"size": [50, 50],
 				"color": "white",
 				"listeners": {
-					"main":{
+					"trigger":{
 						"move_left": "left_rot",
 						"move_right": "right_rot"
 					}

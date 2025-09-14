@@ -22,11 +22,9 @@ class TriggerController(AbstractController):
 		controller = super().get_settings_loader(source)
 		for alias, key in source.check_meta('key_aliases', default={}).items():
 			controller.add_alias_keys(alias, key)
+		controller.logger.debug(controller._aliases_keys)
+		controller.logger.debug(controller._aliases_names)
 		return controller
-
-	def before_init(self, app):
-		self._app = app
-		self.logger.info('init trigger controller')
 
 	def init(self):
 		return
@@ -72,8 +70,6 @@ class TriggerController(AbstractController):
 					self._aliases_names[alias] = self._aliases_keys[key['mode']] = list()
 			except TypeError:
 				raise Value
-		self.logger.debug(self._aliases_keys)
-		self.logger.debug(self._aliases_names)
 
 	def add_trigger_boxes(self, trigger_box):
 		if isinstance(trigger_box, AbstractTriggerBox):
@@ -126,22 +122,22 @@ class TriggerController(AbstractController):
 			self.logger.error(er)
 			raise RuntimeError(f'Проверить ресурс и загружаемый класс, {cls.__name__}, {er}') #TODO: change error
 
-	def add_listener(self, listener_method, handler, order=None):
-		if listener_method == 'update':
+	def add_listener(self, listened_method, handler, order=None):
+		self.logger.debug(f'Add listener method \'{listened_method}\' to controller {self.get_name()}, with order {order}')
+		if listened_method == 'update':
 			if order is None:
 				self._listners_update.append(handler)
 			else:
 				self._listners_update.insert(order, handler)
 			return
-		if listener_method in self._aliases_names.keys():
+		if listened_method in self._aliases_names.keys():
 			if order is None:
-				self._aliases_names[listener_method].append(handler)
+				self._aliases_names[listened_method].append(handler)
 			else:
-				self._aliases_names[listener_method].insert(order, handler)
+				self._aliases_names[listened_method].insert(order, handler)
 			return
 		try:
-			_listener_method = self.get_event_id(listener_method)
-			listener_method = _listener_method
+			listened_method = self.get_event_id(listened_method)
 		except(KeyError, ValueError):
 			pass
 		try:
@@ -153,7 +149,7 @@ class TriggerController(AbstractController):
 			self._listeners_list[listener_method] = [handler]
 
 	def destroy(self, event):
-		self.logger.info('destroy controller')
+		self.logger.info('destroy controller ' + self.get_name())
 		for trigger in self._trigger_boxes:
 			trigger.destroy()
 		for trigger in self._button_boxes:
